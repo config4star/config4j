@@ -1,0 +1,80 @@
+<project name="Config4JMS" default="all" basedir=".">
+	<property environment="env"/>
+	<property name="build.dir" value="${basedir}/build"/>
+	<property name="classes.dir" value="${build.dir}/classes"/> 
+	<property name="samples.src.dir" value="${basedir}/samples"/> 
+	<property name="src.dir" value="${basedir}/src"/> 
+	<property name="config4j.lib.dir" value="../lib"/>
+	<property name="lib.dir" value="${basedir}/lib"/>
+	<property name="sonic.mq.home" value="/opt/Sonic/MQ7.6"/>
+	<property name="sonic.lib.dir" value="${sonic.mq.home}/lib"/>
+	<property name="config4jms.jar" value="${lib.dir}/config4jms.jar"/>
+
+	<path id="third.party.classpath">
+		<pathelement location="${config4j.lib.dir}/config4j.jar"/>
+		<pathelement location="${sonic.lib.dir}/sonic_Client.jar"/>
+		<pathelement location="${sonic.lib.dir}/mfcontext.jar"/>
+		<pathelement location="${sonic.lib.dir}/gnu-regexp-1.0.6.jar"/>
+		<pathelement location="${sonic.lib.dir}/gnu-regexp-1.0.6.jar"/>
+		<pathelement location="${sonic.lib.dir}/rsa_ssl.jar"/>
+	</path>
+	<path id="config4jms.classpath">
+		<pathelement location="${config4jms.jar}"/>
+	</path>
+
+	<path id="boot.classpath">
+		<pathelement location="${sonic.lib.dir}/jmxri.jar"/>
+	</path>
+
+
+	<target name="prepare">
+		<mkdir dir="${classes.dir}"/>	
+		<mkdir dir="${lib.dir}"/>	
+	</target>	
+
+	<target name="compile" depends="prepare"
+		description="Compiles source code">
+		<javac debug="true"
+			srcdir="${src.dir}/org/config4jms" destdir="${classes.dir}">
+			<classpath refid="third.party.classpath"/>
+			<!--bootclasspath refid="boot.classpath"/-->
+		</javac>
+	</target>	
+
+	<target name="samples" depends="jar"
+		description="Compiles source code of sample applications">
+		<javac debug="true"
+			srcdir="${samples.src.dir}" destdir="${samples.src.dir}">
+			<classpath refid="third.party.classpath"/>
+			<classpath refid="config4jms.classpath"/>
+			<!--bootclasspath refid="boot.classpath"/-->
+		</javac>
+	</target>	
+
+	<target name="jar" depends="compile"
+		description="Creates config4jms.jar in the 'lib' directory">
+		<jar jarfile="${config4jms.jar}" compress="true"
+			basedir="${classes.dir}"
+			includes="org/config4jms/**/*.class">
+			<manifest>
+				<attribute name="Class-Path"
+					value="../${config4j.lib.dir}/config4j.jar"/>
+				<attribute name="Main-Class"
+					value="org.config4jms.Config4JMSMain"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="all" depends="compile,jar,samples"
+		description="Compiles and builds everything">
+	</target>
+
+	<target name="clean" description="Deletes generated files">
+		<delete dir="${build.dir}"/>
+		<delete dir="${lib.dir}"/>
+		<delete>
+			<fileset dir="${samples.src.dir}" includes="**/*.class"/>
+		</delete>
+	</target>
+
+</project>

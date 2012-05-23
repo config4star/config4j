@@ -1,0 +1,41 @@
+<project name="Demo" default="all" basedir=".">
+	<property environment="env"/>
+	<property name="config4j.jar" value="../../lib/config4j.jar"/>
+
+	<target name="codegen">
+	    <dependset>
+			<srcfilelist dir="." files="FallbackConfiguration.cfg"/>
+			<targetfilelist dir="."
+				files="FallbackConfiguration.java"/>
+		</dependset>
+		<java fork="yes" classname="org.config4j.Config2J"
+				classpath="${config4j.jar}"
+				failonerror="true">
+			<arg value="-cfg"/>
+			<arg value="FallbackConfiguration.cfg"/>
+			<arg value="-singleton"/>
+			<arg value="-class"/>
+			<arg value="FallbackConfiguration"/>
+        </java>
+	</target>	
+
+	<target name="compile">
+		<javac debug="true" srcdir = "." destdir="." classpath="${config4j.jar}">
+			<include name="*.java"/>
+		</javac>
+	</target>	
+
+	<target name="all" depends="codegen, compile"
+			description="Compiles the demo application">
+	</target>
+
+	<target name="clean" description="Deletes generated files">
+		<delete>
+			<fileset dir=".">
+				<include name="FallbackConfiguration.java"/>
+				<include name="*.class"/>
+			</fileset>
+		</delete>
+	</target>
+
+</project>

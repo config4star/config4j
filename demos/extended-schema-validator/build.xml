@@ -1,0 +1,24 @@
+<project name="Demo" default="all" basedir=".">
+	<property environment="env"/>
+	<property name="config4j.jar" value="../../lib/config4j.jar"/>
+
+	<target name="compile">
+		<javac debug="true" srcdir = "." destdir="." classpath="${config4j.jar}">
+			<include name="*.java"/>
+		</javac>
+	</target>	
+
+	<target name="all" depends="compile"
+			description="Compiles the demo application">
+	</target>
+
+	<target name="clean" description="Deletes generated files">
+		<delete>
+			<fileset dir=".">
+				<include name="FallbackConfiguration.java"/>
+				<include name="*.class"/>
+			</fileset>
+		</delete>
+	</target>
+
+</project>

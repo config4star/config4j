@@ -1,0 +1,47 @@
+<project name="test-schema-types" default="all" basedir=".">
+	<property environment="env"/>
+	<property name="config4j.jar" value="../../lib/config4j.jar"/>
+	<property name="config.file" value="schema-type-tests.cfg"/>
+
+	<target name="run-test">
+		<java fork="yes" classname="Main" failonerror="true">
+			<classpath>
+				<pathelement path="."/>
+				<pathelement path="${config4j.jar}"/>
+			</classpath>
+			<arg value="-cfg"/>
+			<arg value="${config.file}"/>
+        </java>
+	</target>	
+
+	<target name="run-test-diagnostics">
+		<java fork="yes" classname="Main" failonerror="true">
+			<classpath>
+				<pathelement path="."/>
+				<pathelement path="${config4j.jar}"/>
+			</classpath>
+			<arg value="-cfg"/>
+			<arg value="${config.file}"/>
+			<arg value="-diagnostics"/>
+        </java>
+	</target>	
+
+	<target name="compile">
+		<javac debug="true" srcdir = "." destdir="." classpath="${config4j.jar}">
+			<include name="*.java"/>
+		</javac>
+	</target>	
+
+	<target name="all" depends="compile, run-test"
+			description="Compiles and runs the test application">
+	</target>
+
+	<target name="clean" description="Deletes generated files">
+		<delete>
+			<fileset dir=".">
+				<include name="*.class"/>
+			</fileset>
+		</delete>
+	</target>
+
+</project>

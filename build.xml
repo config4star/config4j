@@ -1,0 +1,79 @@
+<project name="Config4J" default="all" basedir=".">
+	<property environment="env"/>
+	<property name="build.dir" value="${basedir}/build"/>
+	<property name="classes.dir" value="${build.dir}/classes"/> 
+	<property name="src.dir" value="${basedir}/src"/> 
+	<property name="build.src.dir" value="${build.dir}/src"/> 
+	<property name="lib.dir" value="${basedir}/lib"/>
+
+	<target name="prepare">
+		<mkdir dir="${classes.dir}"/>	
+		<mkdir dir="${build.src.dir}/org/config4j"/>	
+		<mkdir dir="${lib.dir}"/>	
+	</target>	
+
+	<target name="compile_1" depends="prepare">
+		<javac source="1.3" debug="true" destdir="${classes.dir}"
+				includes="**/Config2JUtil.java,**/Config2JNoCheck.java">
+            <src path="${src.dir}"/>
+		</javac>
+	</target>	
+
+	<target name="codegen">
+	    <dependset>
+			<srcfilelist dir="${src.dir}" files="**/DefaultSecurity.cfg"/>
+			<srcfilelist dir="${src.dir}" files="**/Config2JUtil.java"/>
+			<srcfilelist dir="${src.dir}" files="**/Config2JNoCheck.java"/>
+			<targetfilelist dir="${build.src.dir}"
+				files="org/config4j/DefaultSecurity.cfg"/>
+		</dependset>
+		<java fork="yes" classname="org.config4j.Config2JNoCheck"
+				classpath="${classes.dir}"
+				failonerror="true">
+			<arg value="-cfg"/>
+			<arg value="${src.dir}/org/config4j/DefaultSecurity.cfg"/>
+			<arg value="-singleton"/>
+			<arg value="-class"/>
+			<arg value="DefaultSecurity"/>
+			<arg value="-outDir"/>
+			<arg value="${build.dir}/src/org/config4j"/>
+			<arg value="-package"/>
+			<arg value="org.config4j"/>
+        </java>
+	</target>	
+
+	<target name="compile_2">
+		<javac source="1.3" debug="true" destdir="${classes.dir}">
+            <src path="${build.src.dir}"/>
+            <src path="${src.dir}"/>
+			<include name="org/config4j/*.java"/>
+			<exclude name="org/config4j/Config2JUtil.java"/>
+			<exclude name="org/config4j/Config2JNoCheck.java"/>
+		</javac>
+	</target>	
+
+	<target name="compile" depends="compile_1, codegen, compile_2"
+			description="Compiles source code">
+	</target>
+
+	<target name="jar" depends="compile"
+		description="Creates config4j.jar in the 'lib' directory">
+		<jar jarfile="${lib.dir}/config4j.jar"
+			basedir="${classes.dir}"
+			includes="**/*.class"/>
+	</target>
+
+	<target name="all" depends="compile,jar"
+		description="Compiles and builds the JAR file">
+	</target>
+
+	<target name="clean" description="Deletes generated files">
+		<delete dir="${build.dir}"/>
+		<delete dir="${lib.dir}"/>
+		<delete>
+			<fileset dir="tests" includes="**/*.class"/>
+			<fileset dir="demos" includes="**/*.class"/>
+		</delete>
+	</target>
+
+</project>
