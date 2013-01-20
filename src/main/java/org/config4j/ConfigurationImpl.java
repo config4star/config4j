@@ -25,8 +25,6 @@
 package org.config4j;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.BufferedReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -325,7 +323,7 @@ public class ConfigurationImpl extends Configuration
 	{
 		StringBuffer		trustedCmdLine;
 		ConfigParser		parser;
-
+		
 		trustedCmdLine = new StringBuffer();
 		switch (sourceType) {
 		case Configuration.INPUT_FILE:
@@ -684,7 +682,6 @@ public class ConfigurationImpl extends Configuration
 		String			floatStr;
 		int				unitsLen;
 		int				strLen;
-		int				floatStrLen;
 		char			ch;
 
 		units = null;
@@ -728,7 +725,6 @@ public class ConfigurationImpl extends Configuration
 		String			intStr;
 		int				unitsLen;
 		int				strLen;
-		int				intStrLen;
 		char			ch;
 
 		units = null;
@@ -772,7 +768,6 @@ public class ConfigurationImpl extends Configuration
 		String			floatStr;
 		int				unitsLen;
 		int				strLen;
-		int				floatStrLen;
 		char			ch;
 
 		units = null;
@@ -815,7 +810,6 @@ public class ConfigurationImpl extends Configuration
 		String			intStr;
 		int				unitsLen;
 		int				strLen;
-		int				intStrLen;
 		char			ch;
 
 		units = null;
@@ -1297,7 +1291,6 @@ public class ConfigurationImpl extends Configuration
 		StringBuffer		msg;
 		int					unitsLen;
 		int					strLen;
-		int					floatStrLen;
 		float				floatVal;
 		char				ch;
 		ValueWithUnits		result;
@@ -1371,7 +1364,6 @@ public class ConfigurationImpl extends Configuration
 		StringBuffer		msg;
 		int					unitsLen;
 		int					strLen;
-		int					floatStrLen;
 		float				floatVal;
 		char				ch;
 		ValueWithUnits		result;
@@ -1441,7 +1433,6 @@ public class ConfigurationImpl extends Configuration
 		StringBuffer		msg;
 		int					unitsLen;
 		int					strLen;
-		int					intStrLen;
 		int					intVal;
 		char				ch;
 		ValueWithUnits		result;
@@ -1516,7 +1507,6 @@ public class ConfigurationImpl extends Configuration
 		StringBuffer		msg;
 		int					unitsLen;
 		int					strLen;
-		int					intStrLen;
 		int					intVal;
 		char				ch;
 		ValueWithUnits		result;
@@ -1645,7 +1635,6 @@ public class ConfigurationImpl extends Configuration
 		String[]		defaultArray) throws ConfigurationException
 	{
 		int		 		type;
-		int				i;
 		String			fullyScopedName;
 		ArrayList		result;
 		

@@ -34,7 +34,6 @@ package org.config4j;
 //		<value> part, (which can be a string or a sequence
 //		of string) or a <scope>.
 //--------------------------------------------------------------
-
 class ConfigItem
 {
 	ConfigItem(String name, String stringVal)
@@ -111,7 +110,6 @@ class ConfigItem
 		int							indentLevel)
 	{
 		int							i;
-		int							len;
 		String						escStr;
 		UidIdentifierProcessor		uidIdProc;
 

@@ -84,7 +84,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 
 
@@ -99,8 +98,6 @@ class ConfigParser
 		ConfigurationImpl	config,
 		boolean				ifExistsIsSpecified) throws ConfigurationException
 	{
-		StringBuffer		msg;
-
 		//--------
 		// Initialise instance variables
 		//--------
@@ -359,11 +356,9 @@ class ConfigParser
 		StringBuffer		fromScopeName;
 		String				fromScopeNameStr;
 		String				toScopeName;
-		StringBuffer		msg;
 		String[]			fromNamesArray;
 		ConfigItem			item;
 		ConfigScope			fromScope;
-		ConfigScope			dummyScope;
 		String				newName;
 		int					i;
 		int					fromScopeNameLen;
@@ -1027,10 +1022,8 @@ class ConfigParser
 		String				origStr;
 		String				searchStr;
 		String				replacementStr;
-		int					origStrLen;
 		int					searchStrLen;
 		int					currStart;
-		int					currEnd;
 		int					pIndex;
 
 		origBuf        = new StringBuffer();
@@ -1048,7 +1041,6 @@ class ConfigParser
 		origStr = origBuf.toString();
 		searchStr = searchBuf.toString();
 		replacementStr = replacementBuf.toString();
-		origStrLen = origStr.length();
 		searchStrLen = searchStr.length();
 		currStart = 0;
 		pIndex = origStr.indexOf(searchStr, currStart);
@@ -1068,10 +1060,8 @@ class ConfigParser
 		StringBuffer		delim;
 		String				bufStr;
 		String				delimStr;
-		int					strLen;
 		int					delimLen;
 		int					currStart;
-		int					currEnd;
 		int					pIndex;
 
 		buf   = new StringBuffer();
@@ -1084,7 +1074,6 @@ class ConfigParser
 
 		bufStr    = buf.toString();
 		delimStr  = delim.toString();
-		strLen    = bufStr.length();
 		delimLen  = delimStr.length();
 		currStart = 0;
 		pIndex    = bufStr.indexOf(delimStr, currStart);

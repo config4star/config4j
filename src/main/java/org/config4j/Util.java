@@ -24,10 +24,9 @@
 
 package org.config4j;
 
-import java.util.StringTokenizer;
-import java.util.ArrayList;
 import java.io.File;
-import java.io.BufferedReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 
 class Util
@@ -92,9 +91,7 @@ class Util
 
 	public static boolean execCmd(String cmd, StringBuffer output)
 	{
-		String					line;
 		Process					p;
-		BufferedReader			processStdout;
 		StreamReaderThread		outThread;
 		StreamReaderThread		errThread;
 		int						exitVal;

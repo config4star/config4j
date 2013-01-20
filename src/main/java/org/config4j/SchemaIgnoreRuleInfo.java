@@ -24,7 +24,6 @@
 
 package org.config4j;
 
-import java.util.ArrayList;
 
 
 class SchemaIgnoreRuleInfo

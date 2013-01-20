@@ -45,7 +45,6 @@ class SchemaParser
 		SchemaIdRuleInfo	r2;
 		String				s1;
 		String				s2;
-		String				name;
 
 		sv.sortTypes();
 		for (i = 0; i < schema.length; i++) {

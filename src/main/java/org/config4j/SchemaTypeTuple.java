@@ -105,7 +105,6 @@ class SchemaTypeTuple extends SchemaType
 		int					typeArgsLen;
 		int					elemNameIndex;
 		int					typeIndex;
-		int					rowNum;
 		int					numElems;
 		SchemaType			elemTypeDef;
 		boolean				ok;
@@ -140,7 +139,6 @@ class SchemaTypeTuple extends SchemaType
 		for (i = 0; i < list.length; i++) {
 			typeIndex     = (i * 2 + 0) % typeArgsLen;
 			elemNameIndex = (i * 2 + 1) % typeArgsLen;
-			rowNum = (i / numElems) + 1;
 			elemValue = list[i];
 			elemTypeName = typeArgs[typeIndex];
 			elemTypeDef = findType(sv, elemTypeName);

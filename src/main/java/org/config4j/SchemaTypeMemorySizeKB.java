@@ -94,7 +94,6 @@ class SchemaTypeMemorySizeKB extends SchemaType
 		int					indentLevel,
 		StringBuffer		errSuffix) throws ConfigurationException
 	{
-		boolean				result;
 		int					min;
 		int					max;
 		int					val;

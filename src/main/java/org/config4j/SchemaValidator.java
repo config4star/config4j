@@ -420,7 +420,6 @@ public class SchemaValidator
 		String				iName;
 		String				msg;
 		int					i;
-		int					len;
 		SchemaIdRuleInfo	idRule;
 		SchemaType			typeDef;
 		String				prefix = "---- " + this.getClass().getName()
@@ -721,7 +720,6 @@ public class SchemaValidator
 	//--------
 	// Instance variables NOT visible to subclasses.
 	//--------
-	private Configuration					cfg;
 	ArrayList /*[SchemaIdRuleInfo]*/		schemaIdRules;
 	ArrayList /*[SchemaIgnoreRuleInfo]*/	schemaIgnoreRules;
 	ArrayList /*[SchemaType]*/				schemaTypes;

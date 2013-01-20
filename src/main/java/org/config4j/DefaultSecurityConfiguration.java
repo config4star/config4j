@@ -24,22 +24,18 @@
 
 package org.config4j;
 
-class DefaultSecurityConfiguration extends ConfigurationImpl
-{
-	DefaultSecurityConfiguration()
-	{
+class DefaultSecurityConfiguration extends ConfigurationImpl {
+	DefaultSecurityConfiguration() {
 		try {
-			parse(INPUT_STRING, DefaultSecurity.getString(),
-			      "Config4* default security");
+			parse(INPUT_STRING, DefaultSecurity.getString(), "Config4* default security");
 			lookupList("", "allow_patterns");
 			lookupList("", "deny_patterns");
 			lookupList("", "trusted_directories");
-		} catch(ConfigurationException ex) {
+		} catch (ConfigurationException ex) {
 			System.out.println(ex.getMessage());
 			System.exit(1);
 		}
 	}
 
-	static DefaultSecurityConfiguration singleton
-					= new DefaultSecurityConfiguration();
+	static DefaultSecurityConfiguration singleton = new DefaultSecurityConfiguration();
 }

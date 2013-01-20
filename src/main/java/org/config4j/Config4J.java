@@ -189,7 +189,6 @@ class Config4J
 	private static void parseCmdLineArgs(String[] args, Configuration cfg)
 	{
 		int					i;
-		StringBuffer		msg;
 		ArrayList			patterns;
 
 		cmd = null;

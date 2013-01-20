@@ -58,7 +58,6 @@ class SchemaTypeFloatWithUnits extends SchemaType
 		int					indentLevel,
 		StringBuffer		errSuffix) throws ConfigurationException
 	{
-		ValueWithUnits		valueWithUnits;
 		boolean				result;
 		int					i;
 

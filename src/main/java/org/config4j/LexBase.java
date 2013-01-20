@@ -27,7 +27,6 @@ package org.config4j;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.StringReader;
 
 
 public class LexBase
@@ -611,7 +610,6 @@ public class LexBase
 	// Instance variables
 	//--------
 	private UidIdentifierProcessor	uidIdentifierProcessor;
-	private boolean					amOwnerOfUidIdentifierProcessor;
 	private int						lineNum; // Used for error reporting
 	private int						ch; // Lookahead character
 	private int						sourceType;

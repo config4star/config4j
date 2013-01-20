@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 
 class ConfigScope
@@ -37,7 +36,6 @@ class ConfigScope
 	ConfigScope(ConfigScope parentScope, String name)
 	{
 		this.table = new HashMap(16);
-		this.localName = name;
 		this.parentScope = parentScope;
 		if (parentScope == null) {
 			Util.assertion(name.equals(""));
@@ -152,9 +150,6 @@ class ConfigScope
 	boolean removeItem(String name)
 	{
 		ConfigItem		item;
-		ConfigScope		scope;
-		boolean			result;
-
 		item = (ConfigItem)table.get(name);
 		if (item != null) {
 			table.remove(name);
@@ -353,6 +348,5 @@ class ConfigScope
 
 	private ConfigScope			parentScope;
 	private String				scopedName;
-	private String				localName;
 	private Map					table;
 }

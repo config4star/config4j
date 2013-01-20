@@ -24,12 +24,6 @@
 
 package org.config4j;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.StringReader;
-
-
 class ConfigLex extends LexBase
 {
 	//--------

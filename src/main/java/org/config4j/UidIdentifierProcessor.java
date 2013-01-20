@@ -24,7 +24,6 @@
 
 package org.config4j;
 
-import java.util.ArrayList;
 
 
 class UidIdentifierProcessor
@@ -47,7 +46,7 @@ class UidIdentifierProcessor
 		for (i = 0; i < digits.length; i++) {
 			remainder = num % 10;
 			num = num / 10;
-			digits[9-(i+1)] = (char)((int)'0' + remainder);
+			digits[9-(i+1)] = (char)('0' + remainder);
 		}
 		return new String(digits);
 	}
@@ -242,11 +241,8 @@ class UidIdentifierProcessor
 		int				i;
 		int				len;
 		char			ch;
-		String			msg;
 		String			suffix;
 		String			result;
-
-		msg = "'" + str + "' is not a legal identifier";
 
 		//--------
 		// If str does not start with "uid-<digits>-"
