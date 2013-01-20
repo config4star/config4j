@@ -48,25 +48,28 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public void setFallbackConfiguration(Configuration cfg)
 	{
 		fallbackCfg = (ConfigurationImpl)cfg;
 	}
 
 
+	@Override
 	public void setFallbackConfiguration(
-		int			sourceType,
-		String		source) throws ConfigurationException
-	{
+			int			sourceType,
+			String		source) throws ConfigurationException
+			{
 		setFallbackConfiguration(sourceType, source, "");
-	}
+			}
 
 
+	@Override
 	public void setFallbackConfiguration(
-		int				sourceType,
-		String			source,
-		String			sourceDescription) throws ConfigurationException
-	{
+			int				sourceType,
+			String			source,
+			String			sourceDescription) throws ConfigurationException
+			{
 		Configuration	cfg;
 
 		cfg = Configuration.create();
@@ -78,50 +81,55 @@ public class ConfigurationImpl extends Configuration
 		}
 
 		fallbackCfg = (ConfigurationImpl)cfg;
-	}
+			}
 
 
+	@Override
 	public Configuration getFallbackConfiguration()
 	{
 		return fallbackCfg;
 	}
 
 
+	@Override
 	public void setSecurityConfiguration(Configuration cfg)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		setSecurityConfiguration(cfg, "");
-	}
+			}
 
 
+	@Override
 	public void setSecurityConfiguration(Configuration cfg, String scope)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		try {
 			cfg.lookupList(scope, "allow_patterns");
 			cfg.lookupList(scope, "deny_patterns");
 			cfg.lookupList(scope, "trusted_directories");
 		} catch(ConfigurationException ex) {
 			throw new ConfigurationException("cannot set security "
-				+ "configuration: " + ex.getMessage());
+					+ "configuration: " + ex.getMessage());
 		}
 
 		securityCfg = cfg;
 		securityCfgScope = scope;
-	}
+			}
 
 
+	@Override
 	public void setSecurityConfiguration(String cfgInput)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		setSecurityConfiguration(cfgInput, "");
-	}
+			}
 
 
+	@Override
 	public void setSecurityConfiguration(
 			String			cfgInput,
 			String			scope) throws ConfigurationException
-	{
+			{
 		Configuration		cfg;
 
 		cfg = Configuration.create();
@@ -132,25 +140,28 @@ public class ConfigurationImpl extends Configuration
 			cfg.lookupList(scope, "trusted_directories");
 		} catch(ConfigurationException ex) {
 			throw new ConfigurationException("cannot set security "
-										+ "configuration: " + ex.getMessage());
+					+ "configuration: " + ex.getMessage());
 		}
 		securityCfg = cfg;
 		securityCfgScope = scope;
-	}
+			}
 
 
+	@Override
 	public Configuration getSecurityConfiguration()
 	{
 		return securityCfg;
 	}
 
 
+	@Override
 	public String getSecurityConfigurationScope()
 	{
 		return securityCfgScope;
 	}
 
 
+	@Override
 	public synchronized String getenv(String name) throws ConfigurationException
 	{
 		String					result;
@@ -195,13 +206,13 @@ public class ConfigurationImpl extends Configuration
 		//     org.apache.tools.ant.taskdefs.Execute
 		//     org.apache.tools.ant.taskdefs.condition.Os
 		//--------
-		
+
 		//--------
 		// Plan A: see if System.getenv() works. We use reflection to avoid
 		// compiler warnings about using a deprecated method.
 		//--------
 		try {
-			Class c = System.class;
+			Class<System> c = System.class;
 			Method m = c.getMethod("getenv", new Class[]{String.class});
 			Object obj = m.invoke(null, new Object[]{name});
 			result = (String)obj;
@@ -264,8 +275,8 @@ public class ConfigurationImpl extends Configuration
 			env = outThread.getEnvProperties();
 		} catch(Exception ex) {
 			throw new ConfigurationException("cannot get the '" + name
-						+ "' environment variable because of an error "
-						+ "executing '" + cmd + "': " + ex.getMessage());
+					+ "' environment variable because of an error "
+					+ "executing '" + cmd + "': " + ex.getMessage());
 		}
 		return env.getProperty(name);
 	}
@@ -290,13 +301,15 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public void parse(int sourceType, String source)
-						throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		parse(sourceType, source, "");
-	}
+			}
 
 
+	@Override
 	public void parse(String sourceTypeAndSource) throws ConfigurationException
 	{
 		int					cfgSourceType;
@@ -316,36 +329,37 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public void parse(
-		int					sourceType,
-		String				source,
-		String				sourceDescription) throws ConfigurationException
-	{
+			int					sourceType,
+			String				source,
+			String				sourceDescription) throws ConfigurationException
+			{
 		StringBuffer		trustedCmdLine;
 		ConfigParser		parser;
-		
+
 		trustedCmdLine = new StringBuffer();
 		switch (sourceType) {
 		case Configuration.INPUT_FILE:
-			this.fileName = source;
+			fileName = source;
 			break;
 		case Configuration.INPUT_STRING:
 			if (sourceDescription.equals("")) {
-				this.fileName = "<string-based configuration>";
+				fileName = "<string-based configuration>";
 			} else {
-				this.fileName = sourceDescription;
+				fileName = sourceDescription;
 			}
 			break;
 		case Configuration.INPUT_EXEC:
 			if (sourceDescription.equals("")) {
-				this.fileName = "exec#" + source;
+				fileName = "exec#" + source;
 			} else {
-				this.fileName = sourceDescription;
+				fileName = sourceDescription;
 			}
 			if (!isExecAllowed(source, trustedCmdLine)) {
 				throw new ConfigurationException("cannot parse output of "
-							+ "executing \"" + source + "\" due to security "
-							+ "restrictions");
+						+ "executing \"" + source + "\" due to security "
+						+ "restrictions");
 			}
 			break;
 		default:
@@ -353,49 +367,53 @@ public class ConfigurationImpl extends Configuration
 			break;
 		}
 		parser = new ConfigParser(sourceType, source, trustedCmdLine.toString(),
-								  this.fileName, this, false);
-	}
+				fileName, this, false);
+			}
 
 
+	@Override
 	public String fileName()
 	{
-		return this.fileName;
+		return fileName;
 	}
 
 
+	@Override
 	public String[] listFullyScopedNames(
-		String				scope,
-		String				localName,
-		int					typeMask,
-		boolean				recursive) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			int					typeMask,
+			boolean				recursive) throws ConfigurationException
+			{
 		return listFullyScopedNames(scope, localName, typeMask, recursive,
-									new String[0]);
-	}
+				new String[0]);
+			}
 
 
+	@Override
 	public String[] listFullyScopedNames(
-		String				scope,
-		String				localName,
-		int					typeMask,
-		boolean				recursive,
-		String				filterPattern) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			int					typeMask,
+			boolean				recursive,
+			String				filterPattern) throws ConfigurationException
+			{
 		String []			filterPatterns = new String[1];
 
 		filterPatterns[0] = filterPattern;
 		return listFullyScopedNames(scope, localName, typeMask, recursive,
-									filterPatterns);
-	}
+				filterPatterns);
+			}
 
 
+	@Override
 	public String[] listFullyScopedNames(
-		String				scope,
-		String				localName,
-		int					typeMask,
-		boolean				recursive,
-		String[]			filterPatterns) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			int					typeMask,
+			boolean				recursive,
+			String[]			filterPatterns) throws ConfigurationException
+			{
 		String				fullyScopedName;
 		ConfigItem			item;
 		ConfigScope			scopeObj;
@@ -403,54 +421,57 @@ public class ConfigurationImpl extends Configuration
 
 		fullyScopedName = mergeNames(scope, localName);
 		if (fullyScopedName.equals("")) {
-			scopeObj = this.rootScope;
+			scopeObj = rootScope;
 		} else {
 			item = lookup(fullyScopedName, localName, true);
 			if (item == null || item.getType() != Configuration.CFG_SCOPE) {
 				throw new ConfigurationException(fileName() + ": '"
-										+ fullyScopedName + "' is not a scope");
+						+ fullyScopedName + "' is not a scope");
 			}
 			scopeObj = item.getScopeVal();
 		}
 		result = scopeObj.listFullyScopedNames(typeMask, recursive,
-											   filterPatterns);
+				filterPatterns);
 		Arrays.sort(result);
 		return result;
-	}
+			}
 
 
+	@Override
 	public String[] listLocallyScopedNames(
-		String				scope,
-		String				localName,
-		int					typeMask,
-		boolean				recursive) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			int					typeMask,
+			boolean				recursive) throws ConfigurationException
+			{
 		return listLocallyScopedNames(scope, localName, typeMask, recursive,
-									  new String[0]);
-	}
+				new String[0]);
+			}
 
 
+	@Override
 	public String[] listLocallyScopedNames(
-		String				scope,
-		String				localName,
-		int					typeMask,
-		boolean				recursive,
-		String				filterPattern) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			int					typeMask,
+			boolean				recursive,
+			String				filterPattern) throws ConfigurationException
+			{
 		String [] filterPatterns = new String[1];
 		filterPatterns[0] = filterPattern;
 		return listLocallyScopedNames(scope, localName, typeMask, recursive,
-									  filterPatterns);
-	}
+				filterPatterns);
+			}
 
 
+	@Override
 	public String[] listLocallyScopedNames(
-		String				scope,
-		String				localName,
-		int					typeMask,
-		boolean				recursive,
-		String[]			filterPatterns) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			int					typeMask,
+			boolean				recursive,
+			String[]			filterPatterns) throws ConfigurationException
+			{
 		String				fullyScopedName;
 		ConfigItem			item;
 		ConfigScope			scopeObj;
@@ -458,28 +479,29 @@ public class ConfigurationImpl extends Configuration
 
 		fullyScopedName = mergeNames(scope, localName);
 		if (fullyScopedName.equals("")) {
-			scopeObj = this.rootScope;
+			scopeObj = rootScope;
 		} else {
 			item = lookup(fullyScopedName, localName, true);
 			if (item == null || item.getType() != Configuration.CFG_SCOPE) {
 				throw new ConfigurationException(fileName() + ": '"
-										+ fullyScopedName + "' is not a scope");
+						+ fullyScopedName + "' is not a scope");
 			}
 			scopeObj = item.getScopeVal();
 		}
 		result = scopeObj.listLocallyScopedNames(typeMask, recursive,
-												 filterPatterns);
+				filterPatterns);
 		Arrays.sort(result);
 		return result;
-	}
+			}
 
 
+	@Override
 	public int type(String scope, String localName)
 	{
 		String				fullyScopedName;
 		ConfigItem			item;
 		int					result;
-		
+
 		fullyScopedName = mergeNames(scope, localName);
 		item = lookup(fullyScopedName, localName);
 		if (item == null) {
@@ -491,33 +513,37 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean uidEquals(String str1, String str2)
 	{
 		String				uStr1;
 		String				uStr2;
-		
+
 		uStr1 = uidIdentifierProcessor.unexpand(str1);
 		uStr2 = uidIdentifierProcessor.unexpand(str2);
 		return uStr1.equals(uStr2);
 	}
 
 
+	@Override
 	public String expandUid(String str) throws ConfigurationException
 	{
 		return uidIdentifierProcessor.expand(str);
 	}
 
 
+	@Override
 	public String unexpandUid(String spelling)
-						throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		return uidIdentifierProcessor.unexpand(spelling);
-	}
+			}
 
 
 	//--------
 	// Dump part or all of the configuration
 	//--------
+	@Override
 	public String dump(boolean wantExpandedUidNames)
 	{
 		StringBuffer		buf;
@@ -528,11 +554,12 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public String dump(
-		 boolean		wantExpandedUidNames,
-		 String			scope,
-		 String			localName) throws ConfigurationException
-	{
+			boolean		wantExpandedUidNames,
+			String			scope,
+			String			localName) throws ConfigurationException
+			{
 		ConfigItem		item;
 		String			fullyScopedName;
 		StringBuffer	buf;
@@ -545,12 +572,12 @@ public class ConfigurationImpl extends Configuration
 			item = lookup(fullyScopedName, localName, true);
 			if (item == null) {
 				throw new ConfigurationException(fileName() + ": '"
-									+ fullyScopedName + "' is not an entry");
+						+ fullyScopedName + "' is not an entry");
 			}
 			item.dump(buf, fullyScopedName, wantExpandedUidNames);
 		}
 		return buf.toString();
-	}
+			}
 
 
 	static private EnumNameAndValue boolInfo[] = {
@@ -559,6 +586,7 @@ public class ConfigurationImpl extends Configuration
 	};
 
 
+	@Override
 	public boolean isBoolean(String str)
 	{
 		Integer			result;
@@ -568,6 +596,7 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isInt(String str)
 	{
 		try {
@@ -579,6 +608,7 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isFloat(String str)
 	{
 		try {
@@ -632,6 +662,7 @@ public class ConfigurationImpl extends Configuration
 	};
 
 
+	@Override
 	public boolean isDurationMicroseconds(String str)
 	{
 		if (str.equals("infinite")) {
@@ -641,6 +672,7 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isDurationMilliseconds(String str)
 	{
 		if (str.equals("infinite")) {
@@ -650,6 +682,7 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isDurationSeconds(String str)
 	{
 		if (str.equals("infinite")) {
@@ -659,12 +692,13 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isEnum(
-		String					str,
-		EnumNameAndValue[]		enumInfo)
+			String					str,
+			EnumNameAndValue[]		enumInfo)
 	{
 		Integer					result;
-		
+
 		result = enumVal(str, enumInfo);
 		if (result == null) {
 			return false;
@@ -673,9 +707,10 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isFloatWithUnits(
-		String			str,
-		String[]		allowedUnits)
+			String			str,
+			String[]		allowedUnits)
 	{
 		int				i;
 		String			units;
@@ -716,9 +751,10 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isIntWithUnits(
-		String			str,
-		String[]		allowedUnits)
+			String			str,
+			String[]		allowedUnits)
 	{
 		int				i;
 		String			units;
@@ -759,9 +795,10 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isUnitsWithFloat(
-		String			str,
-		String[]		allowedUnits)
+			String			str,
+			String[]		allowedUnits)
 	{
 		int				i;
 		String			units;
@@ -801,9 +838,10 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isUnitsWithInt(
-		String			str,
-		String[]		allowedUnits)
+			String			str,
+			String[]		allowedUnits)
 	{
 		int				i;
 		String			units;
@@ -843,20 +881,22 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean stringToBoolean(
-		String			scope,
-		String			localName,
-		String			str) throws ConfigurationException
-	{
+			String			scope,
+			String			localName,
+			String			str) throws ConfigurationException
+			{
 		return stringToEnum(scope, localName, str, "boolean", boolInfo) != 0;
-	}
+			}
 
 
+	@Override
 	public int stringToInt(
-		String			scope,
-		String			localName,
-		String			str) throws ConfigurationException
-	{
+			String			scope,
+			String			localName,
+			String			str) throws ConfigurationException
+			{
 		int				result;
 		String			fullyScopedName;
 
@@ -865,18 +905,19 @@ public class ConfigurationImpl extends Configuration
 		} catch(NumberFormatException ex) {
 			fullyScopedName = mergeNames(scope, localName);
 			throw new ConfigurationException(fileName()
-						+ ": non-integer value for '" + fullyScopedName + "'");
+					+ ": non-integer value for '" + fullyScopedName + "'");
 		}
 		return result;
-	}
+			}
 
 
+	@Override
 	public float stringToFloat(
-		String			scope,
-		String			localName,
-		String			str)
-						throws ConfigurationException
-	{
+			String			scope,
+			String			localName,
+			String			str)
+					throws ConfigurationException
+					{
 		float			result;
 		String			fullyScopedName;
 
@@ -885,10 +926,10 @@ public class ConfigurationImpl extends Configuration
 		} catch(NumberFormatException ex) {
 			fullyScopedName = mergeNames(scope, localName);
 			throw new ConfigurationException(fileName() + ": non-numeric "
-									+ "value for '" + fullyScopedName + "'");
+					+ "value for '" + fullyScopedName + "'");
 		}
 		return result;
-	}
+					}
 
 
 	static private ValueWithUnits durationMicrosecondsUnitsInfo[] = {
@@ -933,26 +974,27 @@ public class ConfigurationImpl extends Configuration
 	};
 
 
+	@Override
 	public int stringToDurationMicroseconds(
-		String				scope,
-		String				localName,
-		String				str) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				str) throws ConfigurationException
+			{
 		float				floatVal;
 		String				units;
 		int					i;
 		int					result;
 		int					unitsVal;
 		ValueWithUnits		valueWithUnits;
-		
+
 		if (str.equals("infinite")) {
 			return -1;
 		}
 
 		try {
 			valueWithUnits = stringToFloatWithUnits(scope, localName,
-											"durationMicroseconds", str,
-											allowedDurationMicrosecondsUnits);
+					"durationMicroseconds", str,
+					allowedDurationMicrosecondsUnits);
 		} catch(ConfigurationException ex) {
 			throw new ConfigurationException(ex.getMessage()
 					+ "; alternatively, you can use 'infinite'");
@@ -968,29 +1010,30 @@ public class ConfigurationImpl extends Configuration
 		unitsVal = durationMicrosecondsUnitsInfo[i].getIntValue();
 		result = (int)(floatVal * unitsVal);
 		return result;
-	}
+			}
 
 
+	@Override
 	public int stringToDurationMilliseconds(
-		String				scope,
-		String				localName,
-		String				str) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				str) throws ConfigurationException
+			{
 		float				floatVal;
 		String				units;
 		int					i;
 		int					result;
 		int					unitsVal;
 		ValueWithUnits		valueWithUnits;
-		
+
 		if (str.equals("infinite")) {
 			return -1;
 		}
 
 		try {
 			valueWithUnits = stringToFloatWithUnits(scope, localName,
-											"durationMilliseconds", str,
-											allowedDurationMillisecondsUnits);
+					"durationMilliseconds", str,
+					allowedDurationMillisecondsUnits);
 		} catch(ConfigurationException ex) {
 			throw new ConfigurationException(ex.getMessage()
 					+ "; alternatively, you can use 'infinite'");
@@ -1006,29 +1049,30 @@ public class ConfigurationImpl extends Configuration
 		unitsVal = durationMillisecondsUnitsInfo[i].getIntValue();
 		result = (int)(floatVal * unitsVal);
 		return result;
-	}
+			}
 
 
+	@Override
 	public int stringToDurationSeconds(
-		String				scope,
-		String				localName,
-		String				str) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				str) throws ConfigurationException
+			{
 		float				floatVal;
 		String				units;
 		int					i;
 		int					result;
 		int					unitsVal;
 		ValueWithUnits		valueWithUnits;
-		
+
 		if (str.equals("infinite")) {
 			return -1;
 		}
 
 		try {
 			valueWithUnits = stringToFloatWithUnits(scope, localName,
-											"durationSeconds", str,
-											allowedDurationSecondsUnits);
+					"durationSeconds", str,
+					allowedDurationSecondsUnits);
 		} catch(ConfigurationException ex) {
 			throw new ConfigurationException(ex.getMessage()
 					+ "; alternatively, you can use 'infinite'");
@@ -1044,7 +1088,7 @@ public class ConfigurationImpl extends Configuration
 		unitsVal = durationSecondsUnitsInfo[i].getIntValue();
 		result = (int)(floatVal * unitsVal);
 		return result;
-	}
+			}
 
 
 	static private ValueWithUnits memorySizeBytesUnitsInfo[] = {
@@ -1073,22 +1117,22 @@ public class ConfigurationImpl extends Configuration
 
 
 	private int stringToMemorySizeGeneric(
-		String					typeName,
-		ValueWithUnits[]		unitsInfo,
-		String[]				allowedSizes,
-		String					scope,
-		String					localName,
-		String					str) throws ConfigurationException
-	{
+			String					typeName,
+			ValueWithUnits[]		unitsInfo,
+			String[]				allowedSizes,
+			String					scope,
+			String					localName,
+			String					str) throws ConfigurationException
+			{
 		float					floatVal;
 		String					units;
 		int						i;
 		int						result;
 		int						unitsVal;
 		ValueWithUnits			valueWithUnits;
-		
+
 		valueWithUnits = stringToFloatWithUnits(scope, localName, typeName,
-												str, allowedSizes);
+				str, allowedSizes);
 		units = valueWithUnits.getUnits();
 		floatVal = valueWithUnits.getFloatValue();
 		for (i = 0; i < unitsInfo.length; i++) {
@@ -1100,9 +1144,10 @@ public class ConfigurationImpl extends Configuration
 		unitsVal = unitsInfo[i].getIntValue();
 		result = (int)(floatVal * unitsVal);
 		return result;
-	}
+			}
 
 
+	@Override
 	public boolean isMemorySizeBytes(String str)
 	{
 		String[]		allowedUnits = {"byte", "bytes", "KB", "MB", "GB"};
@@ -1111,6 +1156,7 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isMemorySizeKB(String str)
 	{
 		String[]		allowedUnits = {"KB", "MB", "GB", "TB"};
@@ -1119,6 +1165,7 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public boolean isMemorySizeMB(String str)
 	{
 		String[]		allowedUnits = {"MB", "GB", "TB", "PB"};
@@ -1127,47 +1174,51 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public int stringToMemorySizeBytes(
-		String			scope,
-		String			localName,
-		String			str) throws ConfigurationException
-	{
+			String			scope,
+			String			localName,
+			String			str) throws ConfigurationException
+			{
 		String[]		allowedUnits = {"byte", "bytes", "KB", "MB", "GB"};
 
 		return stringToMemorySizeGeneric("memorySizeBytes",
-										 memorySizeBytesUnitsInfo,
-										 allowedUnits, scope, localName, str);
-	}
+				memorySizeBytesUnitsInfo,
+				allowedUnits, scope, localName, str);
+			}
 
 
+	@Override
 	public int stringToMemorySizeKB(
-		String			scope,
-		String			localName,
-		String			str) throws ConfigurationException
-	{
+			String			scope,
+			String			localName,
+			String			str) throws ConfigurationException
+			{
 		String[]		allowedUnits = {"KB", "MB", "GB", "TB"};
 
 		return stringToMemorySizeGeneric("memorySizeKB", memorySizeKBUnitsInfo,
-										 allowedUnits, scope, localName, str);
-	}
+				allowedUnits, scope, localName, str);
+			}
 
+	@Override
 	public int stringToMemorySizeMB(
-		String			scope,
-		String			localName,
-		String			str) throws ConfigurationException
-	{
+			String			scope,
+			String			localName,
+			String			str) throws ConfigurationException
+			{
 		String[]		allowedUnits = {"MB", "GB", "TB", "PB"};
 
 		return stringToMemorySizeGeneric("memorySizeKB", memorySizeMBUnitsInfo,
-										 allowedUnits, scope, localName, str);
-	}
+				allowedUnits, scope, localName, str);
+			}
 
 
+	@Override
 	public int lookupMemorySizeBytes(
-		String			scope,
-		String			localName,
-		int				defaultVal) throws ConfigurationException
-	{
+			String			scope,
+			String			localName,
+			int				defaultVal) throws ConfigurationException
+			{
 		String			defaultStrValue;
 		String			str;
 		int				result;
@@ -1176,25 +1227,27 @@ public class ConfigurationImpl extends Configuration
 		str = lookupString(scope, localName, defaultStrValue);
 		result = stringToMemorySizeBytes(scope, localName, str);
 		return result;
-	}
+			}
 
 
+	@Override
 	public int lookupMemorySizeBytes(
-		String				scope,
-		String				localName) throws ConfigurationException
-	{
+			String				scope,
+			String				localName) throws ConfigurationException
+			{
 		String				str;
 
 		str = lookupString(scope, localName);
 		return stringToMemorySizeBytes(scope, localName, str);
-	}
+			}
 
 
+	@Override
 	public int lookupMemorySizeKB(
-		String			scope,
-		String			localName,
-		int				defaultVal) throws ConfigurationException
-	{
+			String			scope,
+			String			localName,
+			int				defaultVal) throws ConfigurationException
+			{
 		String			defaultStrValue;
 		String			str;
 		int				result;
@@ -1203,25 +1256,27 @@ public class ConfigurationImpl extends Configuration
 		str = lookupString(scope, localName, defaultStrValue);
 		result = stringToMemorySizeKB(scope, localName, str);
 		return result;
-	}
+			}
 
 
+	@Override
 	public int lookupMemorySizeKB(
-		String				scope,
-		String				localName) throws ConfigurationException
-	{
+			String				scope,
+			String				localName) throws ConfigurationException
+			{
 		String				str;
 
 		str = lookupString(scope, localName);
 		return stringToMemorySizeKB(scope, localName, str);
-	}
+			}
 
 
+	@Override
 	public int lookupMemorySizeMB(
-		String			scope,
-		String			localName,
-		int				defaultVal) throws ConfigurationException
-	{
+			String			scope,
+			String			localName,
+			int				defaultVal) throws ConfigurationException
+			{
 		String			defaultStrValue;
 		String			str;
 		int				result;
@@ -1230,32 +1285,34 @@ public class ConfigurationImpl extends Configuration
 		str = lookupString(scope, localName, defaultStrValue);
 		result = stringToMemorySizeMB(scope, localName, str);
 		return result;
-	}
+			}
 
 
+	@Override
 	public int lookupMemorySizeMB(
-		String				scope,
-		String				localName) throws ConfigurationException
-	{
+			String				scope,
+			String				localName) throws ConfigurationException
+			{
 		String				str;
 
 		str = lookupString(scope, localName);
 		return stringToMemorySizeMB(scope, localName, str);
-	}
+			}
 
 
+	@Override
 	public int stringToEnum(
-		String					scope,
-		String					localName,
-		String					str,
-		String					type,
-		EnumNameAndValue[]		enumInfo) throws ConfigurationException
-	{
+			String					scope,
+			String					localName,
+			String					str,
+			String					type,
+			EnumNameAndValue[]		enumInfo) throws ConfigurationException
+			{
 		String					fullyScopedName;
 		Integer					result;
 		StringBuffer			msg;
 		int						i;
-		
+
 		//--------
 		// Check if the value matches anything in the enumInfo list.
 		//--------
@@ -1264,7 +1321,7 @@ public class ConfigurationImpl extends Configuration
 			fullyScopedName = mergeNames(scope, localName);
 			msg = new StringBuffer();
 			msg.append(": bad '").append(type).append("' value specified for '")
-			   .append(fullyScopedName).append("': should be one of:");
+			.append(fullyScopedName).append("': should be one of:");
 			for (i = 0; i < enumInfo.length; i++) {
 				msg.append(" '").append(enumInfo[i]).append("'");
 				if (i < enumInfo.length-1) {
@@ -1274,16 +1331,17 @@ public class ConfigurationImpl extends Configuration
 			throw new ConfigurationException(msg.toString());
 		}
 		return result.intValue();
-	}
+			}
 
 
+	@Override
 	public ValueWithUnits stringToFloatWithUnits(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String				str,
-		String[]			allowedUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String				str,
+			String[]			allowedUnits) throws ConfigurationException
+			{
 		int					i;
 		String				units;
 		String				floatStr;
@@ -1306,8 +1364,8 @@ public class ConfigurationImpl extends Configuration
 			fullyScopedName = mergeNames(scope, localName);
 			msg = new StringBuffer();
 			msg.append(fileName() + ": invalid " + typeName + " ('" + str
-					   + "') specified for '" + fullyScopedName
-					   + "': should be '<float> <units>' where <units> are");
+					+ "') specified for '" + fullyScopedName
+					+ "': should be '<float> <units>' where <units> are");
 			for (i = 0; i < allowedUnits.length; i++) {
 				msg.append(" '" + allowedUnits[i] + "'");
 				if (i < allowedUnits.length-1) {
@@ -1335,8 +1393,8 @@ public class ConfigurationImpl extends Configuration
 			fullyScopedName = mergeNames(scope, localName);
 			msg = new StringBuffer();
 			msg.append(fileName() + ": invalid " + typeName + " ('" + str
-					   + "') specified for '" + fullyScopedName
-					   + "': should be '<float> <units>' where <units> are");
+					+ "') specified for '" + fullyScopedName
+					+ "': should be '<float> <units>' where <units> are");
 			for (i = 0; i < allowedUnits.length; i++) {
 				msg.append(" '" + allowedUnits[i] + "'");
 				if (i < allowedUnits.length-1) {
@@ -1347,16 +1405,17 @@ public class ConfigurationImpl extends Configuration
 		}
 		result = new ValueWithUnits(floatVal, units);
 		return result;
-	}
+			}
 
 
+	@Override
 	public ValueWithUnits stringToUnitsWithFloat(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String				str,
-		String[]			allowedUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String				str,
+			String[]			allowedUnits) throws ConfigurationException
+			{
 		int					i;
 		String				units;
 		String				floatStr;
@@ -1380,8 +1439,8 @@ public class ConfigurationImpl extends Configuration
 			fullyScopedName = mergeNames(scope, localName);
 			msg = new StringBuffer();
 			msg.append(fileName() + ": invalid " + typeName + " ('" + str
-					   + "') specified for '" + fullyScopedName
-					   + "': should be '<units> <float>' where <units> are");
+					+ "') specified for '" + fullyScopedName
+					+ "': should be '<units> <float>' where <units> are");
 			for (i = 0; i < allowedUnits.length; i++) {
 				msg.append(" '" + allowedUnits[i] + "'");
 				if (i < allowedUnits.length-1) {
@@ -1404,8 +1463,8 @@ public class ConfigurationImpl extends Configuration
 			fullyScopedName = mergeNames(scope, localName);
 			msg = new StringBuffer();
 			msg.append(fileName() + ": invalid " + typeName + " ('" + str
-					   + "') specified for '" + fullyScopedName
-					   + "': should be '<units> <float>' where <units> are");
+					+ "') specified for '" + fullyScopedName
+					+ "': should be '<units> <float>' where <units> are");
 			for (i = 0; i < allowedUnits.length; i++) {
 				msg.append(" '" + allowedUnits[i] + "'");
 				if (i < allowedUnits.length-1) {
@@ -1416,16 +1475,17 @@ public class ConfigurationImpl extends Configuration
 		}
 		result = new ValueWithUnits(floatVal, units);
 		return result;
-	}
+			}
 
 
+	@Override
 	public ValueWithUnits stringToIntWithUnits(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String				str,
-		String[]			allowedUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String				str,
+			String[]			allowedUnits) throws ConfigurationException
+			{
 		int					i;
 		String				units;
 		String				intStr;
@@ -1448,8 +1508,8 @@ public class ConfigurationImpl extends Configuration
 			fullyScopedName = mergeNames(scope, localName);
 			msg = new StringBuffer();
 			msg.append(fileName() + ": invalid " + typeName + " ('" + str
-					   + "') specified for '" + fullyScopedName
-					   + "': should be '<float> <units>' where <units> are");
+					+ "') specified for '" + fullyScopedName
+					+ "': should be '<float> <units>' where <units> are");
 			for (i = 0; i < allowedUnits.length; i++) {
 				msg.append(" '" + allowedUnits[i] + "'");
 				if (i < allowedUnits.length-1) {
@@ -1478,8 +1538,8 @@ public class ConfigurationImpl extends Configuration
 			fullyScopedName = mergeNames(scope, localName);
 			msg = new StringBuffer();
 			msg.append(fileName() + ": invalid " + typeName + " ('" + str
-					   + "') specified for '" + fullyScopedName
-					   + "': should be '<float> <units>' where <units> are");
+					+ "') specified for '" + fullyScopedName
+					+ "': should be '<float> <units>' where <units> are");
 			for (i = 0; i < allowedUnits.length; i++) {
 				msg.append(" '" + allowedUnits[i] + "'");
 				if (i < allowedUnits.length-1) {
@@ -1490,16 +1550,17 @@ public class ConfigurationImpl extends Configuration
 		}
 		result = new ValueWithUnits(intVal, units);
 		return result;
-	}
+			}
 
 
+	@Override
 	public ValueWithUnits stringToUnitsWithInt(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String				str,
-		String[]			allowedUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String				str,
+			String[]			allowedUnits) throws ConfigurationException
+			{
 		int					i;
 		String				units;
 		String				intStr;
@@ -1523,8 +1584,8 @@ public class ConfigurationImpl extends Configuration
 			fullyScopedName = mergeNames(scope, localName);
 			msg = new StringBuffer();
 			msg.append(fileName() + ": invalid " + typeName + " ('" + str
-					   + "') specified for '" + fullyScopedName
-					   + "': should be '<units> <int>' where <units> are");
+					+ "') specified for '" + fullyScopedName
+					+ "': should be '<units> <int>' where <units> are");
 			for (i = 0; i < allowedUnits.length; i++) {
 				msg.append(" '" + allowedUnits[i] + "'");
 				if (i < allowedUnits.length-1) {
@@ -1547,8 +1608,8 @@ public class ConfigurationImpl extends Configuration
 			fullyScopedName = mergeNames(scope, localName);
 			msg = new StringBuffer();
 			msg.append(fileName() + ": invalid " + typeName + " ('" + str
-					   + "') specified for '" + fullyScopedName
-					   + "': should be '<units> <int>' where <units> are");
+					+ "') specified for '" + fullyScopedName
+					+ "': should be '<units> <int>' where <units> are");
 			for (i = 0; i < allowedUnits.length; i++) {
 				msg.append(" '" + allowedUnits[i] + "'");
 				if (i < allowedUnits.length-1) {
@@ -1559,21 +1620,22 @@ public class ConfigurationImpl extends Configuration
 		}
 		result = new ValueWithUnits(intVal, units);
 		return result;
-	}
+			}
 
 
 	//--------
 	// lookup<Type>() operations, with and without default values.
 	//--------
+	@Override
 	public String lookupString(
-		String				scope,
-		String				localName,
-		String				defaultVal) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				defaultVal) throws ConfigurationException
+			{
 		int			 		type;
 		StringBuffer		str;
 		String				fullyScopedName;
-		
+
 		fullyScopedName = mergeNames(scope, localName);
 		str = new StringBuffer();
 		type = stringValueAndType(fullyScopedName, localName, str);
@@ -1585,26 +1647,27 @@ public class ConfigurationImpl extends Configuration
 			break;
 		case Configuration.CFG_SCOPE:
 			throw new ConfigurationException(fileName() + ": '"
-										+ fullyScopedName
-										+ "' is a scope instead of a string");
+					+ fullyScopedName
+					+ "' is a scope instead of a string");
 		case Configuration.CFG_LIST:
 			throw new ConfigurationException(fileName() + ": '"
-										+ fullyScopedName
-										+ "' is a list instead of a string");
+					+ fullyScopedName
+					+ "' is a list instead of a string");
 		default:
 			Util.assertion(false); // Bug
 		}
 		return str.toString();
-	}
+			}
 
 
+	@Override
 	public String lookupString(String scope, String localName)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		int			 		type;
 		StringBuffer		str;
 		String				fullyScopedName;
-		
+
 		fullyScopedName = mergeNames(scope, localName);
 		str = new StringBuffer();
 		type = stringValueAndType(fullyScopedName, localName, str);
@@ -1613,91 +1676,94 @@ public class ConfigurationImpl extends Configuration
 			break;
 		case Configuration.CFG_NO_VALUE:
 			throw new ConfigurationException(fileName() + ": no value "
-								+ "specified for '" + fullyScopedName + "'");
+					+ "specified for '" + fullyScopedName + "'");
 		case Configuration.CFG_SCOPE:
 			throw new ConfigurationException(fileName() + ": '"
-								+ fullyScopedName
-								+ "' is a scope instead of a string");
+					+ fullyScopedName
+					+ "' is a scope instead of a string");
 		case Configuration.CFG_LIST:
 			throw new ConfigurationException(fileName() + ": '"
-								+ fullyScopedName
-								+ "' is a list instead of a string");
+					+ fullyScopedName
+					+ "' is a list instead of a string");
 		default:
 			Util.assertion(false); // Bug
 		}
 		return str.toString();
-	}
+			}
 
 
+	@Override
 	public String[] lookupList(
-		String			scope,
-		String			localName,
-		String[]		defaultArray) throws ConfigurationException
-	{
+			String			scope,
+			String			localName,
+			String[]		defaultArray) throws ConfigurationException
+			{
 		int		 			type;
 		String				fullyScopedName;
 		ArrayList<String>	result;
-		
+
 		fullyScopedName = mergeNames(scope, localName);
 		result = new ArrayList<String>();
 		type = listValueAndType(fullyScopedName, localName, result);
 		switch (type) {
 		case Configuration.CFG_LIST:
-			return (String[])result.toArray(new String[result.size()]);
+			return result.toArray(new String[result.size()]);
 		case Configuration.CFG_NO_VALUE:
 			return defaultArray;
 		case Configuration.CFG_SCOPE:
 			throw new ConfigurationException(fileName() + ": '"
-										+ fullyScopedName
-										+ "' is a scope instead of a list");
+					+ fullyScopedName
+					+ "' is a scope instead of a list");
 		case Configuration.CFG_STRING:
 			throw new ConfigurationException(fileName() + ": '"
-										+ fullyScopedName
-										+ "' is a string instead of a list");
+					+ fullyScopedName
+					+ "' is a string instead of a list");
 		default:
 			Util.assertion(false); // Bug
 			return null; // keep the compiler happy
 		}
-	}
+			}
 
 
+	@Override
 	public String[] lookupList(String scope, String localName)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		int			 		type;
 		String				fullyScopedName;
 		ArrayList<String>	result;
-		
+
 		fullyScopedName = mergeNames(scope, localName);
 		result = new ArrayList<String>();
 		type = listValueAndType(fullyScopedName, localName, result);
 		switch (type) {
 		case Configuration.CFG_LIST:
-			return (String[])result.toArray(new String[result.size()]);
+			return result.toArray(new String[result.size()]);
 		case Configuration.CFG_NO_VALUE:
 			throw new ConfigurationException(fileName()
-										+ ": no value specified for '"
-										+ fullyScopedName + "'");
+					+ ": no value specified for '"
+					+ fullyScopedName + "'");
 		case Configuration.CFG_SCOPE:
 			throw new ConfigurationException(fileName() + ": '"
-										+ fullyScopedName
-										+ "' is a scope instead of a list");
+					+ fullyScopedName
+					+ "' is a scope instead of a list");
 		case Configuration.CFG_STRING:
 			throw new ConfigurationException(fileName() + ": '"
-										+ fullyScopedName
-										+ "' is a string instead of a list");
+					+ fullyScopedName
+					+ "' is a string instead of a list");
 		default:
 			Util.assertion(false); // Bug
 			return null; // keep the compiler happy
 		}
-	}
+			}
 
 
+	@Override
 	public int lookupInt(
-		String				scope,
-		String				localName,
-		int					defaultVal) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			int					defaultVal) throws ConfigurationException
+			{
 		String				strValue;
 		int					result;
 		String				defaultStrVal;
@@ -1706,26 +1772,28 @@ public class ConfigurationImpl extends Configuration
 		strValue = lookupString(scope, localName, defaultStrVal);
 		result = stringToInt(scope, localName, strValue);
 		return result;
-	}
+			}
 
 
+	@Override
 	public int lookupInt(String scope, String localName)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		String				strValue;
 		int					result;
 
 		strValue = lookupString(scope, localName);
 		result = stringToInt(scope, localName, strValue);
 		return result;
-	}
+			}
 
 
+	@Override
 	public float lookupFloat(
-		String				scope,
-		String				localName,
-		float				defaultVal) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			float				defaultVal) throws ConfigurationException
+			{
 		String				strValue;
 		float				result;
 		String				defaultStrVal;
@@ -1734,28 +1802,30 @@ public class ConfigurationImpl extends Configuration
 		strValue = lookupString(scope, localName, defaultStrVal);
 		result = stringToFloat(scope, localName, strValue);
 		return result;
-	}
+			}
 
 
+	@Override
 	public float lookupFloat(String scope, String localName)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		String				strValue;
 		float				result;
 
 		strValue = lookupString(scope, localName);
 		result = stringToFloat(scope, localName, strValue);
 		return result;
-	}
+			}
 
 
+	@Override
 	public int lookupEnum(
-		String					scope,
-		String					localName,
-		String					typeName,
-		EnumNameAndValue[]		enumInfo,
-		String					defaultVal) throws ConfigurationException
-	{
+			String					scope,
+			String					localName,
+			String					typeName,
+			EnumNameAndValue[]		enumInfo,
+			String					defaultVal) throws ConfigurationException
+			{
 		StringBuffer			msg;
 		String					strValue;
 		String					fullyScopedName;
@@ -1768,8 +1838,8 @@ public class ConfigurationImpl extends Configuration
 			msg = new StringBuffer();
 			fullyScopedName = mergeNames(scope, localName);
 			msg.append(fileName() + ": bad " + typeName + " value ('"
-					   + strValue + "') specified for '" + fullyScopedName
-					   + "; should be one of:");
+					+ strValue + "') specified for '" + fullyScopedName
+					+ "; should be one of:");
 			for (i = 0; i < enumInfo.length; i++) {
 				if (i < enumInfo.length) {
 					msg.append(" '" + enumInfo[i].getName() + "',");
@@ -1780,16 +1850,17 @@ public class ConfigurationImpl extends Configuration
 			throw new ConfigurationException(msg.toString());
 		}
 		return result.intValue();
-	}
+			}
 
 
+	@Override
 	public int lookupEnum(
-		String					scope,
-		String					localName,
-		String					typeName,
-		EnumNameAndValue[]		enumInfo,
-		int						defaultVal) throws ConfigurationException
-	{
+			String					scope,
+			String					localName,
+			String					typeName,
+			EnumNameAndValue[]		enumInfo,
+			int						defaultVal) throws ConfigurationException
+			{
 		StringBuffer			msg;
 		String					strValue;
 		String					fullyScopedName;
@@ -1806,8 +1877,8 @@ public class ConfigurationImpl extends Configuration
 			msg = new StringBuffer();
 			fullyScopedName = mergeNames(scope, localName);
 			msg.append(fileName() + ": bad " + typeName + " value ('"
-					   + strValue + "') specified for '" + fullyScopedName
-					   + "; should be one of:");
+					+ strValue + "') specified for '" + fullyScopedName
+					+ "; should be one of:");
 			for (i = 0; i < enumInfo.length; i++) {
 				if (i < enumInfo.length) {
 					msg.append(" '" + enumInfo[i].getName() + "',");
@@ -1818,15 +1889,16 @@ public class ConfigurationImpl extends Configuration
 			throw new ConfigurationException(msg.toString());
 		}
 		return result.intValue();
-	}
+			}
 
 
+	@Override
 	public int lookupEnum(
-		String					scope,
-		String					localName,
-		String					typeName,
-		EnumNameAndValue[]		enumInfo) throws ConfigurationException
-	{
+			String					scope,
+			String					localName,
+			String					typeName,
+			EnumNameAndValue[]		enumInfo) throws ConfigurationException
+			{
 		StringBuffer			msg;
 		String					strValue;
 		String					fullyScopedName;
@@ -1839,8 +1911,8 @@ public class ConfigurationImpl extends Configuration
 			msg = new StringBuffer();
 			fullyScopedName = mergeNames(scope, localName);
 			msg.append(fileName() + ": bad " + typeName + " value ('"
-					   + strValue + "') specified for '" + fullyScopedName
-					   + "; should be one of:");
+					+ strValue + "') specified for '" + fullyScopedName
+					+ "; should be one of:");
 			for (i = 0; i < enumInfo.length; i++) {
 				if (i < enumInfo.length) {
 					msg.append(" '" + enumInfo[i].getName() + "',");
@@ -1851,14 +1923,15 @@ public class ConfigurationImpl extends Configuration
 			throw new ConfigurationException(msg.toString());
 		}
 		return result.intValue();
-	}
+			}
 
 
+	@Override
 	public boolean lookupBoolean(
-		String				scope,
-		String				localName,
-		boolean				defaultVal) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			boolean				defaultVal) throws ConfigurationException
+			{
 		int					result;
 		String				defaultStrVal;
 
@@ -1868,41 +1941,44 @@ public class ConfigurationImpl extends Configuration
 			defaultStrVal = "false";
 		}
 		result = lookupEnum(scope, localName, "boolean", boolInfo,
-							defaultStrVal);
+				defaultStrVal);
 		return result != 0;
-	}
+			}
 
 
+	@Override
 	public boolean lookupBoolean(String scope, String localName)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		return lookupEnum(scope, localName, "boolean", boolInfo) != 0;
-	}
+			}
 
 
+	@Override
 	public ValueWithUnits lookupFloatWithUnits(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String[]			allowedUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String[]			allowedUnits) throws ConfigurationException
+			{
 		String				str;
 		ValueWithUnits		result;
 
 		str = lookupString(scope, localName);
 		result = stringToFloatWithUnits(scope, localName, typeName,
-							str, allowedUnits);
+				str, allowedUnits);
 		return result;
-	}
+			}
 
 
+	@Override
 	public ValueWithUnits lookupFloatWithUnits(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String[]			allowedUnits,
-		ValueWithUnits		defaultValueWithUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String[]			allowedUnits,
+			ValueWithUnits		defaultValueWithUnits) throws ConfigurationException
+			{
 		String				str;
 		ValueWithUnits		result;
 
@@ -1911,33 +1987,35 @@ public class ConfigurationImpl extends Configuration
 		} else {
 			str = lookupString(scope, localName);
 			result = stringToFloatWithUnits(scope, localName,
-						typeName, str, allowedUnits);
+					typeName, str, allowedUnits);
 		}
 		return result;
-	}
+			}
 
 
+	@Override
 	public ValueWithUnits lookupUnitsWithFloat(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String[]			allowedUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String[]			allowedUnits) throws ConfigurationException
+			{
 		String				str;
 
 		str = lookupString(scope, localName);
 		return stringToUnitsWithFloat(scope, localName, typeName,
-							str, allowedUnits);
-	}
+				str, allowedUnits);
+			}
 
 
+	@Override
 	public ValueWithUnits lookupUnitsWithFloat(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String[]			allowedUnits,
-		ValueWithUnits		defaultValueWithUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String[]			allowedUnits,
+			ValueWithUnits		defaultValueWithUnits) throws ConfigurationException
+			{
 		String				str;
 
 		if (type(scope, localName) == Configuration.CFG_NO_VALUE) {
@@ -1945,34 +2023,36 @@ public class ConfigurationImpl extends Configuration
 		} else {
 			str = lookupString(scope, localName);
 			return stringToUnitsWithFloat(scope, localName,
-						typeName, str, allowedUnits);
+					typeName, str, allowedUnits);
 		}
-	}
+			}
 
 
+	@Override
 	public ValueWithUnits lookupIntWithUnits(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String[]			allowedUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String[]			allowedUnits) throws ConfigurationException
+			{
 		String				str;
 		ValueWithUnits		result;
 
 		str = lookupString(scope, localName);
 		result = stringToIntWithUnits(scope, localName, typeName,
-							str, allowedUnits);
+				str, allowedUnits);
 		return result;
-	}
+			}
 
 
+	@Override
 	public ValueWithUnits lookupIntWithUnits(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String[]			allowedUnits,
-		ValueWithUnits		defaultValueWithUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String[]			allowedUnits,
+			ValueWithUnits		defaultValueWithUnits) throws ConfigurationException
+			{
 		String				str;
 
 		if (type(scope, localName) == Configuration.CFG_NO_VALUE) {
@@ -1980,32 +2060,34 @@ public class ConfigurationImpl extends Configuration
 		} else {
 			str = lookupString(scope, localName);
 			return stringToIntWithUnits(scope, localName, typeName, str,
-										allowedUnits);
+					allowedUnits);
 		}
-	}
+			}
 
 
+	@Override
 	public ValueWithUnits lookupUnitsWithInt(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String[]			allowedUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String[]			allowedUnits) throws ConfigurationException
+			{
 		String				str;
 
 		str = lookupString(scope, localName);
 		return stringToUnitsWithInt(scope, localName, typeName, str,
-									allowedUnits);
-	}
+				allowedUnits);
+			}
 
 
+	@Override
 	public ValueWithUnits lookupUnitsWithInt(
-		String				scope,
-		String				localName,
-		String				typeName,
-		String[]			allowedUnits,
-		ValueWithUnits		defaultValueWithUnits) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				typeName,
+			String[]			allowedUnits,
+			ValueWithUnits		defaultValueWithUnits) throws ConfigurationException
+			{
 		String				str;
 
 		if (type(scope, localName) == Configuration.CFG_NO_VALUE) {
@@ -2013,16 +2095,17 @@ public class ConfigurationImpl extends Configuration
 		} else {
 			str = lookupString(scope, localName);
 			return stringToUnitsWithInt(scope, localName, typeName, str,
-										allowedUnits);
+					allowedUnits);
 		}
-	}
+			}
 
 
+	@Override
 	public int lookupDurationMicroseconds(
-		String				scope,
-		String				localName,
-		int					defaultVal) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			int					defaultVal) throws ConfigurationException
+			{
 		String				defaultStrValue;
 		String				str;
 
@@ -2033,25 +2116,27 @@ public class ConfigurationImpl extends Configuration
 		}
 		str = lookupString(scope, localName, defaultStrValue);
 		return stringToDurationMicroseconds(scope, localName, str);
-	}
+			}
 
 
+	@Override
 	public int lookupDurationMicroseconds(
-		String				scope,
-		String				localName) throws ConfigurationException
-	{
+			String				scope,
+			String				localName) throws ConfigurationException
+			{
 		String				str;
 
 		str = lookupString(scope, localName);
 		return stringToDurationMicroseconds(scope, localName, str);
-	}
+			}
 
 
+	@Override
 	public int lookupDurationMilliseconds(
-		String				scope,
-		String				localName,
-		int					defaultVal) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			int					defaultVal) throws ConfigurationException
+			{
 		String				defaultStrValue;
 		String				str;
 
@@ -2062,25 +2147,27 @@ public class ConfigurationImpl extends Configuration
 		}
 		str = lookupString(scope, localName, defaultStrValue);
 		return stringToDurationMilliseconds(scope, localName, str);
-	}
+			}
 
 
+	@Override
 	public int lookupDurationMilliseconds(
-		String				scope,
-		String				localName) throws ConfigurationException
-	{
+			String				scope,
+			String				localName) throws ConfigurationException
+			{
 		String				str;
 
 		str = lookupString(scope, localName);
 		return stringToDurationMilliseconds(scope, localName, str);
-	}
+			}
 
 
+	@Override
 	public int lookupDurationSeconds(
-		String				scope,
-		String				localName,
-		int					defaultVal) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			int					defaultVal) throws ConfigurationException
+			{
 		String				defaultStrValue;
 		String				str;
 
@@ -2091,24 +2178,26 @@ public class ConfigurationImpl extends Configuration
 		}
 		str = lookupString(scope, localName, defaultStrValue);
 		return stringToDurationSeconds(scope, localName, str);
-	}
+			}
 
 
+	@Override
 	public int lookupDurationSeconds(
-		String				scope,
-		String				localName) throws ConfigurationException
-	{
+			String				scope,
+			String				localName) throws ConfigurationException
+			{
 		String				str;
 
 		str = lookupString(scope, localName);
 		return stringToDurationSeconds(scope, localName, str);
-	}
+			}
 
 
+	@Override
 	public void lookupScope(
-		String				scope,
-		String				localName) throws ConfigurationException
-	{
+			String				scope,
+			String				localName) throws ConfigurationException
+			{
 		String				fullyScopedName;
 
 		fullyScopedName = mergeNames(scope, localName);
@@ -2118,31 +2207,32 @@ public class ConfigurationImpl extends Configuration
 			break;
 		case Configuration.CFG_STRING:
 			throw new ConfigurationException(fileName() + ": '"
-										+ fullyScopedName
-										+ "' is a string instead of a scope");
+					+ fullyScopedName
+					+ "' is a string instead of a scope");
 		case Configuration.CFG_LIST:
 			throw new ConfigurationException(fileName() + ": '"
-										+ fullyScopedName
-										+ "' is a list instead of a scope");
+					+ fullyScopedName
+					+ "' is a list instead of a scope");
 		case Configuration.CFG_NO_VALUE:
 			throw new ConfigurationException(fileName()
-										+ ": scope '" + fullyScopedName
-										+ "' does not exist");
+					+ ": scope '" + fullyScopedName
+					+ "' does not exist");
 		default:
 			Util.assertion(false); // Bug!
 		}
-	}
+			}
 
 
 	//--------
 	// Update operations
 	//--------
 
+	@Override
 	public void	insertString(
-		String				scope,
-		String				localName,
-		String				strValue) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String				strValue) throws ConfigurationException
+			{
 		String[]			array;
 		int					len;
 		ConfigScope			scopeObj;
@@ -2154,17 +2244,18 @@ public class ConfigurationImpl extends Configuration
 		scopeObj = ensureScopeExists(array, 0, len-2);
 		if (!scopeObj.addOrReplaceString(array[len-1], strValue)) {
 			throw new ConfigurationException(fileName()
-										+ ": variable '" + fullyScopedName
-										+ "' was previously used as a scope");
+					+ ": variable '" + fullyScopedName
+					+ "' was previously used as a scope");
 		}
-	}
+			}
 
 
+	@Override
 	public void insertList(
-		String				scope,
-		String				localName,
-		String[]			listValue) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			String[]			listValue) throws ConfigurationException
+			{
 		String[]			array;
 		int					len;
 		ConfigScope			scopeObj;
@@ -2176,17 +2267,17 @@ public class ConfigurationImpl extends Configuration
 		scopeObj = ensureScopeExists(array, 0, len-2);
 		if (!scopeObj.addOrReplaceList(array[len-1], listValue)) {
 			throw new ConfigurationException(fileName()
-										+ ": variable '" + fullyScopedName
-										+ "' was previously used as a scope");
+					+ ": variable '" + fullyScopedName
+					+ "' was previously used as a scope");
 		}
-	}
+			}
 
 
 	public void insertList(
-		String				scope,
-		String				localName,
-		ArrayList<String>	listValue) throws ConfigurationException
-	{
+			String				scope,
+			String				localName,
+			ArrayList<String>	listValue) throws ConfigurationException
+			{
 		String[]			array;
 		int					len;
 		ConfigScope			scopeObj;
@@ -2198,29 +2289,30 @@ public class ConfigurationImpl extends Configuration
 		scopeObj = ensureScopeExists(array, 0, len-2);
 		if (!scopeObj.addOrReplaceList(array[len-1], listValue)) {
 			throw new ConfigurationException(fileName()
-										+ ": variable '" + fullyScopedName
-										+ "' was previously used as a scope");
+					+ ": variable '" + fullyScopedName
+					+ "' was previously used as a scope");
 		}
-	}
+			}
 
 
+	@Override
 	public void remove(String scope, String localName)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		String				fullyScopedName;
 		String[]			array;
 		int					i;
 		ConfigScope			scopeObj;
 		ConfigItem			item;
 
-		scopeObj = this.currScope;
+		scopeObj = currScope;
 		fullyScopedName = mergeNames(scope, localName);
 		array = Util.splitScopedNameIntoArray(fullyScopedName);
 		for (i = 0; i < array.length-1; i++) {
 			item = scopeObj.findItem(array[i]);
 			if (item == null || item.getType() != Configuration.CFG_SCOPE) {
 				throw new ConfigurationException(fileName() + ": '"
-									+ fullyScopedName + "' does not exist");
+						+ fullyScopedName + "' does not exist");
 			}
 			scopeObj = item.getScopeVal();
 			Util.assertion(scopeObj != null);
@@ -2229,11 +2321,12 @@ public class ConfigurationImpl extends Configuration
 		Util.assertion(scopeObj != null);
 		if (!scopeObj.removeItem(array[i])) {
 			throw new ConfigurationException(fileName() + ": '"
-									+ fullyScopedName + "' does not exist");
+					+ fullyScopedName + "' does not exist");
 		}
-	}
+			}
 
 
+	@Override
 	public void empty()
 	{
 		fileName      = "<no file>";
@@ -2248,8 +2341,8 @@ public class ConfigurationImpl extends Configuration
 	//--------
 
 	void insertList(String name, String[] listValue)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		String[]			array;
 		int					len;
 		ConfigScope			scopeObj;
@@ -2259,14 +2352,14 @@ public class ConfigurationImpl extends Configuration
 		scopeObj = ensureScopeExists(array, 0, len-2);
 		if (!scopeObj.addOrReplaceList(array[len-1], listValue)) {
 			throw new ConfigurationException(fileName() + ": variable '"
-								+ name + "' was previously used as a scope");
+					+ name + "' was previously used as a scope");
 		}
-	}
+			}
 
 
 	void insertList(String name, ArrayList<String> listValue)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		String[]			array;
 		int					len;
 		ConfigScope			scopeObj;
@@ -2276,9 +2369,9 @@ public class ConfigurationImpl extends Configuration
 		scopeObj = ensureScopeExists(array, 0, len-2);
 		if (!scopeObj.addOrReplaceList(array[len-1], listValue)) {
 			throw new ConfigurationException(fileName() + ": variable '" + name
-										+ "' was previously used as a scope");
+					+ "' was previously used as a scope");
 		}
-	}
+			}
 
 
 	ConfigScope getRootScope()
@@ -2299,38 +2392,39 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
+	@Override
 	public void	ensureScopeExists(
 			String			scope,
 			String			localName) throws ConfigurationException
-	{
+			{
 		String				fullyScopedName;
 
 		fullyScopedName = mergeNames(scope, localName);
 		ensureScopeExists(fullyScopedName);
-	}
+			}
 
 
 	ConfigScope ensureScopeExists(String fullyScopedName)
-						throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		String[]			array;
 
 		array = Util.splitScopedNameIntoArray(fullyScopedName);
 		return ensureScopeExists(array, 0, array.length-1);
-	}
+			}
 
 
 	ConfigScope ensureScopeExists(
-		String[]		array,
-		int				firstIndex,
-		int				lastIndex) throws ConfigurationException
-	{
+			String[]		array,
+			int				firstIndex,
+			int				lastIndex) throws ConfigurationException
+			{
 		int				i;
 		int				j;
 		ConfigScope		scope;
 		StringBuffer	msg;
 
-		scope = this.currScope;
+		scope = currScope;
 		for (i = firstIndex; i <= lastIndex; i++) {
 			scope = scope.ensureScopeExists(array[i]);
 			if (scope == null) {
@@ -2348,7 +2442,7 @@ public class ConfigurationImpl extends Configuration
 		}
 		Util.assertion(scope != null);
 		return scope;
-	}
+			}
 
 
 	boolean isExecAllowed(String cmdLine, StringBuffer trustedCmdLine)
@@ -2365,7 +2459,7 @@ public class ConfigurationImpl extends Configuration
 		char					ch;
 
 		if (this == DefaultSecurityConfiguration.singleton
-		    || securityCfg == null)
+				|| securityCfg == null)
 		{
 			return false;
 		}
@@ -2416,7 +2510,7 @@ public class ConfigurationImpl extends Configuration
 				if (Util.isCmdInDir(cmd.toString(), trustedDirs[j])) {
 					trustedCmdLine.delete(0, trustedCmdLine.length());
 					trustedCmdLine.append(trustedDirs[j] + dirSeparator
-																  + cmdLine);
+							+ cmdLine);
 					return true;
 				}
 			}
@@ -2436,9 +2530,9 @@ public class ConfigurationImpl extends Configuration
 
 
 	ConfigItem lookup(
-		String				fullyScopedName,
-		String				localName,
-		boolean				startInRoot)
+			String				fullyScopedName,
+			String				localName,
+			boolean				startInRoot)
 	{
 		String[]			array;
 		ConfigScope			scope;
@@ -2504,9 +2598,9 @@ public class ConfigurationImpl extends Configuration
 
 
 	int stringValueAndType(
-		String				fullyScopedName,
-		String				localName,
-		StringBuffer		str)
+			String				fullyScopedName,
+			String				localName,
+			StringBuffer		str)
 	{
 		ConfigItem			item;
 		int					type;
@@ -2526,9 +2620,9 @@ public class ConfigurationImpl extends Configuration
 
 
 	int listValueAndType(
-		String				fullyScopedName,
-		String				localName,
-		ArrayList<String>	list)
+			String				fullyScopedName,
+			String				localName,
+			ArrayList<String>	list)
 	{
 		ConfigItem			item;
 		String[]			array;
@@ -2565,29 +2659,29 @@ public class ConfigurationImpl extends Configuration
 
 		size = fileNameStack.size();
 		Util.assertion(size > 0);
-		str = (String)fileNameStack.get(size-1);
+		str = fileNameStack.get(size-1);
 		Util.assertion(fileName.equals(str));
 		fileNameStack.remove(size-1);
 	}
 
 
 	void checkForCircularIncludes(String fileName, int includeLineNum)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		String			str;
 		int				size;
 		int				i;
 
 		size = fileNameStack.size();
 		for (i = 0; i < size; i++) {
-			str = (String)fileNameStack.get(i);
+			str = fileNameStack.get(i);
 			if (fileName.equals(str)) {
 				throw new ConfigurationException( fileName() + ": line "
-								+ includeLineNum + ", circular include of '"
-								+ fileName + "'");
+						+ includeLineNum + ", circular include of '"
+						+ fileName + "'");
 			}
 		}
-	}
+			}
 
 
 	UidIdentifierProcessor		uidIdentifierProcessor;
