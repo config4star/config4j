@@ -336,7 +336,6 @@ public class ConfigurationImpl extends Configuration
 			String				sourceDescription) throws ConfigurationException
 			{
 		StringBuffer		trustedCmdLine;
-		ConfigParser		parser;
 
 		trustedCmdLine = new StringBuffer();
 		switch (sourceType) {
@@ -366,7 +365,7 @@ public class ConfigurationImpl extends Configuration
 			Util.assertion(false); // Bug!
 			break;
 		}
-		parser = new ConfigParser(sourceType, source, trustedCmdLine.toString(),
+		new ConfigParser(sourceType, source, trustedCmdLine.toString(),
 				fileName, this, false);
 			}
 

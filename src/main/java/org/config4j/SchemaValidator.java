@@ -127,13 +127,12 @@ public class SchemaValidator
 			int						typeMask,
 			int						forceMode) throws ConfigurationException
 			{
-		String					fullyScopedName;
 		String[]				itemNames;
 
 		//--------
 		// Get a list of the entries in the scope
 		//--------
-		fullyScopedName = Configuration.mergeNames(scope, name);
+		Configuration.mergeNames(scope, name);
 		itemNames = cfg.listLocallyScopedNames(scope, name, typeMask,
 				recurseIntoSubscopes);
 
@@ -171,9 +170,9 @@ public class SchemaValidator
 
 
 	void registerTypedef(
-String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArgsList)
-	        throws ConfigurationException
-			{
+			String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArgsList)
+					throws ConfigurationException
+					{
 		SchemaType			type;
 		String[]			baseTypeArgs;
 
@@ -183,7 +182,7 @@ String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArg
 				baseTypeArgs);
 		schemaTypes.add(type);
 		areTypesSorted = false;
-			}
+					}
 
 
 	void sortTypes()

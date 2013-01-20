@@ -254,7 +254,7 @@ class ConfigParser
 	}
 
 
-	private void parseIncludeStmt()
+    private void parseIncludeStmt()
 	{
 		StringBuffer		source;
 		String				sourceStr;
@@ -262,7 +262,6 @@ class ConfigParser
 		String				execSource;
 		int					includeLineNum;
 		boolean				ifExistsIsSpecified;
-		ConfigParser		tmp;
 
 		//--------
 		// Consume the '@include' keyword
@@ -324,16 +323,16 @@ class ConfigParser
 		//--------
 		try {
 			if (sourceStr.startsWith("exec#")) {
-				tmp = new ConfigParser(Configuration.INPUT_EXEC, execSource,
+				new ConfigParser(Configuration.INPUT_EXEC, execSource,
 						trustedCmdLine.toString(), "",
 						config, ifExistsIsSpecified);
 			} else if (sourceStr.startsWith("file#")) {
-				tmp = new ConfigParser(Configuration.INPUT_FILE,
+				new ConfigParser(Configuration.INPUT_FILE,
 						sourceStr.substring("file#".length()),
 						trustedCmdLine.toString(), "", config,
 						ifExistsIsSpecified);
 			} else {
-				tmp = new ConfigParser(Configuration.INPUT_FILE, sourceStr,
+				new ConfigParser(Configuration.INPUT_FILE, sourceStr,
 						trustedCmdLine.toString(), "", config,
 						ifExistsIsSpecified);
 			}
