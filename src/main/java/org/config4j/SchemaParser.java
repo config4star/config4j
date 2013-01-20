@@ -140,7 +140,7 @@ class SchemaParser
 		SchemaType			typeDef;
 		String				locallyScopedName;
 		String				typeName;
-		ArrayList			args;
+		ArrayList<String>	args;
 		boolean				isOptional;
 		String				name;
 		int					index;
@@ -160,7 +160,7 @@ class SchemaParser
 		}
 
 		typeName = "";
-		args = new ArrayList();
+		args = new ArrayList<String>();
 		locallyScopedName = token.getSpelling();
 		accept(SchemaLex.LEX_IDENT_SYM, rule, "expecting an identifier");
 
@@ -228,9 +228,9 @@ class SchemaParser
 		SchemaType			baseTypeDef;
 		String				typeName;
 		String				baseTypeName;
-		ArrayList			baseTypeArgs;
+		ArrayList<String>	baseTypeArgs;
 
-		baseTypeArgs = new ArrayList();
+		baseTypeArgs = new ArrayList<String>();
 		accept(SchemaLex.LEX_TYPEDEF_SYM, str, "expecting '@typedef'");
 		typeName = token.getSpelling();
 		accept(SchemaLex.LEX_IDENT_SYM, str, "expecting an identifier");

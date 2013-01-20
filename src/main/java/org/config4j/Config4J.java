@@ -95,7 +95,7 @@ class Config4J
 		} else if (cmd.equals("slist")) {
 			try {
 				names = cfg.listFullyScopedNames(scope, name, types,
-												 isRecursive, filterPatterns);
+						isRecursive, filterPatterns);
 				for (i = 0; i < names.length; i++) {
 					System.out.println(names[i]);
 				}
@@ -105,7 +105,7 @@ class Config4J
 		} else if (cmd.equals("llist")) {
 			try {
 				names = cfg.listLocallyScopedNames(scope, name, types,
-												   isRecursive, filterPatterns);
+						isRecursive, filterPatterns);
 				for (i = 0; i < names.length; i++) {
 					System.out.println(names[i]);
 				}
@@ -148,7 +148,7 @@ class Config4J
 					break;
 				case Configuration.CFG_NO_VALUE:
 					System.err.println("'" + fullyScopedName
-									   + "' does not exist");
+							+ "' does not exist");
 					break;
 				default:
 					Util.assertion(false); // Bug!
@@ -162,13 +162,13 @@ class Config4J
 				secDumpCfg = cfg.getSecurityConfiguration();
 				secDumpScope = cfg.getSecurityConfigurationScope();
 				str = secDumpCfg.dump(wantExpandedUidNames, secDumpScope,
-									  "allow_patterns");
+						"allow_patterns");
 				System.out.println(str);
 				str = secDumpCfg.dump(wantExpandedUidNames, secDumpScope,
-									  "deny_patterns");
+						"deny_patterns");
 				System.out.println(str);
 				str = secDumpCfg.dump(wantExpandedUidNames, secDumpScope,
-									  "trusted_directories");
+						"trusted_directories");
 				System.out.println(str);
 			} catch(ConfigurationException ex) {
 				System.err.println(ex.getMessage());
@@ -189,7 +189,7 @@ class Config4J
 	private static void parseCmdLineArgs(String[] args, Configuration cfg)
 	{
 		int					i;
-		ArrayList			patterns;
+		ArrayList<String> patterns;
 
 		cmd = null;
 		wantExpandedUidNames = true;
@@ -202,7 +202,7 @@ class Config4J
 		schemaName = "";
 		wantDiagnostics = false;
 		isRecursive = true;
-		patterns  = new ArrayList();
+		patterns = new ArrayList<String>();
 		types = Configuration.CFG_SCOPE_AND_VARS;
 
 		for (i = 0; i < args.length; i++) {
@@ -244,9 +244,9 @@ class Config4J
 				if (i == args.length-1) { usage(""); }
 				types = stringToTypes(args[i+1]);
 				i++;
-			//--------
-			// Commands
-			//--------
+				//--------
+				// Commands
+				//--------
 			} else if (args[i].equals("parse")) {
 				cmd = args[i];
 			} else if (args[i].equals("slist")) {
@@ -263,9 +263,9 @@ class Config4J
 				cmd = args[i];
 			} else if (args[i].equals("validate")) {
 				cmd = args[i];
-			//--------
-			// Arguments to commands
-			//--------
+				//--------
+				// Arguments to commands
+				//--------
 			} else if (args[i].equals("-scope")) {
 				if (i == args.length-1) { usage(""); }
 				scope = args[i+1];
@@ -301,17 +301,17 @@ class Config4J
 		if (cmd.equals("validate")) {
 			if (schemaSource == null) {
 				System.err.println("\nThe validate command requires "
-								   + "-schemaCfg <source>\n\n");
+						+ "-schemaCfg <source>\n\n");
 				usage("");
 			}
 			if (schemaName.equals("")) {
 				System.err.println("\nThe validate command requires "
-								   + "-schema <full.name>\n\n");
+						+ "-schema <full.name>\n\n");
 				usage("");
 			}
 		}
 
-		filterPatterns= (String[])patterns.toArray(new String[patterns.size()]);
+		filterPatterns= patterns.toArray(new String[patterns.size()]);
 	}
 
 
@@ -343,56 +343,56 @@ class Config4J
 		}
 
 		msg.append(
-		      "usage: java org.config4j.Config4J -cfg <source> "
-			  				+  "<command> <options>\n"
-			+ "\n"
-		    + "<command> can be one of the following:\n"
-		    + "  parse               Parse and report errors, if any\n"
-		    + "  validate            Validate <scope>.<name>\n"
-		    + "  dump                Dump <scope>.<name>\n"
-		    + "  dumpSec             Dump the security policy\n"
-		    + "  print               Print value of the <scope>.<name> "
-		    			 	+ "variable\n"
-		    + "  type                Print type of the <scope>.<name> entry\n"
-		    + "  slist               List scoped names in <scope>.<name>\n"
-		    + "  llist               List local names in <scope>.<name>\n"
-			+ "\n"
-		    + "<options> can be:\n"
-		    + "  -h                  Print this usage statement\n"
-		    + "  -set <name> <value> Preset name=value in configuration "
-							+ "object\n"
-		    + "  -scope <scope>      Specify <scope> argument for commands\n"
-		    + "  -name <name>        Specify <name> argument for commands\n"
-			+ "\n"
-		    + "  -secCfg <source>    Override default security policy\n"
-		    + "  -secScope           Scope for security policy\n"
-			+ "\n"
-		    + "  -schemaCfg <source> Source that contains a schema\n"
-		    + "  -schema <full.name> Name of schema in '-schemaCfg <source>'\n"
-			+ "  -force_optional     Validate with forceMode = FORCE_OPTIONAL\n"
-			+ "  -force_required     Validate with forceMode = FORCE_REQUIRED\n"
-			+ "  -diagnostics        Print diagnostics during schema "
-							+ "validation\n"
-			+ "  -nodiagnostics       Do not print diagnostics during schema "
-							+ "validation (default)\n"
-			+ "\n"
-		    + "  -recursive          For llist, slist and validate (default)\n"
-		    + "  -norecursive        For llist, slist and validate\n"
-		    + "  -filter <pattern>   A filter pattern for sslist and llist\n"
-		    + "  -types <types>      For llist, slist and validate\n"
-			+ "\n"
-		    + "  -expandUid          For dump (default)\n"
-		    + "  -unexpandUid        For dump\n"
-		    + "\n"
-		    + "<types> can be one of the following\n"
-		    + "  string, list, scope, variables, scope_and_vars (default)\n"
-		    + "\n"
-		    + "<source> can be one of the following:\n"
-		    + "  file.cfg       A configuration file\n"
-		    + "  file#file.cfg  A configuration file\n"
-		    + "  exec#<command> Output from executing the specified "
-		    				+ "command\n"
-		);
+				"usage: java org.config4j.Config4J -cfg <source> "
+						+  "<command> <options>\n"
+						+ "\n"
+						+ "<command> can be one of the following:\n"
+						+ "  parse               Parse and report errors, if any\n"
+						+ "  validate            Validate <scope>.<name>\n"
+						+ "  dump                Dump <scope>.<name>\n"
+						+ "  dumpSec             Dump the security policy\n"
+						+ "  print               Print value of the <scope>.<name> "
+						+ "variable\n"
+						+ "  type                Print type of the <scope>.<name> entry\n"
+						+ "  slist               List scoped names in <scope>.<name>\n"
+						+ "  llist               List local names in <scope>.<name>\n"
+						+ "\n"
+						+ "<options> can be:\n"
+						+ "  -h                  Print this usage statement\n"
+						+ "  -set <name> <value> Preset name=value in configuration "
+						+ "object\n"
+						+ "  -scope <scope>      Specify <scope> argument for commands\n"
+						+ "  -name <name>        Specify <name> argument for commands\n"
+						+ "\n"
+						+ "  -secCfg <source>    Override default security policy\n"
+						+ "  -secScope           Scope for security policy\n"
+						+ "\n"
+						+ "  -schemaCfg <source> Source that contains a schema\n"
+						+ "  -schema <full.name> Name of schema in '-schemaCfg <source>'\n"
+						+ "  -force_optional     Validate with forceMode = FORCE_OPTIONAL\n"
+						+ "  -force_required     Validate with forceMode = FORCE_REQUIRED\n"
+						+ "  -diagnostics        Print diagnostics during schema "
+						+ "validation\n"
+						+ "  -nodiagnostics       Do not print diagnostics during schema "
+						+ "validation (default)\n"
+						+ "\n"
+						+ "  -recursive          For llist, slist and validate (default)\n"
+						+ "  -norecursive        For llist, slist and validate\n"
+						+ "  -filter <pattern>   A filter pattern for sslist and llist\n"
+						+ "  -types <types>      For llist, slist and validate\n"
+						+ "\n"
+						+ "  -expandUid          For dump (default)\n"
+						+ "  -unexpandUid        For dump\n"
+						+ "\n"
+						+ "<types> can be one of the following\n"
+						+ "  string, list, scope, variables, scope_and_vars (default)\n"
+						+ "\n"
+						+ "<source> can be one of the following:\n"
+						+ "  file.cfg       A configuration file\n"
+						+ "  file#file.cfg  A configuration file\n"
+						+ "  exec#<command> Output from executing the specified "
+						+ "command\n"
+				);
 		System.out.print(msg.toString());
 		System.exit(1);
 	}

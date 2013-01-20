@@ -51,11 +51,11 @@ class Util
 
 	public static String[] splitScopedNameIntoArray(String str)
 	{
-		ArrayList			list = null;
+		ArrayList<String>	list = null;
 		StringTokenizer		st = null;
 		String				array[] = null;
 
-		list = new ArrayList();
+		list = new ArrayList<String>();
 		st = new StringTokenizer(str, ".");
 		while (st.hasMoreTokens()) {
 			list.add(st.nextToken());

@@ -35,22 +35,22 @@ class ConfigScope
 {
 	ConfigScope(ConfigScope parentScope, String name)
 	{
-		this.table = new HashMap(16);
+		table = new HashMap(16);
 		this.parentScope = parentScope;
 		if (parentScope == null) {
 			Util.assertion(name.equals(""));
-			this.scopedName = "";
+			scopedName = "";
 		} else if (parentScope.parentScope == null) {
-			this.scopedName = name;
+			scopedName = name;
 		} else {
-			this.scopedName = parentScope.scopedName + "." + name;
+			scopedName = parentScope.scopedName + "." + name;
 		}
 	}
 
 
 	String getScopedName()
 	{
-		return this.scopedName;
+		return scopedName;
 	}
 
 
@@ -100,7 +100,7 @@ class ConfigScope
 	}
 
 
-	boolean addOrReplaceList(String name, ArrayList listVal)
+	boolean addOrReplaceList(String name, ArrayList<String> listVal)
 	{
 		ConfigItem			item;
 		String[]			array;
@@ -166,59 +166,59 @@ class ConfigScope
 
 	String[] listFullyScopedNames(int typeMask, boolean recursive)
 	{
-		ArrayList		vec = new ArrayList();
-		String[]		result;
+		ArrayList<String>	vec = new ArrayList<String>();
+		String[]			result;
 
 		listScopedNamesHelper(scopedName, typeMask, recursive, new String[0],
-							  vec);
+				vec);
 		result = new String[vec.size()];
-		return (String[])(vec.toArray(result));
+		return (vec.toArray(result));
 	}
 
 
 	String[] listFullyScopedNames(
-		int				typeMask,
-		boolean			recursive,
-		String[]		filterPatterns)
+			int				typeMask,
+			boolean			recursive,
+			String[]		filterPatterns)
 	{
-		ArrayList		vec = new ArrayList();
-		String[]		result;
+		ArrayList<String>	vec = new ArrayList<String>();
+		String[]			result;
 
 		listScopedNamesHelper(scopedName, typeMask, recursive, filterPatterns,
-							  vec);
+				vec);
 		result = new String[vec.size()];
-		return (String[])(vec.toArray(result));
+		return (vec.toArray(result));
 	}
 
 
 	String[] listLocallyScopedNames(int typeMask, boolean recursive)
 	{
-		ArrayList		vec = new ArrayList();
-		String[]		result;
+		ArrayList<String>	vec = new ArrayList<String>();
+		String[]			result;
 
 		listScopedNamesHelper("", typeMask, recursive, new String[0], vec);
 		result = new String[vec.size()];
-		return (String[])(vec.toArray(result));
+		return (vec.toArray(result));
 	}
 
 
 	String[] listLocallyScopedNames(
-		int				typeMask,
-		boolean			recursive,
-		String[]		filterPatterns)
+			int				typeMask,
+			boolean			recursive,
+			String[]		filterPatterns)
 	{
-		ArrayList		vec = new ArrayList();
-		String[]		result;
+		ArrayList<String>	vec = new ArrayList<String>();
+		String[]			result;
 
 		listScopedNamesHelper("", typeMask, recursive, filterPatterns, vec);
 		result = new String[vec.size()];
-		return (String[])(vec.toArray(result));
+		return (vec.toArray(result));
 	}
 
 
 	ConfigScope getParentScope()
 	{
-		return this.parentScope;
+		return parentScope;
 	}
 
 
@@ -261,13 +261,13 @@ class ConfigScope
 
 	private String[] listLocalNames(int typeMask)
 	{
-		ArrayList			arrayList;
+		ArrayList<String>	arrayList;
 		Map.Entry			entry;
 		Iterator			iter;
 		ConfigItem			item;
 		String[]			result;
 
-		arrayList = new ArrayList();
+		arrayList = new ArrayList<String>();
 		iter = table.entrySet().iterator();
 		while (iter.hasNext()) {
 			entry = (Map.Entry)iter.next();
@@ -283,11 +283,11 @@ class ConfigScope
 
 
 	private void listScopedNamesHelper(
-		String				prefix,
-		int					typeMask,
-		boolean				recursive,
-		String[]			filterPatterns,
-		ArrayList			arrayList)
+			String				prefix,
+			int					typeMask,
+			boolean				recursive,
+			String[]			filterPatterns,
+			ArrayList<String>	arrayList)
 	{
 		Map.Entry			entry;
 		Iterator			iter;
@@ -307,7 +307,7 @@ class ConfigScope
 				scopedName = prefix + "." + item.getName();
 			}
 			if ((item.getType() & typeMask) != 0
-			    && listFilter(scopedName, filterPatterns))
+					&& listFilter(scopedName, filterPatterns))
 			{
 				arrayList.add(scopedName);
 			}
@@ -346,7 +346,7 @@ class ConfigScope
 	}
 
 
-	private ConfigScope			parentScope;
+	private final ConfigScope			parentScope;
 	private String				scopedName;
-	private Map					table;
+	private final Map					table;
 }

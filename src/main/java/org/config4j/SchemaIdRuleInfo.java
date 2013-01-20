@@ -44,10 +44,10 @@ class SchemaIdRuleInfo implements Comparable
 
 
 	public SchemaIdRuleInfo(
-		String			locallyScopedName,
-		String			typeName,
-		ArrayList		args,
-		boolean			isOptional)
+		String				locallyScopedName,
+		String				typeName,
+		ArrayList<String>	args,
+		boolean				isOptional)
 	{
 		this.locallyScopedName = locallyScopedName;
 		this.typeName = typeName;

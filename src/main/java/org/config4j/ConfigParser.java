@@ -91,35 +91,35 @@ class ConfigParser
 {
 
 	ConfigParser(
-		int					sourceType,
-		String				source,
-		String				trustedCmdLine,
-		String				sourceDescription,
-		ConfigurationImpl	config,
-		boolean				ifExistsIsSpecified) throws ConfigurationException
-	{
+			int					sourceType,
+			String				source,
+			String				trustedCmdLine,
+			String				sourceDescription,
+			ConfigurationImpl	config,
+			boolean				ifExistsIsSpecified) throws ConfigurationException
+			{
 		//--------
 		// Initialise instance variables
 		//--------
-		this.token = new LexToken();
+		token = new LexToken();
 		this.config = config;
-		this.errorInIncludedFile = false;
+		errorInIncludedFile = false;
 		switch (sourceType) {
 		case Configuration.INPUT_FILE:
-			this.fileName = source;
+			fileName = source;
 			break;
 		case Configuration.INPUT_STRING:
 			if (sourceDescription.equals("")) {
-				this.fileName = "<string-based configuration>";
+				fileName = "<string-based configuration>";
 			} else {
-				this.fileName = sourceDescription;
+				fileName = sourceDescription;
 			}
 			break;
 		case Configuration.INPUT_EXEC:
 			if (sourceDescription.equals("")) {
-				this.fileName = "exec#" + source;
+				fileName = "exec#" + source;
 			} else {
-				this.fileName = sourceDescription;
+				fileName = sourceDescription;
 			}
 			source = trustedCmdLine;
 			break;
@@ -137,7 +137,7 @@ class ConfigParser
 		// any work.
 		//--------
 		try {
-			this.lex = new ConfigLex(sourceType, source,
+			lex = new ConfigLex(sourceType, source,
 					this.config.uidIdentifierProcessor);
 		} catch (ConfigurationException ex) {
 			if (ifExistsIsSpecified) {
@@ -152,18 +152,18 @@ class ConfigParser
 		// consists of a list of statements.
 		//--------
 		try {
-			this.lex.nextToken(token);
-			this.config.pushIncludedFilename(this.fileName);
+			lex.nextToken(token);
+			this.config.pushIncludedFilename(fileName);
 			parseStmtList();
 			accept(ConfigLex.LEX_EOF_SYM, "expecting identifier");
 		} catch(ConfigurationException ex) {
 			lex.destroy();
-			this.config.popIncludedFilename(this.fileName);
+			this.config.popIncludedFilename(fileName);
 			if (errorInIncludedFile) {
 				throw ex;
 			} else {
-				throw new ConfigurationException(this.fileName + ", line "
-						+ this.token.getLineNum() + ": " + ex.getMessage());
+				throw new ConfigurationException(fileName + ", line "
+						+ token.getLineNum() + ": " + ex.getMessage());
 			}
 		}
 
@@ -171,8 +171,8 @@ class ConfigParser
 		//--------
 		// Pop our file from the the stack of (include'd) files.
 		//--------
-		this.config.popIncludedFilename(this.fileName);
-	}
+		this.config.popIncludedFilename(fileName);
+			}
 
 
 	//--------
@@ -185,11 +185,11 @@ class ConfigParser
 
 		type = token.getType();
 		while (   type == ConfigLex.LEX_IDENT_SYM
-		       || type == ConfigLex.LEX_INCLUDE_SYM
-		       || type == ConfigLex.LEX_IF_SYM
-		       || type == ConfigLex.LEX_REMOVE_SYM
-		       || type == ConfigLex.LEX_ERROR_SYM
-		       || type == ConfigLex.LEX_COPY_FROM_SYM)
+				|| type == ConfigLex.LEX_INCLUDE_SYM
+				|| type == ConfigLex.LEX_IF_SYM
+				|| type == ConfigLex.LEX_REMOVE_SYM
+				|| type == ConfigLex.LEX_ERROR_SYM
+				|| type == ConfigLex.LEX_COPY_FROM_SYM)
 		{
 			parseStmt();
 			type = token.getType();
@@ -223,7 +223,7 @@ class ConfigParser
 		}
 
 		if (identNameType == ConfigLex.LEX_IDENT_SYM
-		    && identName.getSpelling().startsWith(".")) {
+				&& identName.getSpelling().startsWith(".")) {
 			error("cannot use '.' at start of the declaration of a variable "
 					+ "or scope,");
 			return;
@@ -325,23 +325,23 @@ class ConfigParser
 		try {
 			if (sourceStr.startsWith("exec#")) {
 				tmp = new ConfigParser(Configuration.INPUT_EXEC, execSource,
-									   trustedCmdLine.toString(), "",
-									   config, ifExistsIsSpecified);
+						trustedCmdLine.toString(), "",
+						config, ifExistsIsSpecified);
 			} else if (sourceStr.startsWith("file#")) {
 				tmp = new ConfigParser(Configuration.INPUT_FILE,
-									   sourceStr.substring("file#".length()),
-									   trustedCmdLine.toString(), "", config,
-									   ifExistsIsSpecified);
+						sourceStr.substring("file#".length()),
+						trustedCmdLine.toString(), "", config,
+						ifExistsIsSpecified);
 			} else {
 				tmp = new ConfigParser(Configuration.INPUT_FILE, sourceStr,
-									   trustedCmdLine.toString(), "", config,
-									   ifExistsIsSpecified);
+						trustedCmdLine.toString(), "", config,
+						ifExistsIsSpecified);
 			}
 		} catch(ConfigurationException ex) {
 			errorInIncludedFile = true;
 			throw new ConfigurationException(ex.getMessage()
-								+ "\n(included from " + fileName + ", line "
-								+ includeLineNum + ")");
+					+ "\n(included from " + fileName + ", line "
+					+ includeLineNum + ")");
 		}
 
 		//--------
@@ -386,11 +386,11 @@ class ConfigParser
 		toScopeName = config.getCurrScope().getScopedName();
 		if (toScopeName.equals(fromScopeNameStr)) {
 			throw new ConfigurationException("copy statement: cannot copy "
-											+ "own scope");
+					+ "own scope");
 		}
 		if (toScopeName.startsWith(fromScopeNameStr + ".")) {
 			throw new ConfigurationException("copy statement: cannot copy "
-											+ "from a parent scope");
+					+ "from a parent scope");
 		}
 
 		//--------
@@ -405,11 +405,11 @@ class ConfigParser
 
 		if (item == null) {
 			throw new ConfigurationException("copy statement: scope '"
-									+ fromScopeNameStr + "' does not exist");
+					+ fromScopeNameStr + "' does not exist");
 		}
 		if (item.getType() != Configuration.CFG_SCOPE) {
 			throw new ConfigurationException("copy statement: '"
-									+ fromScopeNameStr + "' is not a scope");
+					+ fromScopeNameStr + "' is not a scope");
 		}
 		fromScope = item.getScopeVal();
 		Util.assertion(fromScope != null);
@@ -418,7 +418,7 @@ class ConfigParser
 		// Get a recursive listing of all the items in fromScopeName
 		//--------
 		fromNamesArray = fromScope.listFullyScopedNames(
-									Configuration.CFG_SCOPE_AND_VARS, true);
+				Configuration.CFG_SCOPE_AND_VARS, true);
 
 		//--------
 		// Copy all the items into the current scope
@@ -460,12 +460,12 @@ class ConfigParser
 		accept(ConfigLex.LEX_IDENT_SYM, "expecting an identifier");
 		if (identName.indexOf('.') != -1) {
 			throw new ConfigurationException(fileName + ": can remove entries "
-										+ "from only the current scope");
+					+ "from only the current scope");
 		}
 		currScope = config.getCurrScope();
 		if (!currScope.removeItem(identName)) {
 			throw new ConfigurationException(fileName + ": '" + identName
-									+ "' does not exist in the current scope");
+					+ "' does not exist in the current scope");
 		}
 		accept(ConfigLex.LEX_SEMICOLON_SYM, "expecting ';'");
 	}
@@ -606,12 +606,12 @@ class ConfigParser
 
 	private boolean parseTerminalCondition()
 	{
-		StringBuffer	str1;
-		StringBuffer	str2;
-		ArrayList		list;
-		boolean			result;
-		int				len;
-		int				i;
+		StringBuffer		str1;
+		StringBuffer		str2;
+		ArrayList<String>	list;
+		boolean				result;
+		int					len;
+		int					i;
 
 		result = false;
 		if (token.getType() == ConfigLex.LEX_NOT_SYM) {
@@ -655,7 +655,7 @@ class ConfigParser
 			break;
 		case ConfigLex.LEX_IN_SYM:
 			lex.nextToken(token);
-			list = new ArrayList();
+			list = new ArrayList<String>();
 			parseListExpr(list);
 			len = list.size();
 			result = false;
@@ -671,7 +671,7 @@ class ConfigParser
 			str2 = new StringBuffer();
 			parseStringExpr(str2);
 			result = Configuration.patternMatch(str1.toString(),
-												str2.toString());
+					str2.toString());
 			break;
 		default:
 			error("expecting '(', or a string expression");
@@ -709,10 +709,10 @@ class ConfigParser
 
 	private void parseRhsAssignStmt(LexToken varName, int assignmentType)
 	{
-		StringBuffer	stringExpr;
-		ArrayList		listExpr;
-		int				varType;
-		boolean			doAssign;
+		StringBuffer		stringExpr;
+		ArrayList<String>	listExpr;
+		int					varType;
+		boolean				doAssign;
 
 		switch (config.type(varName.getSpelling(), "")) {
 		case Configuration.CFG_STRING:
@@ -782,24 +782,24 @@ class ConfigParser
 		// can parse it correctly.
 		//--------
 		switch(varType) {
-			case Configuration.CFG_STRING:
-				stringExpr = new StringBuffer();
-				parseStringExpr(stringExpr);
-				if (doAssign) {
-					config.insertString("", varName.getSpelling(),
-										stringExpr.toString());
-				}
-				break;
-			case Configuration.CFG_LIST:
-				listExpr = new ArrayList();
-				parseListExpr(listExpr);
-				if (doAssign) {
-					config.insertList(varName.getSpelling(), listExpr);
-				}
-				break;
-			default:
-				Util.assertion(false);	// Bug
-				break;
+		case Configuration.CFG_STRING:
+			stringExpr = new StringBuffer();
+			parseStringExpr(stringExpr);
+			if (doAssign) {
+				config.insertString("", varName.getSpelling(),
+						stringExpr.toString());
+			}
+			break;
+		case Configuration.CFG_LIST:
+			listExpr = new ArrayList<String>();
+			parseListExpr(listExpr);
+			if (doAssign) {
+				config.insertList(varName.getSpelling(), listExpr);
+			}
+			break;
+		default:
+			Util.assertion(false);	// Bug
+			break;
 		}
 	}
 
@@ -916,15 +916,15 @@ class ConfigParser
 				break;
 			case Configuration.CFG_NO_VALUE:
 				error("identifier '" + token.getSpelling()
-					+ "' not previously declared" , false);
+						+ "' not previously declared" , false);
 				return;
 			case Configuration.CFG_SCOPE:
 				error("identifier '" + token.getSpelling()
-				    + "' is a scope instead of a string", false);
+						+ "' is a scope instead of a string", false);
 				return;
 			case Configuration.CFG_LIST:
 				error("identifier '" + token.getSpelling()
-				    + "' is a list instead of a string", false);
+						+ "' is a list instead of a string", false);
 				return;
 			default:
 				Util.assertion(false); // Bug
@@ -966,7 +966,7 @@ class ConfigParser
 		trustedCmdLine = new StringBuffer();
 		if (!config.isExecAllowed(cmd.toString(), trustedCmdLine)) {
 			throw new ConfigurationException("cannot execute \"" + cmd
-										+ "\" due to security restrictions");
+					+ "\" due to security restrictions");
 		}
 
 		//--------
@@ -977,7 +977,7 @@ class ConfigParser
 		execStatus = Util.execCmd(trustedCmdLine.toString(), str);
 		if (!execStatus && !hasDefaultStr) {
 			throw new ConfigurationException("os.exec(\"" + cmd +"\") failed: "
-											+ str);
+					+ str);
 		} else if (!execStatus && hasDefaultStr) {
 			str.append(defaultStr);
 		} else {
@@ -990,14 +990,14 @@ class ConfigParser
 
 	private void parseJoin(StringBuffer str)
 	{
-		ArrayList		list;
-		StringBuffer	separator;
-		int				len;
-		int				i;
+		ArrayList<String>	list;
+		StringBuffer		separator;
+		int					len;
+		int					i;
 
 		str.delete(0, str.length());
 		accept(ConfigLex.LEX_FUNC_JOIN_SYM, "expecting 'join('");
-		list = new ArrayList();
+		list = new ArrayList<String>();
 		parseListExpr(list);
 		accept(ConfigLex.LEX_COMMA_SYM, "expecting ','");
 		separator = new StringBuffer();
@@ -1006,7 +1006,7 @@ class ConfigParser
 
 		len = list.size();
 		for (i = 0; i < len; i++) {
-			str.append((String)list.get(i));
+			str.append(list.get(i));
 			if (i < len - 1) {
 				str.append(separator.toString());
 			}
@@ -1054,7 +1054,7 @@ class ConfigParser
 	}
 
 
-	private void parseSplit(ArrayList result)
+	private void parseSplit(ArrayList<String> result)
 	{
 		StringBuffer		buf;
 		StringBuffer		delim;
@@ -1086,11 +1086,11 @@ class ConfigParser
 	}
 
 
-	private void parseListExpr(ArrayList expr)
+	private void parseListExpr(ArrayList<String> expr)
 	{
-		ArrayList	expr2;
+		ArrayList<String> expr2;
 
-		expr2 = new ArrayList();
+		expr2 = new ArrayList<String>();
 		expr.clear();
 		parseList(expr);
 		while (token.getType() == ConfigLex.LEX_PLUS_SYM) {
@@ -1102,7 +1102,7 @@ class ConfigParser
 	}
 
 
-	private void parseList(ArrayList expr)
+	private void parseList(ArrayList<String> expr)
 	{
 		int				type;
 
@@ -1123,10 +1123,10 @@ class ConfigParser
 			// ident_sym: make sure the identifier is a list
 			//--------
 			type = config.listValueAndType(token.getSpelling(),
-										   token.getSpelling(), expr);
+					token.getSpelling(), expr);
 			if (type != Configuration.CFG_LIST) {
 				error("identifier '" + token.getSpelling() + "' is not a list",
-					  false);
+						false);
 			}
 			lex.nextToken(token); // consume the identifier
 			break;
@@ -1137,7 +1137,7 @@ class ConfigParser
 	}
 
 
-	private void parseStringExprList(ArrayList list)
+	private void parseStringExprList(ArrayList<String> list)
 	{
 		StringBuffer	str;
 		int				type;
@@ -1148,8 +1148,8 @@ class ConfigParser
 			return; // empty list
 		}
 		if (!token.isStringFunc()
-		    && type != ConfigLex.LEX_STRING_SYM
-		    && type != ConfigLex.LEX_IDENT_SYM)
+				&& type != ConfigLex.LEX_STRING_SYM
+				&& type != ConfigLex.LEX_IDENT_SYM)
 		{
 			error("expecting a string or ']'");
 		}
@@ -1211,9 +1211,9 @@ class ConfigParser
 			}
 			ch = file.charAt(0);
 			if (i == 2
-			    && (Character.isUpperCase(ch)
-				|| Character.isLowerCase(ch))
-			    && file.charAt(1) == ':')
+					&& (Character.isUpperCase(ch)
+							|| Character.isLowerCase(ch))
+							&& file.charAt(1) == ':')
 			{
 				result.append(file.charAt(i)).append(".");
 			}
@@ -1253,21 +1253,21 @@ class ConfigParser
 		switch (type) {
 		case ConfigLex.LEX_UNKNOWN_FUNC_SYM:
 			throw new ConfigurationException("'" + token.getSpelling()
-											+ "' is not a built-in function");
+					+ "' is not a built-in function");
 		case ConfigLex.LEX_SOLE_DOT_IDENT_SYM:
 			throw new ConfigurationException("'.' is not a valid identifier");
 		case ConfigLex.LEX_TWO_DOTS_IDENT_SYM:
 			throw new ConfigurationException("'..' appears in identified '"
-											+ token.getSpelling() + "'");
+					+ token.getSpelling() + "'");
 		case ConfigLex.LEX_STRING_WITH_EOL_SYM:
 			throw new ConfigurationException("end-of-line not allowed in "
-									+ "string '" + token.getSpelling() + "'");
+					+ "string '" + token.getSpelling() + "'");
 		case ConfigLex.LEX_BLOCK_STRING_WITH_EOF_SYM:
 			throw new ConfigurationException("end-of-file encountered in "
 					+ "block string starting at line " + token.getLineNum());
 		case ConfigLex.LEX_ILLEGAL_IDENT_SYM:
 			throw new ConfigurationException("'" + token.getSpelling()
-											+ "' is not a legal identifier");
+					+ "' is not a legal identifier");
 		default:
 			// No lexical error. Handle the parsing error below.
 			break;
@@ -1281,10 +1281,10 @@ class ConfigParser
 
 		if (printNear && type == ConfigLex.LEX_STRING_SYM) {
 			throw new ConfigurationException(errMsg + " near \""
-											+ token.getSpelling() +  "\"");
+					+ token.getSpelling() +  "\"");
 		} else if (printNear && type != ConfigLex.LEX_STRING_SYM) {
 			throw new ConfigurationException(errMsg + " near '"
-											+ token.getSpelling() + "'");
+					+ token.getSpelling() + "'");
 		} else {
 			throw new ConfigurationException(errMsg);
 		}
@@ -1316,7 +1316,7 @@ class ConfigParser
 		}
 		if (val == null) {
 			throw new ConfigurationException("cannot access the '" + envVarName
-											+ "' environment variable");
+					+ "' environment variable");
 		}
 		str.delete(0, str.length());
 		str.append(val);
@@ -1332,7 +1332,7 @@ class ConfigParser
 
 		siblingName = new StringBuffer();
 		accept(ConfigLex.LEX_FUNC_SIBLING_SCOPE_SYM,
-			   "expecting 'siblingScope('");
+				"expecting 'siblingScope('");
 		currScope = config.getCurrScope();
 		if (currScope == config.getRootScope()) {
 			error("The siblingScope() function cannot be used in the "

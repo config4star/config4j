@@ -40,9 +40,9 @@ public class SchemaValidator
 	{
 		try {
 			wantDiagnostics      = false;
-			schemaIdRules        = new ArrayList();
-			schemaIgnoreRules    = new ArrayList();
-			schemaTypes          = new ArrayList();
+			schemaIdRules        = new ArrayList<SchemaIdRuleInfo>();
+			schemaIgnoreRules    = new ArrayList<SchemaIgnoreRuleInfo>();
+			schemaTypes          = new ArrayList<SchemaType>();
 			areSchemaTypesSorted = false;
 			registerBuiltinTypes();
 		} catch(ConfigurationException ex) {
@@ -67,7 +67,7 @@ public class SchemaValidator
 	{
 		SchemaParser	schemaParser = new SchemaParser(this);
 		String			prefix = "---- " + this.getClass().getName()
-								+ ".parseSchema()";
+				+ ".parseSchema()";
 		if (wantDiagnostics) {
 			System.out.print("\n" + prefix + ": start\n");
 		}
@@ -76,7 +76,7 @@ public class SchemaValidator
 		} catch(ConfigurationException ex) {
 			if (wantDiagnostics) {
 				System.out.print("\n" + prefix + ": error: "
-									+ ex.getMessage() + "\n");
+						+ ex.getMessage() + "\n");
 			}
 			throw ex;
 		}
@@ -87,46 +87,46 @@ public class SchemaValidator
 
 
 	public void validate(
-		Configuration			cfg,
-		String					scope,
-		String					name) throws ConfigurationException
-	{
+			Configuration			cfg,
+			String					scope,
+			String					name) throws ConfigurationException
+			{
 		validate(cfg, scope, name, true, Configuration.CFG_SCOPE_AND_VARS,
-				 DO_NOT_FORCE);
-	}
+				DO_NOT_FORCE);
+			}
 
 
 	public void validate(
-		Configuration			cfg,
-		String					scope,
-		String					name,
-		int						forceMode) throws ConfigurationException
-	{
+			Configuration			cfg,
+			String					scope,
+			String					name,
+			int						forceMode) throws ConfigurationException
+			{
 		validate(cfg, scope, name, true, Configuration.CFG_SCOPE_AND_VARS,
-				 forceMode);
-	}
+				forceMode);
+			}
 
 
 	public void validate(
-		Configuration			cfg,
-		String					scope,
-		String					name,
-		boolean					recurseIntoSubscopes,
-		int						typeMask) throws ConfigurationException
-	{
+			Configuration			cfg,
+			String					scope,
+			String					name,
+			boolean					recurseIntoSubscopes,
+			int						typeMask) throws ConfigurationException
+			{
 		validate(cfg, scope, name, recurseIntoSubscopes, typeMask,
-				 DO_NOT_FORCE);
-	}
+				DO_NOT_FORCE);
+			}
 
 
 	public void validate(
-		Configuration			cfg,
-		String					scope,
-		String					name,
-		boolean					recurseIntoSubscopes,
-		int						typeMask,
-		int						forceMode) throws ConfigurationException
-	{
+			Configuration			cfg,
+			String					scope,
+			String					name,
+			boolean					recurseIntoSubscopes,
+			int						typeMask,
+			int						forceMode) throws ConfigurationException
+			{
 		String					fullyScopedName;
 		String[]				itemNames;
 
@@ -135,31 +135,31 @@ public class SchemaValidator
 		//--------
 		fullyScopedName = cfg.mergeNames(scope, name);
 		itemNames = cfg.listLocallyScopedNames(scope, name, typeMask,
-												recurseIntoSubscopes);
+				recurseIntoSubscopes);
 
 		//--------
 		// Now validate those names
 		//--------
 		validate(cfg, scope, name, itemNames, forceMode);
-	}
+			}
 
 
 	private void checkTypeDoesNotExist(String typeName)
-												throws ConfigurationException
-	{
+			throws ConfigurationException
+			{
 		int						len;
 		int						i;
 		SchemaType				type;
 
 		len = schemaTypes.size();
 		for (i = 0; i < len; i++) {
-			type = (SchemaType)schemaTypes.get(i);
+			type = schemaTypes.get(i);
 			if (typeName.equals(type.getTypeName())) {
 				throw new ConfigurationException("schema type '" + typeName
-												 + "' is already registered");
+						+ "' is already registered");
 			}
 		}
-	}
+			}
 
 
 	protected void registerType(SchemaType type) throws ConfigurationException
@@ -171,21 +171,19 @@ public class SchemaValidator
 
 
 	void registerTypedef(
-			String			typeName,
-			int				cfgType,
-			String			baseTypeName,
-			ArrayList		baseTypeArgsList) throws ConfigurationException
-	{
+String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArgsList)
+	        throws ConfigurationException
+			{
 		SchemaType			type;
 		String[]			baseTypeArgs;
 
 		checkTypeDoesNotExist(typeName);
-		baseTypeArgs = (String[])baseTypeArgsList.toArray(new String[0]);
+		baseTypeArgs = baseTypeArgsList.toArray(new String[0]);
 		type = new SchemaTypeTypedef(typeName, cfgType, baseTypeName,
-										baseTypeArgs);
+				baseTypeArgs);
 		schemaTypes.add(type);
 		areTypesSorted = false;
-	}
+			}
 
 
 	void sortTypes()
@@ -222,7 +220,7 @@ public class SchemaValidator
 		if (index < 0) {
 			return null;
 		}
-		return (SchemaType)schemaTypes.get(index);
+		return schemaTypes.get(index);
 	}
 
 
@@ -238,8 +236,8 @@ public class SchemaValidator
 
 
 	private void printTypeArgs(
-		String[]			typeArgs,
-		int					indentLevel)
+			String[]			typeArgs,
+			int					indentLevel)
 	{
 		indent(indentLevel);
 		System.out.print("typeArgs = [");
@@ -254,9 +252,9 @@ public class SchemaValidator
 
 
 	private void printTypeNameAndArgs(
-		String				typeName,
-		String[]			typeArgs,
-		int					indentLevel)
+			String				typeName,
+			String[]			typeArgs,
+			int					indentLevel)
 	{
 		indent(indentLevel);
 		System.out.print("typename = \"" + typeName + "\"; typeArgs = [");
@@ -271,34 +269,34 @@ public class SchemaValidator
 
 
 	void callCheckRule(
-		SchemaType			target,
-		Configuration		cfg,
-		String				typeName,
-		ArrayList			typeArgsList,
-		String				rule,
-		int					indentLevel)
+			SchemaType			target,
+			Configuration		cfg,
+			String				typeName,
+			ArrayList<String>	typeArgsList,
+			String				rule,
+			int					indentLevel)
 	{
 		String[]			typeArgs;
 
-		typeArgs = (String[])typeArgsList.toArray(new String[0]);
+		typeArgs = typeArgsList.toArray(new String[0]);
 		callCheckRule(target, cfg, typeName, typeArgs, rule, indentLevel);
 	}
 
 
 	void callCheckRule(
-		SchemaType			target,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule,
-		int					indentLevel)
+			SchemaType			target,
+			Configuration		cfg,
+			String				typeName,
+			String[]			typeArgs,
+			String				rule,
+			int					indentLevel)
 	{
 		try {
 			if (wantDiagnostics) {
 				System.out.println("");
 				indent(indentLevel);
 				System.out.print("start " + target.getClassName()
-								+ ".checkRule()\n");
+						+ ".checkRule()\n");
 				indent(indentLevel+1);
 				System.out.print("rule = \"" + rule + "\"\n");
 				printTypeNameAndArgs(typeName, typeArgs, indentLevel+1);
@@ -307,14 +305,14 @@ public class SchemaValidator
 			if (wantDiagnostics) {
 				indent(indentLevel);
 				System.out.print("end " + target.getClassName()
-								+ ".checkRule()\n");
+						+ ".checkRule()\n");
 			}
 		} catch(ConfigurationException ex) {
 			if (wantDiagnostics) {
 				System.out.println("");
 				indent(indentLevel);
 				System.out.print("exception throw from " + target.getClassName()
-								+ ".checkRule(): " + ex.getMessage() + "\n");
+						+ ".checkRule(): " + ex.getMessage() + "\n");
 			}
 			throw ex;
 		}
@@ -336,28 +334,28 @@ public class SchemaValidator
 				System.out.println("");
 				indent(indentLevel);
 				System.out.print("start " + target.getClassName()
-								+ ".validate()\n");
+						+ ".validate()\n");
 				indent(indentLevel+1);
 				System.out.print("scope = \"" + scope + "\"; name = \""
-								+ name + "\"\n");
+						+ name + "\"\n");
 				indent(indentLevel+1);
 				System.out.print("typeName = \"" + typeName
-							+ "\"; origTypeName = \"" + origTypeName + "\"\n");
+						+ "\"; origTypeName = \"" + origTypeName + "\"\n");
 				printTypeArgs(typeArgs, indentLevel+1);
 			}
 			target.validate(this, cfg, scope, name, typeName, origTypeName,
-						typeArgs, indentLevel+1);
+					typeArgs, indentLevel+1);
 			if (wantDiagnostics) {
 				indent(indentLevel);
 				System.out.print("end " + target.getClassName()
-								+ ".validate()\n");
+						+ ".validate()\n");
 			}
 		} catch(ConfigurationException ex) {
 			if (wantDiagnostics) {
 				System.out.println("");
 				indent(indentLevel);
 				System.out.print("exception throw from " + target.getClassName()
-								+ ".validate(): " + ex.getMessage() + "\n");
+						+ ".validate(): " + ex.getMessage() + "\n");
 			}
 			throw ex;
 		}
@@ -365,13 +363,13 @@ public class SchemaValidator
 
 
 	boolean callIsA(
-		SchemaType			target,
-		Configuration		cfg,
-		String				value,
-		String				typeName,
-		String[]			typeArgs,
-		int					indentLevel,
-		StringBuffer		errSuffix)
+			SchemaType			target,
+			Configuration		cfg,
+			String				value,
+			String				typeName,
+			String[]			typeArgs,
+			int					indentLevel,
+			StringBuffer		errSuffix)
 	{
 		boolean				result = false;
 
@@ -385,7 +383,7 @@ public class SchemaValidator
 				printTypeNameAndArgs(typeName, typeArgs, indentLevel+1);
 			}
 			result = target.isA(this, cfg, value, typeName, typeArgs,
-						indentLevel+1, errSuffix);
+					indentLevel+1, errSuffix);
 			if (wantDiagnostics) {
 				indent(indentLevel);
 				System.out.print("end " + target.getClassName() + ".isA()\n");
@@ -398,7 +396,7 @@ public class SchemaValidator
 				System.out.println("");
 				indent(indentLevel);
 				System.out.print("exception throw from " + target.getClassName()
-								+ ".isA(): " + ex.getMessage() + "\n");
+						+ ".isA(): " + ex.getMessage() + "\n");
 			}
 			throw ex;
 		}
@@ -407,12 +405,12 @@ public class SchemaValidator
 
 
 	private void validate(
-		Configuration		cfg,
-		String				scope,
-		String				localName,
-		String[]			itemNames,
-		int					forceMode) throws ConfigurationException
-	{
+			Configuration		cfg,
+			String				scope,
+			String				localName,
+			String[]			itemNames,
+			int					forceMode) throws ConfigurationException
+			{
 		String				fullyScopedName;
 		String				unlistedName;
 		String				unexpandedName;
@@ -423,7 +421,7 @@ public class SchemaValidator
 		SchemaIdRuleInfo	idRule;
 		SchemaType			typeDef;
 		String				prefix = "---- " + this.getClass().getName()
-									+ ".validate()";
+				+ ".validate()";
 
 		fullyScopedName = cfg.mergeNames(scope, localName);
 		if (wantDiagnostics) {
@@ -451,12 +449,12 @@ public class SchemaValidator
 				switch (cfg.type(unlistedName, "")) {
 				case Configuration.CFG_SCOPE:
 					msg = cfg.fileName() + ": the '" + unlistedName
-						+ "' scope is unknown.";
+					+ "' scope is unknown.";
 					break;
 				case Configuration.CFG_LIST:
 				case Configuration.CFG_STRING:
 					msg = cfg.fileName() + ": the '" + unlistedName
-						+ "' variable is unknown.";
+					+ "' variable is unknown.";
 					break;
 				default:
 					Util.assertion(false); // Bug!
@@ -476,7 +474,7 @@ public class SchemaValidator
 			Util.assertion(typeDef != null);
 			try {
 				callValidate(typeDef, cfg, fullyScopedName, iName, typeName,
-								typeName, idRule.getArgs(), 1);
+						typeName, idRule.getArgs(), 1);
 			} catch(ConfigurationException ex) {
 				if (wantDiagnostics) {
 					System.out.print("\n" + prefix + ": end\n\n");
@@ -490,15 +488,15 @@ public class SchemaValidator
 		if (wantDiagnostics) {
 			System.out.print("\n" + prefix + ": end\n\n");
 		}
-	}
+			}
 
 
 	private void validateForceMode(
-		Configuration			cfg,
-		String					scope,
-		String					localName,
-		int						forceMode) throws ConfigurationException
-	{
+			Configuration			cfg,
+			String					scope,
+			String					localName,
+			int						forceMode) throws ConfigurationException
+			{
 		int						i;
 		int						len;
 		boolean					isOptional;
@@ -514,7 +512,7 @@ public class SchemaValidator
 		fullyScopedName = cfg.mergeNames(scope, localName);
 		len = schemaIdRules.size();
 		for (i = 0; i < len; i++) {
-			idRule = (SchemaIdRuleInfo)schemaIdRules.get(i);
+			idRule = schemaIdRules.get(i);
 			isOptional = idRule.getIsOptional();
 			if (forceMode == DO_NOT_FORCE && isOptional) {
 				continue;
@@ -524,10 +522,10 @@ public class SchemaValidator
 				validateRequiredUidEntry(cfg, fullyScopedName, idRule);
 			} else {
 				if (cfg.type(fullyScopedName, nameInRule)
-				    == Configuration.CFG_NO_VALUE)
+						== Configuration.CFG_NO_VALUE)
 				{
 					nameOfMissingEntry = cfg.mergeNames(fullyScopedName,
-														nameInRule);
+							nameInRule);
 					typeName = idRule.getTypeName();
 					throw new ConfigurationException(cfg.fileName() + ": the "
 							+ typeName + " '" + nameOfMissingEntry
@@ -535,14 +533,14 @@ public class SchemaValidator
 				}
 			}
 		}
-	}
+			}
 
 
 	private void validateRequiredUidEntry(
-		Configuration			cfg,
-		String					fullScope,
-		SchemaIdRuleInfo		idRule) throws ConfigurationException
-	{
+			Configuration			cfg,
+			String					fullScope,
+			SchemaIdRuleInfo		idRule) throws ConfigurationException
+			{
 		String					nameInRule;
 		int						lastDotIndex;
 		StringBuffer			parentScopePattern = new StringBuffer();
@@ -556,7 +554,7 @@ public class SchemaValidator
 		Util.assertion(nameInRule.indexOf("uid-") != -1);
 		lastDotIndex = nameInRule.lastIndexOf('.');
 		if (lastDotIndex == -1
-		    || nameInRule.indexOf("uid-", lastDotIndex+1) != -1)
+				|| nameInRule.indexOf("uid-", lastDotIndex+1) != -1)
 		{
 			return;
 		}
@@ -567,15 +565,15 @@ public class SchemaValidator
 		}
 		parentScopePattern.append(nameInRule.substring(0, lastDotIndex));
 		parentScopes = cfg.listFullyScopedNames(fullScope, "",
-												Configuration.CFG_SCOPE, true,
-												parentScopePattern.toString());
+				Configuration.CFG_SCOPE, true,
+				parentScopePattern.toString());
 		lastPartOfName = nameInRule.substring(lastDotIndex + 1);
 		for (i = 0; i < parentScopes.length; i++) {
 			if (cfg.type(parentScopes[i], lastPartOfName)
-			    == Configuration.CFG_NO_VALUE)
+					== Configuration.CFG_NO_VALUE)
 			{
 				nameOfMissingEntry = cfg.mergeNames(parentScopes[i],
-													lastPartOfName);
+						lastPartOfName);
 				typeName = idRule.getTypeName();
 				throw new ConfigurationException(cfg.fileName() + ": the "
 						+ typeName + " '" + nameOfMissingEntry
@@ -583,14 +581,14 @@ public class SchemaValidator
 			}
 		}
 
-	}
+			}
 
 
 	private boolean shouldIgnore(
-		Configuration			cfg,
-		String					scope,
-		String					expandedName,
-		String					unexpandedName)
+			Configuration			cfg,
+			String					scope,
+			String					expandedName,
+			String					unexpandedName)
 	{
 		int						i;
 		int						len;
@@ -604,7 +602,7 @@ public class SchemaValidator
 
 		size = schemaIgnoreRules.size();
 		for (i = 0; i < size; i++) {
-			rule = (SchemaIgnoreRuleInfo)schemaIgnoreRules.get(i);
+			rule = schemaIgnoreRules.get(i);
 			name = rule.getLocallyScopedName();
 			len = name.length();
 			//--------
@@ -615,7 +613,7 @@ public class SchemaValidator
 				continue;
 			}
 			if (unexpandedName.length() == len
-			    || unexpandedName.charAt(len) != '.')
+					|| unexpandedName.charAt(len) != '.')
 			{
 				continue;
 			}
@@ -626,14 +624,14 @@ public class SchemaValidator
 			//--------
 			symbol = rule.getSymbol();
 			switch (symbol) {
-				case SchemaLex.LEX_IGNORE_EVERYTHING_IN_SYM:
-					return true;
-				case SchemaLex.LEX_IGNORE_SCOPES_IN_SYM:
-				case SchemaLex.LEX_IGNORE_VARIABLES_IN_SYM:
-					break;
-				default:
-					Util.assertion(false, "Bug!");
-					break;
+			case SchemaLex.LEX_IGNORE_EVERYTHING_IN_SYM:
+				return true;
+			case SchemaLex.LEX_IGNORE_SCOPES_IN_SYM:
+			case SchemaLex.LEX_IGNORE_VARIABLES_IN_SYM:
+				break;
+			default:
+				Util.assertion(false, "Bug!");
+				break;
 			}
 			nameAfterPrefix = unexpandedName.substring(len+1);
 			hasDotAfterPrefix = (nameAfterPrefix.indexOf('.') != -1);
@@ -713,16 +711,16 @@ public class SchemaValidator
 		if (index < 0) {
 			return null;
 		}
-		return (SchemaIdRuleInfo)schemaIdRules.get(index);
+		return schemaIdRules.get(index);
 	}
 
 
 	//--------
 	// Instance variables NOT visible to subclasses.
 	//--------
-	ArrayList /*[SchemaIdRuleInfo]*/		schemaIdRules;
-	ArrayList /*[SchemaIgnoreRuleInfo]*/	schemaIgnoreRules;
-	ArrayList /*[SchemaType]*/				schemaTypes;
+	ArrayList<SchemaIdRuleInfo>				schemaIdRules;
+	ArrayList<SchemaIgnoreRuleInfo>			schemaIgnoreRules;
+	ArrayList<SchemaType>					schemaTypes;
 	boolean									areSchemaTypesSorted;
 	boolean									areTypesSorted;
 

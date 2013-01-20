@@ -40,7 +40,7 @@ public class ConfigurationImpl extends Configuration
 		rootScope              = new ConfigScope(null, "");
 		currScope              = rootScope;
 		fallbackCfg             = null;
-		fileNameStack          = new ArrayList();
+		fileNameStack          = new ArrayList<String>();
 		securityCfgScope       = "";
 		env                    = null;
 		uidIdentifierProcessor = new UidIdentifierProcessor();
@@ -1634,12 +1634,12 @@ public class ConfigurationImpl extends Configuration
 		String			localName,
 		String[]		defaultArray) throws ConfigurationException
 	{
-		int		 		type;
-		String			fullyScopedName;
-		ArrayList		result;
+		int		 			type;
+		String				fullyScopedName;
+		ArrayList<String>	result;
 		
 		fullyScopedName = mergeNames(scope, localName);
-		result = new ArrayList();
+		result = new ArrayList<String>();
 		type = listValueAndType(fullyScopedName, localName, result);
 		switch (type) {
 		case Configuration.CFG_LIST:
@@ -1666,10 +1666,10 @@ public class ConfigurationImpl extends Configuration
 	{
 		int			 		type;
 		String				fullyScopedName;
-		ArrayList			result;
+		ArrayList<String>	result;
 		
 		fullyScopedName = mergeNames(scope, localName);
-		result = new ArrayList();
+		result = new ArrayList<String>();
 		type = listValueAndType(fullyScopedName, localName, result);
 		switch (type) {
 		case Configuration.CFG_LIST:
@@ -2185,7 +2185,7 @@ public class ConfigurationImpl extends Configuration
 	public void insertList(
 		String				scope,
 		String				localName,
-		ArrayList			listValue) throws ConfigurationException
+		ArrayList<String>	listValue) throws ConfigurationException
 	{
 		String[]			array;
 		int					len;
@@ -2239,7 +2239,7 @@ public class ConfigurationImpl extends Configuration
 		fileName      = "<no file>";
 		rootScope     = new ConfigScope(null, "");
 		currScope     = rootScope;
-		fileNameStack = new ArrayList();
+		fileNameStack = new ArrayList<String>();
 	}
 
 
@@ -2264,7 +2264,7 @@ public class ConfigurationImpl extends Configuration
 	}
 
 
-	void insertList(String name, ArrayList listValue)
+	void insertList(String name, ArrayList<String> listValue)
 												throws ConfigurationException
 	{
 		String[]			array;
@@ -2528,7 +2528,7 @@ public class ConfigurationImpl extends Configuration
 	int listValueAndType(
 		String				fullyScopedName,
 		String				localName,
-		ArrayList			list)
+		ArrayList<String>	list)
 	{
 		ConfigItem			item;
 		String[]			array;
@@ -2596,7 +2596,7 @@ public class ConfigurationImpl extends Configuration
 	String						fileName;
 	ConfigScope					rootScope;
 	ConfigScope					currScope;
-	ArrayList					fileNameStack;
+	ArrayList<String>			fileNameStack;
 	ConfigurationImpl			fallbackCfg;
 	Properties					env;
 }
