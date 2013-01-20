@@ -29,13 +29,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 
 class ConfigScope
 {
 	ConfigScope(ConfigScope parentScope, String name)
 	{
-		table = new HashMap(16);
+		table = new HashMap<String, ConfigItem>(16);
 		this.parentScope = parentScope;
 		if (parentScope == null) {
 			Util.assertion(name.equals(""));
@@ -261,16 +262,16 @@ class ConfigScope
 
 	private String[] listLocalNames(int typeMask)
 	{
-		ArrayList<String>	arrayList;
-		Map.Entry			entry;
-		Iterator			iter;
-		ConfigItem			item;
-		String[]			result;
+		ArrayList<String>					arrayList;
+		Map.Entry<String, ConfigItem>		entry;
+		Iterator<Entry<String, ConfigItem>>	iter;
+		ConfigItem							item;
+		String[]							result;
 
 		arrayList = new ArrayList<String>();
 		iter = table.entrySet().iterator();
 		while (iter.hasNext()) {
-			entry = (Map.Entry)iter.next();
+			entry = (Map.Entry<String, ConfigItem>)iter.next();
 			item = (ConfigItem)entry.getValue();
 			if ((item.getType() & typeMask) != 0) {
 				arrayList.add(item.getName());
@@ -289,17 +290,17 @@ class ConfigScope
 			String[]			filterPatterns,
 			ArrayList<String>	arrayList)
 	{
-		Map.Entry			entry;
-		Iterator			iter;
-		ConfigItem			item;
-		ConfigScope			scope;
-		boolean				isPrefixEmpty;
-		String				scopedName;
+		Map.Entry<String, ConfigItem>		entry;
+		Iterator<Entry<String, ConfigItem>>	iter;
+		ConfigItem					  		item;
+		ConfigScope							scope;
+		boolean								isPrefixEmpty;
+		String								scopedName;
 
 		isPrefixEmpty = prefix.equals("");
 		iter = table.entrySet().iterator();
 		while (iter.hasNext()) {
-			entry = (Map.Entry)iter.next();
+			entry = (Map.Entry<String, ConfigItem>)iter.next();
 			item = (ConfigItem)entry.getValue();
 			if (isPrefixEmpty) {
 				scopedName = item.getName();
@@ -346,7 +347,7 @@ class ConfigScope
 	}
 
 
-	private final ConfigScope			parentScope;
-	private String				scopedName;
-	private final Map					table;
+	private final ConfigScope				parentScope;
+	private String							scopedName;
+	private final Map<String, ConfigItem>	table;
 }
