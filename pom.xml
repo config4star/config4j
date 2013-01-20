@@ -60,4 +60,11 @@
 	<modules>
 		<module>cli-tool</module>
 	</modules>
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>0.11.6</version>
+		</dependency>
+	</dependencies>
 </project>
