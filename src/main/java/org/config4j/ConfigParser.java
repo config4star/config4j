@@ -114,27 +114,27 @@ class ConfigParser {
 		this.config = config;
 		errorInIncludedFile = false;
 		switch (sourceType) {
-		case Configuration.INPUT_FILE:
-			fileName = source;
-			break;
-		case Configuration.INPUT_STRING:
-			if (sourceDescription.equals("")) {
-				fileName = "<string-based configuration>";
-			} else {
-				fileName = sourceDescription;
-			}
-			break;
-		case Configuration.INPUT_EXEC:
-			if (sourceDescription.equals("")) {
-				fileName = "exec#" + source;
-			} else {
-				fileName = sourceDescription;
-			}
-			source = trustedCmdLine;
-			break;
-		default:
-			Util.assertion(false); // Bug!
-			break;
+			case Configuration.INPUT_FILE:
+				fileName = source;
+				break;
+			case Configuration.INPUT_STRING:
+				if (sourceDescription.equals("")) {
+					fileName = "<string-based configuration>";
+				} else {
+					fileName = sourceDescription;
+				}
+				break;
+			case Configuration.INPUT_EXEC:
+				if (sourceDescription.equals("")) {
+					fileName = "exec#" + source;
+				} else {
+					fileName = sourceDescription;
+				}
+				source = trustedCmdLine;
+				break;
+			default:
+				Util.assertion(false); // Bug!
+				break;
 		}
 
 		// --------
@@ -205,21 +205,21 @@ class ConfigParser {
 		// --------
 		type = token.getType();
 		switch (type) {
-		case LexBase.LEX_UNKNOWN_FUNC_SYM:
-			throw new ConfigurationException("'" + token.getSpelling() + "' is not a built-in function");
-		case LexBase.LEX_SOLE_DOT_IDENT_SYM:
-			throw new ConfigurationException("'.' is not a valid identifier");
-		case LexBase.LEX_TWO_DOTS_IDENT_SYM:
-			throw new ConfigurationException("'..' appears in identified '" + token.getSpelling() + "'");
-		case LexBase.LEX_STRING_WITH_EOL_SYM:
-			throw new ConfigurationException("end-of-line not allowed in " + "string '" + token.getSpelling() + "'");
-		case LexBase.LEX_BLOCK_STRING_WITH_EOF_SYM:
-			throw new ConfigurationException("end-of-file encountered in " + "block string starting at line " + token.getLineNum());
-		case LexBase.LEX_ILLEGAL_IDENT_SYM:
-			throw new ConfigurationException("'" + token.getSpelling() + "' is not a legal identifier");
-		default:
-			// No lexical error. Handle the parsing error below.
-			break;
+			case LexBase.LEX_UNKNOWN_FUNC_SYM:
+				throw new ConfigurationException("'" + token.getSpelling() + "' is not a built-in function");
+			case LexBase.LEX_SOLE_DOT_IDENT_SYM:
+				throw new ConfigurationException("'.' is not a valid identifier");
+			case LexBase.LEX_TWO_DOTS_IDENT_SYM:
+				throw new ConfigurationException("'..' appears in identified '" + token.getSpelling() + "'");
+			case LexBase.LEX_STRING_WITH_EOL_SYM:
+				throw new ConfigurationException("end-of-line not allowed in " + "string '" + token.getSpelling() + "'");
+			case LexBase.LEX_BLOCK_STRING_WITH_EOF_SYM:
+				throw new ConfigurationException("end-of-file encountered in " + "block string starting at line " + token.getLineNum());
+			case LexBase.LEX_ILLEGAL_IDENT_SYM:
+				throw new ConfigurationException("'" + token.getSpelling() + "' is not a legal identifier");
+			default:
+				// No lexical error. Handle the parsing error below.
+				break;
 		}
 
 		// --------
@@ -373,18 +373,18 @@ class ConfigParser {
 			item = config.lookup(fromNamesArray[i], fromNamesArray[i], true);
 			Util.assertion(item != null);
 			switch (item.getType()) {
-			case Configuration.CFG_STRING:
-				config.insertString("", newName, item.getStringVal());
-				break;
-			case Configuration.CFG_LIST:
-				config.insertList(newName, item.getListVal());
-				break;
-			case Configuration.CFG_SCOPE:
-				config.ensureScopeExists(newName);
-				break;
-			default:
-				Util.assertion(false); // Bug!
-				break;
+				case Configuration.CFG_STRING:
+					config.insertString("", newName, item.getStringVal());
+					break;
+				case Configuration.CFG_LIST:
+					config.insertList(newName, item.getListVal());
+					break;
+				case Configuration.CFG_SCOPE:
+					config.ensureScopeExists(newName);
+					break;
+				default:
+					Util.assertion(false); // Bug!
+					break;
 			}
 		}
 
@@ -649,30 +649,30 @@ class ConfigParser {
 		int type;
 
 		switch (token.getType()) {
-		case ConfigLex.LEX_FUNC_SPLIT_SYM:
-			parseSplit(expr);
-			break;
-		case LexBase.LEX_OPEN_BRACKET_SYM:
-			// --------
-			// '[' StringExprList ']'
-			// --------
-			lex.nextToken(token); // consume '['
-			parseStringExprList(expr);
-			accept(LexBase.LEX_CLOSE_BRACKET_SYM, "expecting ']'");
-			break;
-		case LexBase.LEX_IDENT_SYM:
-			// --------
-			// ident_sym: make sure the identifier is a list
-			// --------
-			type = config.listValueAndType(token.getSpelling(), token.getSpelling(), expr);
-			if (type != Configuration.CFG_LIST) {
-				error("identifier '" + token.getSpelling() + "' is not a list", false);
-			}
-			lex.nextToken(token); // consume the identifier
-			break;
-		default:
-			error("expecting an identifier or '['"); // matching ']'
-			break;
+			case ConfigLex.LEX_FUNC_SPLIT_SYM:
+				parseSplit(expr);
+				break;
+			case LexBase.LEX_OPEN_BRACKET_SYM:
+				// --------
+				// '[' StringExprList ']'
+				// --------
+				lex.nextToken(token); // consume '['
+				parseStringExprList(expr);
+				accept(LexBase.LEX_CLOSE_BRACKET_SYM, "expecting ']'");
+				break;
+			case LexBase.LEX_IDENT_SYM:
+				// --------
+				// ident_sym: make sure the identifier is a list
+				// --------
+				type = config.listValueAndType(token.getSpelling(), token.getSpelling(), expr);
+				if (type != Configuration.CFG_LIST) {
+					error("identifier '" + token.getSpelling() + "' is not a list", false);
+				}
+				lex.nextToken(token); // consume the identifier
+				break;
+			default:
+				error("expecting an identifier or '['"); // matching ']'
+				break;
 		}
 	}
 
@@ -796,16 +796,16 @@ class ConfigParser {
 		boolean doAssign;
 
 		switch (config.type(varName.getSpelling(), "")) {
-		case Configuration.CFG_STRING:
-		case Configuration.CFG_LIST:
-			if (assignmentType == LexBase.LEX_QUESTION_EQUALS_SYM) {
-				doAssign = false;
-			} else {
+			case Configuration.CFG_STRING:
+			case Configuration.CFG_LIST:
+				if (assignmentType == LexBase.LEX_QUESTION_EQUALS_SYM) {
+					doAssign = false;
+				} else {
+					doAssign = true;
+				}
+				break;
+			default:
 				doAssign = true;
-			}
-			break;
-		default:
-			doAssign = true;
 		}
 
 		// --------
@@ -813,48 +813,48 @@ class ConfigParser {
 		// expression to be parsed is a stringExpr or an listExpr.
 		// --------
 		switch (token.getType()) {
-		case LexBase.LEX_OPEN_BRACKET_SYM:
-		case ConfigLex.LEX_FUNC_SPLIT_SYM:
-			varType = Configuration.CFG_LIST;
-			break;
-		case ConfigLex.LEX_FUNC_GETENV_SYM:
-		case ConfigLex.LEX_FUNC_EXEC_SYM:
-		case ConfigLex.LEX_FUNC_JOIN_SYM:
-		case ConfigLex.LEX_FUNC_READ_FILE_SYM:
-		case ConfigLex.LEX_FUNC_REPLACE_SYM:
-		case ConfigLex.LEX_FUNC_OS_TYPE_SYM:
-		case ConfigLex.LEX_FUNC_OS_DIR_SEP_SYM:
-		case ConfigLex.LEX_FUNC_OS_PATH_SEP_SYM:
-		case ConfigLex.LEX_FUNC_FILE_TO_DIR_SYM:
-		case ConfigLex.LEX_FUNC_CONFIG_FILE_SYM:
-		case ConfigLex.LEX_FUNC_CONFIG_TYPE_SYM:
-		case ConfigLex.LEX_FUNC_SIBLING_SCOPE_SYM:
-		case LexBase.LEX_STRING_SYM:
-			varType = Configuration.CFG_STRING;
-			break;
-		case LexBase.LEX_IDENT_SYM:
-			// --------
-			// This identifier (hopefully) denotes an already
-			// existing variable. We have to determine the type
-			// of the variable (it is either a string or a list)
-			// in order to proceed with the parsing.
-			// --------
-			switch (config.type(token.getSpelling(), "")) {
-			case Configuration.CFG_STRING:
-				varType = Configuration.CFG_STRING;
-				break;
-			case Configuration.CFG_LIST:
+			case LexBase.LEX_OPEN_BRACKET_SYM:
+			case ConfigLex.LEX_FUNC_SPLIT_SYM:
 				varType = Configuration.CFG_LIST;
 				break;
+			case ConfigLex.LEX_FUNC_GETENV_SYM:
+			case ConfigLex.LEX_FUNC_EXEC_SYM:
+			case ConfigLex.LEX_FUNC_JOIN_SYM:
+			case ConfigLex.LEX_FUNC_READ_FILE_SYM:
+			case ConfigLex.LEX_FUNC_REPLACE_SYM:
+			case ConfigLex.LEX_FUNC_OS_TYPE_SYM:
+			case ConfigLex.LEX_FUNC_OS_DIR_SEP_SYM:
+			case ConfigLex.LEX_FUNC_OS_PATH_SEP_SYM:
+			case ConfigLex.LEX_FUNC_FILE_TO_DIR_SYM:
+			case ConfigLex.LEX_FUNC_CONFIG_FILE_SYM:
+			case ConfigLex.LEX_FUNC_CONFIG_TYPE_SYM:
+			case ConfigLex.LEX_FUNC_SIBLING_SCOPE_SYM:
+			case LexBase.LEX_STRING_SYM:
+				varType = Configuration.CFG_STRING;
+				break;
+			case LexBase.LEX_IDENT_SYM:
+				// --------
+				// This identifier (hopefully) denotes an already
+				// existing variable. We have to determine the type
+				// of the variable (it is either a string or a list)
+				// in order to proceed with the parsing.
+				// --------
+				switch (config.type(token.getSpelling(), "")) {
+					case Configuration.CFG_STRING:
+						varType = Configuration.CFG_STRING;
+						break;
+					case Configuration.CFG_LIST:
+						varType = Configuration.CFG_LIST;
+						break;
+					default:
+						error("identifier '" + token.getSpelling() + "' not previously declared", false);
+						return;
+				}
+				break;
 			default:
-				error("identifier '" + token.getSpelling() + "' not previously declared", false);
+				error("expecting a string, identifier or '['");
+				// matching ']'
 				return;
-			}
-			break;
-		default:
-			error("expecting a string, identifier or '['");
-			// matching ']'
-			return;
 		}
 
 		// --------
@@ -862,23 +862,23 @@ class ConfigParser {
 		// can parse it correctly.
 		// --------
 		switch (varType) {
-		case Configuration.CFG_STRING:
-			stringExpr = new StringBuffer();
-			parseStringExpr(stringExpr);
-			if (doAssign) {
-				config.insertString("", varName.getSpelling(), stringExpr.toString());
-			}
-			break;
-		case Configuration.CFG_LIST:
-			listExpr = new ArrayList<String>();
-			parseListExpr(listExpr);
-			if (doAssign) {
-				config.insertList(varName.getSpelling(), listExpr);
-			}
-			break;
-		default:
-			Util.assertion(false); // Bug
-			break;
+			case Configuration.CFG_STRING:
+				stringExpr = new StringBuffer();
+				parseStringExpr(stringExpr);
+				if (doAssign) {
+					config.insertString("", varName.getSpelling(), stringExpr.toString());
+				}
+				break;
+			case Configuration.CFG_LIST:
+				listExpr = new ArrayList<String>();
+				parseListExpr(listExpr);
+				if (doAssign) {
+					config.insertList(varName.getSpelling(), listExpr);
+				}
+				break;
+			default:
+				Util.assertion(false); // Bug
+				break;
 		}
 	}
 
@@ -988,25 +988,25 @@ class ConfigParser {
 		accept(LexBase.LEX_IDENT_SYM, "expecting identifier or 'include'");
 
 		switch (token.getType()) {
-		case LexBase.LEX_QUESTION_EQUALS_SYM:
-		case LexBase.LEX_EQUALS_SYM:
-			assignmentType = token.getType();
-			lex.nextToken(token); // consume '='
-			parseRhsAssignStmt(identName, assignmentType);
-			accept(LexBase.LEX_SEMICOLON_SYM, "expecting ';' or '+'");
-			break;
-		case LexBase.LEX_OPEN_BRACE_SYM:
-			parseScope(identName);
-			// --------
-			// Consume an optional ";"
-			// --------
-			if (token.getType() == LexBase.LEX_SEMICOLON_SYM) {
-				lex.nextToken(token);
-			}
-			break;
-		default:
-			error("expecting '=', '?=' or '{'"); // matching '}'
-			return;
+			case LexBase.LEX_QUESTION_EQUALS_SYM:
+			case LexBase.LEX_EQUALS_SYM:
+				assignmentType = token.getType();
+				lex.nextToken(token); // consume '='
+				parseRhsAssignStmt(identName, assignmentType);
+				accept(LexBase.LEX_SEMICOLON_SYM, "expecting ';' or '+'");
+				break;
+			case LexBase.LEX_OPEN_BRACE_SYM:
+				parseScope(identName);
+				// --------
+				// Consume an optional ";"
+				// --------
+				if (token.getType() == LexBase.LEX_SEMICOLON_SYM) {
+					lex.nextToken(token);
+				}
+				break;
+			default:
+				error("expecting '=', '?=' or '{'"); // matching '}'
+				return;
 		}
 	}
 
@@ -1028,111 +1028,111 @@ class ConfigParser {
 
 		str.delete(0, str.length());
 		switch (token.getType()) {
-		case ConfigLex.LEX_FUNC_SIBLING_SCOPE_SYM:
-			parseSiblingScope(str);
-			break;
-		case ConfigLex.LEX_FUNC_GETENV_SYM:
-			parseEnv(str);
-			break;
-		case ConfigLex.LEX_FUNC_EXEC_SYM:
-			parseExec(str);
-			break;
-		case ConfigLex.LEX_FUNC_JOIN_SYM:
-			parseJoin(str);
-			break;
-		case ConfigLex.LEX_FUNC_READ_FILE_SYM:
-			parseReadFile(str);
-			break;
-		case ConfigLex.LEX_FUNC_REPLACE_SYM:
-			parseReplace(str);
-			break;
-		case ConfigLex.LEX_FUNC_OS_TYPE_SYM:
-			if (System.getProperty("file.separator").equals("\\")) {
-				str.append("windows");
-			} else {
-				str.append("unix");
-			}
-			lex.nextToken(token);
-			accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
-			break;
-		case ConfigLex.LEX_FUNC_OS_DIR_SEP_SYM:
-			str.append(System.getProperty("file.separator"));
-			lex.nextToken(token);
-			accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
-			break;
-		case ConfigLex.LEX_FUNC_OS_PATH_SEP_SYM:
-			str.append(System.getProperty("path.separator"));
-			lex.nextToken(token);
-			accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
-			break;
-		case ConfigLex.LEX_FUNC_FILE_TO_DIR_SYM:
-			lex.nextToken(token);
-			name = new StringBuffer();
-			parseStringExpr(name);
-			accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
-			str.append(getDirectoryOfFile(name.toString()));
-			break;
-		case ConfigLex.LEX_FUNC_CONFIG_FILE_SYM:
-			lex.nextToken(token);
-			accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
-			str.append(fileName);
-			break;
-		case ConfigLex.LEX_FUNC_CONFIG_TYPE_SYM:
-			lex.nextToken(token);
-			name = new StringBuffer();
-			parseStringExpr(name);
-			accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
-			item = config.lookup(name.toString(), name.toString());
-			if (item == null) {
-				type = Configuration.CFG_NO_VALUE;
-			} else {
-				type = item.getType();
-			}
-			switch (type) {
-			case Configuration.CFG_STRING:
-				str.append("string");
+			case ConfigLex.LEX_FUNC_SIBLING_SCOPE_SYM:
+				parseSiblingScope(str);
 				break;
-			case Configuration.CFG_LIST:
-				str.append("list");
+			case ConfigLex.LEX_FUNC_GETENV_SYM:
+				parseEnv(str);
 				break;
-			case Configuration.CFG_SCOPE:
-				str.append("scope");
+			case ConfigLex.LEX_FUNC_EXEC_SYM:
+				parseExec(str);
 				break;
-			case Configuration.CFG_NO_VALUE:
-				str.append("no_value");
+			case ConfigLex.LEX_FUNC_JOIN_SYM:
+				parseJoin(str);
+				break;
+			case ConfigLex.LEX_FUNC_READ_FILE_SYM:
+				parseReadFile(str);
+				break;
+			case ConfigLex.LEX_FUNC_REPLACE_SYM:
+				parseReplace(str);
+				break;
+			case ConfigLex.LEX_FUNC_OS_TYPE_SYM:
+				if (System.getProperty("file.separator").equals("\\")) {
+					str.append("windows");
+				} else {
+					str.append("unix");
+				}
+				lex.nextToken(token);
+				accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
+				break;
+			case ConfigLex.LEX_FUNC_OS_DIR_SEP_SYM:
+				str.append(System.getProperty("file.separator"));
+				lex.nextToken(token);
+				accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
+				break;
+			case ConfigLex.LEX_FUNC_OS_PATH_SEP_SYM:
+				str.append(System.getProperty("path.separator"));
+				lex.nextToken(token);
+				accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
+				break;
+			case ConfigLex.LEX_FUNC_FILE_TO_DIR_SYM:
+				lex.nextToken(token);
+				name = new StringBuffer();
+				parseStringExpr(name);
+				accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
+				str.append(getDirectoryOfFile(name.toString()));
+				break;
+			case ConfigLex.LEX_FUNC_CONFIG_FILE_SYM:
+				lex.nextToken(token);
+				accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
+				str.append(fileName);
+				break;
+			case ConfigLex.LEX_FUNC_CONFIG_TYPE_SYM:
+				lex.nextToken(token);
+				name = new StringBuffer();
+				parseStringExpr(name);
+				accept(LexBase.LEX_CLOSE_PAREN_SYM, "expecting ')'");
+				item = config.lookup(name.toString(), name.toString());
+				if (item == null) {
+					type = Configuration.CFG_NO_VALUE;
+				} else {
+					type = item.getType();
+				}
+				switch (type) {
+					case Configuration.CFG_STRING:
+						str.append("string");
+						break;
+					case Configuration.CFG_LIST:
+						str.append("list");
+						break;
+					case Configuration.CFG_SCOPE:
+						str.append("scope");
+						break;
+					case Configuration.CFG_NO_VALUE:
+						str.append("no_value");
+						break;
+					default:
+						Util.assertion(false); // Bug!
+						break;
+				}
+				break;
+			case LexBase.LEX_STRING_SYM:
+				str.append(token.getSpelling());
+				lex.nextToken(token);
+				break;
+			case LexBase.LEX_IDENT_SYM:
+				type = config.stringValueAndType(token.getSpelling(), token.getSpelling(), str);
+				switch (type) {
+					case Configuration.CFG_STRING:
+						break;
+					case Configuration.CFG_NO_VALUE:
+						error("identifier '" + token.getSpelling() + "' not previously declared", false);
+						return;
+					case Configuration.CFG_SCOPE:
+						error("identifier '" + token.getSpelling() + "' is a scope instead of a string", false);
+						return;
+					case Configuration.CFG_LIST:
+						error("identifier '" + token.getSpelling() + "' is a list instead of a string", false);
+						return;
+					default:
+						Util.assertion(false); // Bug
+						return;
+				}
+				lex.nextToken(token);
 				break;
 			default:
-				Util.assertion(false); // Bug!
-				break;
-			}
-			break;
-		case LexBase.LEX_STRING_SYM:
-			str.append(token.getSpelling());
-			lex.nextToken(token);
-			break;
-		case LexBase.LEX_IDENT_SYM:
-			type = config.stringValueAndType(token.getSpelling(), token.getSpelling(), str);
-			switch (type) {
-			case Configuration.CFG_STRING:
-				break;
-			case Configuration.CFG_NO_VALUE:
-				error("identifier '" + token.getSpelling() + "' not previously declared", false);
+				error("expecting a string or identifier");
 				return;
-			case Configuration.CFG_SCOPE:
-				error("identifier '" + token.getSpelling() + "' is a scope instead of a string", false);
-				return;
-			case Configuration.CFG_LIST:
-				error("identifier '" + token.getSpelling() + "' is a list instead of a string", false);
-				return;
-			default:
-				Util.assertion(false); // Bug
-				return;
-			}
-			lex.nextToken(token);
-			break;
-		default:
-			error("expecting a string or identifier");
-			return;
 		}
 	}
 
@@ -1210,40 +1210,40 @@ class ConfigParser {
 		str1 = new StringBuffer();
 		parseStringExpr(str1);
 		switch (token.getType()) {
-		case LexBase.LEX_EQUALS_EQUALS_SYM:
-			lex.nextToken(token);
-			str2 = new StringBuffer();
-			parseStringExpr(str2);
-			result = str1.toString().equals(str2.toString());
-			break;
-		case LexBase.LEX_NOT_EQUALS_SYM:
-			lex.nextToken(token);
-			str2 = new StringBuffer();
-			parseStringExpr(str2);
-			result = !str1.toString().equals(str2.toString());
-			break;
-		case ConfigLex.LEX_IN_SYM:
-			lex.nextToken(token);
-			list = new ArrayList<String>();
-			parseListExpr(list);
-			len = list.size();
-			result = false;
-			for (i = 0; i < len; i++) {
-				if (str1.toString().equals(list.get(i))) {
-					result = true;
-					break;
+			case LexBase.LEX_EQUALS_EQUALS_SYM:
+				lex.nextToken(token);
+				str2 = new StringBuffer();
+				parseStringExpr(str2);
+				result = str1.toString().equals(str2.toString());
+				break;
+			case LexBase.LEX_NOT_EQUALS_SYM:
+				lex.nextToken(token);
+				str2 = new StringBuffer();
+				parseStringExpr(str2);
+				result = !str1.toString().equals(str2.toString());
+				break;
+			case ConfigLex.LEX_IN_SYM:
+				lex.nextToken(token);
+				list = new ArrayList<String>();
+				parseListExpr(list);
+				len = list.size();
+				result = false;
+				for (i = 0; i < len; i++) {
+					if (str1.toString().equals(list.get(i))) {
+						result = true;
+						break;
+					}
 				}
-			}
-			break;
-		case ConfigLex.LEX_MATCHES_SYM:
-			lex.nextToken(token);
-			str2 = new StringBuffer();
-			parseStringExpr(str2);
-			result = Configuration.patternMatch(str1.toString(), str2.toString());
-			break;
-		default:
-			error("expecting '(', or a string expression");
-			break;
+				break;
+			case ConfigLex.LEX_MATCHES_SYM:
+				lex.nextToken(token);
+				str2 = new StringBuffer();
+				parseStringExpr(str2);
+				result = Configuration.patternMatch(str1.toString(), str2.toString());
+				break;
+			default:
+				error("expecting '(', or a string expression");
+				break;
 		}
 		return result;
 	}
@@ -1254,17 +1254,17 @@ class ConfigParser {
 		countOpenBraces = 1;
 		while (countOpenBraces > 0) {
 			switch (token.getType()) {
-			case LexBase.LEX_OPEN_BRACE_SYM:
-				countOpenBraces++;
-				break;
-			case LexBase.LEX_CLOSE_BRACE_SYM:
-				countOpenBraces--;
-				break;
-			case LexBase.LEX_EOF_SYM:
-				error("expecting '}'");
-				break;
-			default:
-				break;
+				case LexBase.LEX_OPEN_BRACE_SYM:
+					countOpenBraces++;
+					break;
+				case LexBase.LEX_CLOSE_BRACE_SYM:
+					countOpenBraces--;
+					break;
+				case LexBase.LEX_EOF_SYM:
+					error("expecting '}'");
+					break;
+				default:
+					break;
 			}
 			lex.nextToken(token);
 		}

@@ -54,16 +54,16 @@ class SchemaTypeList extends SchemaType {
 			throw new ConfigurationException("unknown type '" + listElementTypeName + "' in rule '" + rule + "'");
 		}
 		switch (typeDef.getCfgType()) {
-		case Configuration.CFG_STRING:
-			break;
-		case Configuration.CFG_LIST:
-			throw new ConfigurationException("you cannot embed a list type ('" + listElementTypeName + "') inside " + "another list "
-			        + "in rule '" + rule + "'");
-		case Configuration.CFG_SCOPE:
-			throw new ConfigurationException("you cannot embed a scope type ('" + listElementTypeName + "') inside " + "a list in rule '"
-			        + rule + "'");
-		default:
-			Util.assertion(false);
+			case Configuration.CFG_STRING:
+				break;
+			case Configuration.CFG_LIST:
+				throw new ConfigurationException("you cannot embed a list type ('" + listElementTypeName + "') inside " + "another list "
+				        + "in rule '" + rule + "'");
+			case Configuration.CFG_SCOPE:
+				throw new ConfigurationException("you cannot embed a scope type ('" + listElementTypeName + "') inside "
+				        + "a list in rule '" + rule + "'");
+			default:
+				Util.assertion(false);
 		}
 	}
 

@@ -124,30 +124,30 @@ public class LexBase {
 		funcInfoArray = null;
 
 		switch (sourceType) {
-		case Configuration.INPUT_FILE:
-			try {
-				file = new BufferedReader(new FileReader(source));
-			} catch (Exception ex) {
-				throw new ConfigurationException("cannot open '" + source + "': " + ex.getMessage());
-			}
-			break;
-		case Configuration.INPUT_STRING:
-			ptr = source;
-			ptrIndex = 0;
-			ptrLen = ptr.length();
-			break;
-		case Configuration.INPUT_EXEC:
-			execOutput = new StringBuffer();
-			if (!Util.execCmd(source, execOutput)) {
-				throw new ConfigurationException("cannot parse 'exec#" + source + "': " + execOutput.toString());
-			}
-			ptr = execOutput.toString();
-			ptrIndex = 0;
-			ptrLen = ptr.length();
-			break;
-		default:
-			Util.assertion(false); // Bug!
-			break;
+			case Configuration.INPUT_FILE:
+				try {
+					file = new BufferedReader(new FileReader(source));
+				} catch (Exception ex) {
+					throw new ConfigurationException("cannot open '" + source + "': " + ex.getMessage());
+				}
+				break;
+			case Configuration.INPUT_STRING:
+				ptr = source;
+				ptrIndex = 0;
+				ptrLen = ptr.length();
+				break;
+			case Configuration.INPUT_EXEC:
+				execOutput = new StringBuffer();
+				if (!Util.execCmd(source, execOutput)) {
+					throw new ConfigurationException("cannot parse 'exec#" + source + "': " + execOutput.toString());
+				}
+				ptr = execOutput.toString();
+				ptrIndex = 0;
+				ptrLen = ptr.length();
+				break;
+			default:
+				Util.assertion(false); // Bug!
+				break;
 		}
 		nextChar(); // initialize ch
 	}
@@ -229,38 +229,39 @@ public class LexBase {
 				return;
 			}
 			switch ((char) ch) {
-			case '%':
-				// --------
-				// Escape char in string
-				// --------
-				nextChar();
-				if (ch == EOF || ch == '\n') {
-					token.reset(LEX_STRING_WITH_EOL_SYM, lineNum, spelling.toString());
-					return;
-				}
-				switch ((char) ch) {
-				case 't':
-					spelling.append('\t');
-					break;
-				case 'n':
-					spelling.append('\n');
-					break;
 				case '%':
-					spelling.append('%');
-					break;
-				case '"':
-					spelling.append('"');
+					// --------
+					// Escape char in string
+					// --------
+					nextChar();
+					if (ch == EOF || ch == '\n') {
+						token.reset(LEX_STRING_WITH_EOL_SYM, lineNum, spelling.toString());
+						return;
+					}
+					switch ((char) ch) {
+						case 't':
+							spelling.append('\t');
+							break;
+						case 'n':
+							spelling.append('\n');
+							break;
+						case '%':
+							spelling.append('%');
+							break;
+						case '"':
+							spelling.append('"');
+							break;
+						default:
+							throw new ConfigurationException("Invalid escape sequence (%" + (char) ch + ") in string on line "
+							        + this.lineNum);
+					}
 					break;
 				default:
-					throw new ConfigurationException("Invalid escape sequence (%" + (char) ch + ") in string on line " + this.lineNum);
-				}
-				break;
-			default:
-				// --------
-				// Typical char in string
-				// --------
-				spelling.append((char) ch);
-				break;
+					// --------
+					// Typical char in string
+					// --------
+					spelling.append((char) ch);
+					break;
 			}
 			nextChar();
 		}
@@ -368,147 +369,147 @@ public class LexBase {
 		// --------
 		spelling = new StringBuffer();
 		switch ((char) ch) {
-		case '?':
-			nextChar();
-			if (ch == '=') {
+			case '?':
 				nextChar();
-				token.reset(LEX_QUESTION_EQUALS_SYM, lineNum, "!=");
-			} else {
-				token.reset(LEX_UNKNOWN_SYM, lineNum, spelling.toString());
-			}
-			return;
-		case '!':
-			nextChar();
-			if (ch == '=') {
-				nextChar();
-				token.reset(LEX_NOT_EQUALS_SYM, lineNum, "!=");
-			} else {
-				token.reset(LEX_NOT_SYM, lineNum, "!");
-			}
-			return;
-		case '@':
-			spelling.append('@');
-			nextChar();
-			while (ch != EOF && isKeywordChar((char) ch)) {
-				spelling.append((char) ch);
-				nextChar();
-			}
-			i = searchForKeyword(spelling.toString());
-			if (i >= 0) {
-				token.reset(keywordInfoArray[i].symbol, lineNum, spelling.toString());
-			} else {
-				token.reset(LEX_UNKNOWN_SYM, lineNum, spelling.toString());
-			}
-			return;
-		case '+':
-			nextChar();
-			token.reset(LEX_PLUS_SYM, lineNum, "+");
-			return;
-		case '&':
-			nextChar();
-			if (ch == '&') {
-				nextChar();
-				token.reset(LEX_AND_SYM, lineNum, "&&");
-			} else {
-				spelling.append('&').append((char) ch);
-				token.reset(LEX_UNKNOWN_SYM, lineNum, spelling.toString());
-			}
-			return;
-		case '|':
-			nextChar();
-			if (ch == '|') {
-				nextChar();
-				token.reset(LEX_OR_SYM, lineNum, "||");
-			} else {
-				spelling.append('|').append((char) ch);
-				token.reset(LEX_UNKNOWN_SYM, lineNum, spelling.toString());
-			}
-			return;
-		case '=':
-			nextChar();
-			if (ch == '=') {
-				nextChar();
-				token.reset(LEX_EQUALS_EQUALS_SYM, lineNum, "==");
-			} else {
-				token.reset(LEX_EQUALS_SYM, lineNum, "=");
-			}
-			return;
-		case ';':
-			nextChar();
-			token.reset(LEX_SEMICOLON_SYM, lineNum, ";");
-			return;
-		case '[':
-			nextChar();
-			token.reset(LEX_OPEN_BRACKET_SYM, lineNum, "[");
-			return;
-		case ']':
-			nextChar();
-			token.reset(LEX_CLOSE_BRACKET_SYM, lineNum, "]");
-			return;
-		case '{':
-			nextChar();
-			token.reset(LEX_OPEN_BRACE_SYM, lineNum, "{");
-			return;
-		case '}':
-			nextChar();
-			token.reset(LEX_CLOSE_BRACE_SYM, lineNum, "}");
-			return;
-		case '(':
-			nextChar();
-			token.reset(LEX_OPEN_PAREN_SYM, lineNum, "(");
-			return;
-		case ')':
-			nextChar();
-			token.reset(LEX_CLOSE_PAREN_SYM, lineNum, ")");
-			return;
-		case ',':
-			nextChar();
-			token.reset(LEX_COMMA_SYM, lineNum, ",");
-			return;
-		case '"':
-			consumeString(token);
-			return;
-		case '<':
-			nextChar();
-			if (ch != '%') {
-				token.reset(LEX_UNKNOWN_SYM, lineNum, "<");
+				if (ch == '=') {
+					nextChar();
+					token.reset(LEX_QUESTION_EQUALS_SYM, lineNum, "!=");
+				} else {
+					token.reset(LEX_UNKNOWN_SYM, lineNum, spelling.toString());
+				}
 				return;
-			}
-			nextChar(); // skip over '%'
-			consumeBlockString(token);
-			return;
-		case '#':
-			// --------
-			// A comment. Consume it and immediately following
-			// comments (without resorting to recursion).
-			// --------
-			while (ch == '#') {
-				// --------
-				// Skip to the end of line
-				// --------
-				while (ch != EOF && ch != '\n') {
+			case '!':
+				nextChar();
+				if (ch == '=') {
+					nextChar();
+					token.reset(LEX_NOT_EQUALS_SYM, lineNum, "!=");
+				} else {
+					token.reset(LEX_NOT_SYM, lineNum, "!");
+				}
+				return;
+			case '@':
+				spelling.append('@');
+				nextChar();
+				while (ch != EOF && isKeywordChar((char) ch)) {
+					spelling.append((char) ch);
 					nextChar();
 				}
-				if (ch == '\n') {
+				i = searchForKeyword(spelling.toString());
+				if (i >= 0) {
+					token.reset(keywordInfoArray[i].symbol, lineNum, spelling.toString());
+				} else {
+					token.reset(LEX_UNKNOWN_SYM, lineNum, spelling.toString());
+				}
+				return;
+			case '+':
+				nextChar();
+				token.reset(LEX_PLUS_SYM, lineNum, "+");
+				return;
+			case '&':
+				nextChar();
+				if (ch == '&') {
 					nextChar();
+					token.reset(LEX_AND_SYM, lineNum, "&&");
+				} else {
+					spelling.append('&').append((char) ch);
+					token.reset(LEX_UNKNOWN_SYM, lineNum, spelling.toString());
+				}
+				return;
+			case '|':
+				nextChar();
+				if (ch == '|') {
+					nextChar();
+					token.reset(LEX_OR_SYM, lineNum, "||");
+				} else {
+					spelling.append('|').append((char) ch);
+					token.reset(LEX_UNKNOWN_SYM, lineNum, spelling.toString());
+				}
+				return;
+			case '=':
+				nextChar();
+				if (ch == '=') {
+					nextChar();
+					token.reset(LEX_EQUALS_EQUALS_SYM, lineNum, "==");
+				} else {
+					token.reset(LEX_EQUALS_SYM, lineNum, "=");
+				}
+				return;
+			case ';':
+				nextChar();
+				token.reset(LEX_SEMICOLON_SYM, lineNum, ";");
+				return;
+			case '[':
+				nextChar();
+				token.reset(LEX_OPEN_BRACKET_SYM, lineNum, "[");
+				return;
+			case ']':
+				nextChar();
+				token.reset(LEX_CLOSE_BRACKET_SYM, lineNum, "]");
+				return;
+			case '{':
+				nextChar();
+				token.reset(LEX_OPEN_BRACE_SYM, lineNum, "{");
+				return;
+			case '}':
+				nextChar();
+				token.reset(LEX_CLOSE_BRACE_SYM, lineNum, "}");
+				return;
+			case '(':
+				nextChar();
+				token.reset(LEX_OPEN_PAREN_SYM, lineNum, "(");
+				return;
+			case ')':
+				nextChar();
+				token.reset(LEX_CLOSE_PAREN_SYM, lineNum, ")");
+				return;
+			case ',':
+				nextChar();
+				token.reset(LEX_COMMA_SYM, lineNum, ",");
+				return;
+			case '"':
+				consumeString(token);
+				return;
+			case '<':
+				nextChar();
+				if (ch != '%') {
+					token.reset(LEX_UNKNOWN_SYM, lineNum, "<");
+					return;
+				}
+				nextChar(); // skip over '%'
+				consumeBlockString(token);
+				return;
+			case '#':
+				// --------
+				// A comment. Consume it and immediately following
+				// comments (without resorting to recursion).
+				// --------
+				while (ch == '#') {
+					// --------
+					// Skip to the end of line
+					// --------
+					while (ch != EOF && ch != '\n') {
+						nextChar();
+					}
+					if (ch == '\n') {
+						nextChar();
+					}
+					// --------
+					// Skip leading white space on the next line
+					// --------
+					while (ch != EOF && Character.isWhitespace((char) ch)) {
+						nextChar();
+					}
+					// --------
+					// Potentially loop around again to consume
+					// more comment lines that follow immediately.
+					// --------
 				}
 				// --------
-				// Skip leading white space on the next line
+				// Now use (a guaranteed single level of) recursion
+				// to obtain the next (non-comment) token.
 				// --------
-				while (ch != EOF && Character.isWhitespace((char) ch)) {
-					nextChar();
-				}
-				// --------
-				// Potentially loop around again to consume
-				// more comment lines that follow immediately.
-				// --------
-			}
-			// --------
-			// Now use (a guaranteed single level of) recursion
-			// to obtain the next (non-comment) token.
-			// --------
-			nextToken(token);
-			return;
+				nextToken(token);
+				return;
 		}
 
 		// --------

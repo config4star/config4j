@@ -93,22 +93,22 @@ class SchemaParser {
 			lex.nextToken(token);
 
 			switch (token.getType()) {
-			case SchemaLex.LEX_OPTIONAL_SYM:
-			case SchemaLex.LEX_REQUIRED_SYM:
-			case LexBase.LEX_IDENT_SYM:
-				sv.schemaIdRules.add(parseIdRule(schemaItem));
-				break;
-			case SchemaLex.LEX_IGNORE_EVERYTHING_IN_SYM:
-			case SchemaLex.LEX_IGNORE_SCOPES_IN_SYM:
-			case SchemaLex.LEX_IGNORE_VARIABLES_IN_SYM:
-				sv.schemaIgnoreRules.add(parseIgnoreRule(schemaItem));
-				break;
-			case SchemaLex.LEX_TYPEDEF_SYM:
-				parseUserTypeDef(schemaItem);
-				sv.sortTypes();
-				break;
-			default:
-				accept(LexBase.LEX_IDENT_SYM, schemaItem, "expecting an identifier or '@typedef'");
+				case SchemaLex.LEX_OPTIONAL_SYM:
+				case SchemaLex.LEX_REQUIRED_SYM:
+				case LexBase.LEX_IDENT_SYM:
+					sv.schemaIdRules.add(parseIdRule(schemaItem));
+					break;
+				case SchemaLex.LEX_IGNORE_EVERYTHING_IN_SYM:
+				case SchemaLex.LEX_IGNORE_SCOPES_IN_SYM:
+				case SchemaLex.LEX_IGNORE_VARIABLES_IN_SYM:
+					sv.schemaIgnoreRules.add(parseIgnoreRule(schemaItem));
+					break;
+				case SchemaLex.LEX_TYPEDEF_SYM:
+					parseUserTypeDef(schemaItem);
+					sv.sortTypes();
+					break;
+				default:
+					accept(LexBase.LEX_IDENT_SYM, schemaItem, "expecting an identifier or '@typedef'");
 			}
 		}
 
@@ -142,17 +142,17 @@ class SchemaParser {
 		int index;
 
 		switch (token.getType()) {
-		case SchemaLex.LEX_REQUIRED_SYM:
-			isOptional = false;
-			lex.nextToken(token);
-			break;
-		case SchemaLex.LEX_OPTIONAL_SYM:
-			isOptional = true;
-			lex.nextToken(token);
-			break;
-		default:
-			isOptional = true;
-			break;
+			case SchemaLex.LEX_REQUIRED_SYM:
+				isOptional = false;
+				lex.nextToken(token);
+				break;
+			case SchemaLex.LEX_OPTIONAL_SYM:
+				isOptional = true;
+				lex.nextToken(token);
+				break;
+			default:
+				isOptional = true;
+				break;
 		}
 
 		typeName = "";

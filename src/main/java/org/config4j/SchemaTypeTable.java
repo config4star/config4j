@@ -58,16 +58,16 @@ class SchemaTypeTable extends SchemaType {
 				throw new ConfigurationException("unknown type '" + columnType + "' in rule '" + rule + "'");
 			}
 			switch (typeDef.getCfgType()) {
-			case Configuration.CFG_STRING:
-				break;
-			case Configuration.CFG_LIST:
-				throw new ConfigurationException("you cannot embed a list type " + "('" + columnType + "') inside a table in rule '" + rule
-				        + "'");
-			case Configuration.CFG_SCOPE:
-				throw new ConfigurationException("you cannot embed a scope " + "type ('" + columnType + "') inside a table " + "in rule '"
-				        + rule + "'");
-			default:
-				Util.assertion(false); // Bug!
+				case Configuration.CFG_STRING:
+					break;
+				case Configuration.CFG_LIST:
+					throw new ConfigurationException("you cannot embed a list type " + "('" + columnType + "') inside a table in rule '"
+					        + rule + "'");
+				case Configuration.CFG_SCOPE:
+					throw new ConfigurationException("you cannot embed a scope " + "type ('" + columnType + "') inside a table "
+					        + "in rule '" + rule + "'");
+				default:
+					Util.assertion(false); // Bug!
 			}
 		}
 	}

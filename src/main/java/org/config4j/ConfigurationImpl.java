@@ -1165,17 +1165,17 @@ public class ConfigurationImpl extends Configuration {
 		result = new ArrayList<String>();
 		type = listValueAndType(fullyScopedName, localName, result);
 		switch (type) {
-		case Configuration.CFG_LIST:
-			return result.toArray(new String[result.size()]);
-		case Configuration.CFG_NO_VALUE:
-			throw new ConfigurationException(fileName() + ": no value specified for '" + fullyScopedName + "'");
-		case Configuration.CFG_SCOPE:
-			throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a scope instead of a list");
-		case Configuration.CFG_STRING:
-			throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a string instead of a list");
-		default:
-			Util.assertion(false); // Bug
-			return null; // keep the compiler happy
+			case Configuration.CFG_LIST:
+				return result.toArray(new String[result.size()]);
+			case Configuration.CFG_NO_VALUE:
+				throw new ConfigurationException(fileName() + ": no value specified for '" + fullyScopedName + "'");
+			case Configuration.CFG_SCOPE:
+				throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a scope instead of a list");
+			case Configuration.CFG_STRING:
+				throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a string instead of a list");
+			default:
+				Util.assertion(false); // Bug
+				return null; // keep the compiler happy
 		}
 	}
 
@@ -1189,17 +1189,17 @@ public class ConfigurationImpl extends Configuration {
 		result = new ArrayList<String>();
 		type = listValueAndType(fullyScopedName, localName, result);
 		switch (type) {
-		case Configuration.CFG_LIST:
-			return result.toArray(new String[result.size()]);
-		case Configuration.CFG_NO_VALUE:
-			return defaultArray;
-		case Configuration.CFG_SCOPE:
-			throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a scope instead of a list");
-		case Configuration.CFG_STRING:
-			throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a string instead of a list");
-		default:
-			Util.assertion(false); // Bug
-			return null; // keep the compiler happy
+			case Configuration.CFG_LIST:
+				return result.toArray(new String[result.size()]);
+			case Configuration.CFG_NO_VALUE:
+				return defaultArray;
+			case Configuration.CFG_SCOPE:
+				throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a scope instead of a list");
+			case Configuration.CFG_STRING:
+				throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a string instead of a list");
+			default:
+				Util.assertion(false); // Bug
+				return null; // keep the compiler happy
 		}
 	}
 
@@ -1269,17 +1269,17 @@ public class ConfigurationImpl extends Configuration {
 
 		fullyScopedName = mergeNames(scope, localName);
 		switch (type(scope, localName)) {
-		case Configuration.CFG_SCOPE:
-			// Okay
-			break;
-		case Configuration.CFG_STRING:
-			throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a string instead of a scope");
-		case Configuration.CFG_LIST:
-			throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a list instead of a scope");
-		case Configuration.CFG_NO_VALUE:
-			throw new ConfigurationException(fileName() + ": scope '" + fullyScopedName + "' does not exist");
-		default:
-			Util.assertion(false); // Bug!
+			case Configuration.CFG_SCOPE:
+				// Okay
+				break;
+			case Configuration.CFG_STRING:
+				throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a string instead of a scope");
+			case Configuration.CFG_LIST:
+				throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a list instead of a scope");
+			case Configuration.CFG_NO_VALUE:
+				throw new ConfigurationException(fileName() + ": scope '" + fullyScopedName + "' does not exist");
+			default:
+				Util.assertion(false); // Bug!
 		}
 	}
 
@@ -1293,16 +1293,16 @@ public class ConfigurationImpl extends Configuration {
 		str = new StringBuffer();
 		type = stringValueAndType(fullyScopedName, localName, str);
 		switch (type) {
-		case Configuration.CFG_STRING:
-			break;
-		case Configuration.CFG_NO_VALUE:
-			throw new ConfigurationException(fileName() + ": no value " + "specified for '" + fullyScopedName + "'");
-		case Configuration.CFG_SCOPE:
-			throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a scope instead of a string");
-		case Configuration.CFG_LIST:
-			throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a list instead of a string");
-		default:
-			Util.assertion(false); // Bug
+			case Configuration.CFG_STRING:
+				break;
+			case Configuration.CFG_NO_VALUE:
+				throw new ConfigurationException(fileName() + ": no value " + "specified for '" + fullyScopedName + "'");
+			case Configuration.CFG_SCOPE:
+				throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a scope instead of a string");
+			case Configuration.CFG_LIST:
+				throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a list instead of a string");
+			default:
+				Util.assertion(false); // Bug
 		}
 		return str.toString();
 	}
@@ -1320,17 +1320,17 @@ public class ConfigurationImpl extends Configuration {
 		str = new StringBuffer();
 		type = stringValueAndType(fullyScopedName, localName, str);
 		switch (type) {
-		case Configuration.CFG_STRING:
-			break;
-		case Configuration.CFG_NO_VALUE:
-			str.append(defaultVal);
-			break;
-		case Configuration.CFG_SCOPE:
-			throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a scope instead of a string");
-		case Configuration.CFG_LIST:
-			throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a list instead of a string");
-		default:
-			Util.assertion(false); // Bug
+			case Configuration.CFG_STRING:
+				break;
+			case Configuration.CFG_NO_VALUE:
+				str.append(defaultVal);
+				break;
+			case Configuration.CFG_SCOPE:
+				throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a scope instead of a string");
+			case Configuration.CFG_LIST:
+				throw new ConfigurationException(fileName() + ": '" + fullyScopedName + "' is a list instead of a string");
+			default:
+				Util.assertion(false); // Bug
 		}
 		return str.toString();
 	}
@@ -1390,30 +1390,30 @@ public class ConfigurationImpl extends Configuration {
 
 		trustedCmdLine = new StringBuffer();
 		switch (sourceType) {
-		case Configuration.INPUT_FILE:
-			fileName = source;
-			break;
-		case Configuration.INPUT_STRING:
-			if (sourceDescription.equals("")) {
-				fileName = "<string-based configuration>";
-			} else {
-				fileName = sourceDescription;
-			}
-			break;
-		case Configuration.INPUT_EXEC:
-			if (sourceDescription.equals("")) {
-				fileName = "exec#" + source;
-			} else {
-				fileName = sourceDescription;
-			}
-			if (!isExecAllowed(source, trustedCmdLine)) {
-				throw new ConfigurationException("cannot parse output of " + "executing \"" + source + "\" due to security "
-				        + "restrictions");
-			}
-			break;
-		default:
-			Util.assertion(false); // Bug!
-			break;
+			case Configuration.INPUT_FILE:
+				fileName = source;
+				break;
+			case Configuration.INPUT_STRING:
+				if (sourceDescription.equals("")) {
+					fileName = "<string-based configuration>";
+				} else {
+					fileName = sourceDescription;
+				}
+				break;
+			case Configuration.INPUT_EXEC:
+				if (sourceDescription.equals("")) {
+					fileName = "exec#" + source;
+				} else {
+					fileName = sourceDescription;
+				}
+				if (!isExecAllowed(source, trustedCmdLine)) {
+					throw new ConfigurationException("cannot parse output of " + "executing \"" + source + "\" due to security "
+					        + "restrictions");
+				}
+				break;
+			default:
+				Util.assertion(false); // Bug!
+				break;
 		}
 		new ConfigParser(sourceType, source, trustedCmdLine.toString(), fileName, this, false);
 	}

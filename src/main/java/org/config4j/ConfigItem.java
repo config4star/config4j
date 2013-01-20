@@ -76,29 +76,29 @@ class ConfigItem {
 		}
 		printIndent(buf, indentLevel);
 		switch (type) {
-		case Configuration.CFG_STRING:
-			escStr = escapeString(stringVal);
-			buf.append(name + " = \"" + escStr + "\";\n");
-			break;
-		case Configuration.CFG_LIST:
-			buf.append(name + " = [");
-			for (i = 0; i < listVal.length; i++) {
-				escStr = escapeString(listVal[i]);
-				buf.append("\"" + escStr + "\"");
-				if (i < listVal.length - 1) {
-					buf.append(", ");
+			case Configuration.CFG_STRING:
+				escStr = escapeString(stringVal);
+				buf.append(name + " = \"" + escStr + "\";\n");
+				break;
+			case Configuration.CFG_LIST:
+				buf.append(name + " = [");
+				for (i = 0; i < listVal.length; i++) {
+					escStr = escapeString(listVal[i]);
+					buf.append("\"" + escStr + "\"");
+					if (i < listVal.length - 1) {
+						buf.append(", ");
+					}
 				}
-			}
-			buf.append("];\n");
-			break;
-		case Configuration.CFG_SCOPE:
-			buf.append(name + " {\n");
-			scopeVal.dump(buf, wantExpandedUidNames, indentLevel + 1);
-			printIndent(buf, indentLevel);
-			buf.append("}\n");
-			break;
-		default:
-			Util.assertion(false); // Bug!
+				buf.append("];\n");
+				break;
+			case Configuration.CFG_SCOPE:
+				buf.append(name + " {\n");
+				scopeVal.dump(buf, wantExpandedUidNames, indentLevel + 1);
+				printIndent(buf, indentLevel);
+				buf.append("}\n");
+				break;
+			default:
+				Util.assertion(false); // Bug!
 		}
 	}
 
@@ -113,21 +113,21 @@ class ConfigItem {
 		for (i = 0; i < len; i++) {
 			ch = str.charAt(i);
 			switch (ch) {
-			case '\t':
-				buf.append("%t");
-				break;
-			case '\n':
-				buf.append("%n");
-				break;
-			case '%':
-				buf.append("%%");
-				break;
-			case '"':
-				buf.append("%\"");
-				break;
-			default:
-				buf.append(ch);
-				break;
+				case '\t':
+					buf.append("%t");
+					break;
+				case '\n':
+					buf.append("%n");
+					break;
+				case '%':
+					buf.append("%%");
+					break;
+				case '"':
+					buf.append("%\"");
+					break;
+				default:
+					buf.append(ch);
+					break;
 			}
 		}
 		return buf.toString();

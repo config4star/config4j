@@ -335,14 +335,14 @@ public class SchemaValidator {
 			// --------
 			symbol = rule.getSymbol();
 			switch (symbol) {
-			case SchemaLex.LEX_IGNORE_EVERYTHING_IN_SYM:
-				return true;
-			case SchemaLex.LEX_IGNORE_SCOPES_IN_SYM:
-			case SchemaLex.LEX_IGNORE_VARIABLES_IN_SYM:
-				break;
-			default:
-				Util.assertion(false, "Bug!");
-				break;
+				case SchemaLex.LEX_IGNORE_EVERYTHING_IN_SYM:
+					return true;
+				case SchemaLex.LEX_IGNORE_SCOPES_IN_SYM:
+				case SchemaLex.LEX_IGNORE_VARIABLES_IN_SYM:
+					break;
+				default:
+					Util.assertion(false, "Bug!");
+					break;
 			}
 			nameAfterPrefix = unexpandedName.substring(len + 1);
 			hasDotAfterPrefix = nameAfterPrefix.indexOf('.') != -1;
@@ -490,15 +490,15 @@ public class SchemaValidator {
 				unlistedName = Configuration.mergeNames(fullyScopedName, iName);
 				msg = null;
 				switch (cfg.type(unlistedName, "")) {
-				case Configuration.CFG_SCOPE:
-					msg = cfg.fileName() + ": the '" + unlistedName + "' scope is unknown.";
-					break;
-				case Configuration.CFG_LIST:
-				case Configuration.CFG_STRING:
-					msg = cfg.fileName() + ": the '" + unlistedName + "' variable is unknown.";
-					break;
-				default:
-					Util.assertion(false); // Bug!
+					case Configuration.CFG_SCOPE:
+						msg = cfg.fileName() + ": the '" + unlistedName + "' scope is unknown.";
+						break;
+					case Configuration.CFG_LIST:
+					case Configuration.CFG_STRING:
+						msg = cfg.fileName() + ": the '" + unlistedName + "' variable is unknown.";
+						break;
+					default:
+						Util.assertion(false); // Bug!
 				}
 				if (wantDiagnostics) {
 					System.out.print("\n" + prefix + ": error: " + msg + "\n");

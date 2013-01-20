@@ -187,21 +187,21 @@ class Config2JUtil {
 
 	void outputEscapedChar(PrintWriter out, char ch) {
 		switch (ch) {
-		case '\\':
-			out.print("\\\\");
-			break;
-		case '\t':
-			out.print("\\t");
-			break;
-		case '\n':
-			// out.print("\\n");
-			out.print("\" + CR + \"");
-			break;
-		case '"':
-			out.print("\\\"");
-			break;
-		default:
-			out.print(ch);
+			case '\\':
+				out.print("\\\\");
+				break;
+			case '\t':
+				out.print("\\t");
+				break;
+			case '\n':
+				// out.print("\\n");
+				out.print("\" + CR + \"");
+				break;
+			case '"':
+				out.print("\\\"");
+				break;
+			default:
+				out.print(ch);
 		}
 	}
 

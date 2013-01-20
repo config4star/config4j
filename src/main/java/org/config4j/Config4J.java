@@ -108,44 +108,44 @@ class Config4J {
 			}
 		} else if (cmd.equals("type")) {
 			switch (cfg.type(scope, name)) {
-			case Configuration.CFG_STRING:
-				System.out.println("string");
-				break;
-			case Configuration.CFG_LIST:
-				System.out.println("list");
-				break;
-			case Configuration.CFG_SCOPE:
-				System.out.println("scope");
-				break;
-			case Configuration.CFG_NO_VALUE:
-				System.out.println("no_value");
-				break;
-			default:
-				Util.assertion(false); // Bug!
-				break;
-			}
-		} else if (cmd.equals("print")) {
-			try {
-				switch (cfg.type(scope, name)) {
 				case Configuration.CFG_STRING:
-					str = cfg.lookupString(scope, name);
-					System.out.println(str);
+					System.out.println("string");
 					break;
 				case Configuration.CFG_LIST:
-					vec = cfg.lookupList(scope, name);
-					for (i = 0; i < vec.length; i++) {
-						System.out.println(vec[i]);
-					}
+					System.out.println("list");
 					break;
 				case Configuration.CFG_SCOPE:
-					System.err.println("'" + fullyScopedName + "' is a scope");
+					System.out.println("scope");
 					break;
 				case Configuration.CFG_NO_VALUE:
-					System.err.println("'" + fullyScopedName + "' does not exist");
+					System.out.println("no_value");
 					break;
 				default:
 					Util.assertion(false); // Bug!
 					break;
+			}
+		} else if (cmd.equals("print")) {
+			try {
+				switch (cfg.type(scope, name)) {
+					case Configuration.CFG_STRING:
+						str = cfg.lookupString(scope, name);
+						System.out.println(str);
+						break;
+					case Configuration.CFG_LIST:
+						vec = cfg.lookupList(scope, name);
+						for (i = 0; i < vec.length; i++) {
+							System.out.println(vec[i]);
+						}
+						break;
+					case Configuration.CFG_SCOPE:
+						System.err.println("'" + fullyScopedName + "' is a scope");
+						break;
+					case Configuration.CFG_NO_VALUE:
+						System.err.println("'" + fullyScopedName + "' does not exist");
+						break;
+					default:
+						Util.assertion(false); // Bug!
+						break;
 				}
 			} catch (ConfigurationException ex) {
 				System.err.println(ex.getMessage());
