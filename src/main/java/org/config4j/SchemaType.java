@@ -25,7 +25,7 @@
 package org.config4j;
 
 
-public abstract class SchemaType implements Comparable
+public abstract class SchemaType implements Comparable<SchemaType>
 {
 
 	public SchemaType(String typeName, int cfgType)
@@ -36,10 +36,9 @@ public abstract class SchemaType implements Comparable
 	}
 
 
-	public int compareTo(Object o)
+	public int compareTo(SchemaType o)
 	{
-		SchemaType other = (SchemaType)o;
-		return typeName.compareTo(other.typeName);
+		return typeName.compareTo(o.typeName);
 	}
 
 

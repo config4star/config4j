@@ -27,7 +27,7 @@ package org.config4j;
 import java.util.ArrayList;
 
 
-class SchemaIdRuleInfo implements Comparable
+class SchemaIdRuleInfo implements Comparable<SchemaIdRuleInfo>
 {
 
 	public SchemaIdRuleInfo(
@@ -55,13 +55,9 @@ class SchemaIdRuleInfo implements Comparable
 		this.isOptional = isOptional;
 	}
 
-
-	public int compareTo(Object o)
-	{
-		SchemaIdRuleInfo other = (SchemaIdRuleInfo)o;
-		return locallyScopedName.compareTo(other.locallyScopedName);
+	public int compareTo(SchemaIdRuleInfo o) {
+		return locallyScopedName.compareTo(o.locallyScopedName);
 	}
-
 
 	public boolean equals(Object o)
 	{
@@ -82,5 +78,4 @@ class SchemaIdRuleInfo implements Comparable
 	private String		typeName;
 	private String[]	args;
 	private boolean		isOptional;
-
 }
