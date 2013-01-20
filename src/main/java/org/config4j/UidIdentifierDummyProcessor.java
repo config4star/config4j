@@ -24,18 +24,15 @@
 
 package org.config4j;
 
-
-class UidIdentifierDummyProcessor extends UidIdentifierProcessor
-{
-	public String expand(String str) throws ConfigurationException
-	{
+class UidIdentifierDummyProcessor extends UidIdentifierProcessor {
+	@Override
+	public String expand(String str) throws ConfigurationException {
 		super.expand(str);
 		return str;
 	}
 
-
-	public String unexpand(String str) throws ConfigurationException
-	{
+	@Override
+	public String unexpand(String str) throws ConfigurationException {
 		super.unexpand(str);
 		return str;
 	}

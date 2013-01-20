@@ -24,16 +24,14 @@
 
 package org.config4j;
 
-
 public class LexFuncInfo {
-	LexFuncInfo(String spelling, short funcType, short symbol)
-	{
+	LexFuncInfo(String spelling, short funcType, short symbol) {
 		this.spelling = spelling;
 		this.funcType = funcType;
-		this.symbol   = symbol;
+		this.symbol = symbol;
 	}
 
-	String			spelling;
-	short			funcType;
-	short			symbol;
+	String spelling;
+	short funcType;
+	short symbol;
 }

@@ -24,23 +24,24 @@
 
 package org.config4j;
 
+class SchemaIgnoreRuleInfo {
 
-
-class SchemaIgnoreRuleInfo
-{
-
-	public SchemaIgnoreRuleInfo(short symbol, String locallyScopedName)
-	{
+	public SchemaIgnoreRuleInfo(short symbol, String locallyScopedName) {
 		this.symbol = symbol;
 		this.locallyScopedName = locallyScopedName;
 	}
 
-	public short getSymbol() { return this.symbol;}
-	public String getLocallyScopedName() { return this.locallyScopedName;}
+	public short getSymbol() {
+		return symbol;
+	}
 
-	//--------
+	public String getLocallyScopedName() {
+		return locallyScopedName;
+	}
+
+	// --------
 	// Instance variables
-	//--------
-	private short	symbol;
-	private String	locallyScopedName;
+	// --------
+	private short symbol;
+	private String locallyScopedName;
 }

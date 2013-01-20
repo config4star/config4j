@@ -24,18 +24,20 @@
 
 package org.config4j;
 
-
-public class EnumNameAndValue
-{
-	public EnumNameAndValue(String name, int value)
-	{
+public class EnumNameAndValue {
+	public EnumNameAndValue(String name, int value) {
 		this.name = name;
 		this.value = value;
 	}
 
-	public String getName()  { return name; }
-	public int getValue() { return value; }
+	public String getName() {
+		return name;
+	}
 
-	private String		name;
-	private int		value;
+	public int getValue() {
+		return value;
+	}
+
+	private String name;
+	private int value;
 }

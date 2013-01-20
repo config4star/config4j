@@ -24,54 +24,35 @@
 
 package org.config4j;
 
+class SchemaTypeFloatWithUnits extends SchemaType {
 
-class SchemaTypeFloatWithUnits extends SchemaType
-{
-
-	public SchemaTypeFloatWithUnits()
-	{
+	public SchemaTypeFloatWithUnits() {
 		super("float_with_units", Configuration.CFG_STRING);
 	}
 
-
-	public void checkRule(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule) throws ConfigurationException
-	{
+	@Override
+	public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
+	        throws ConfigurationException {
 		if (typeArgs.length == 0) {
-			throw new ConfigurationException(
-						"the '" + typeName + "' type should take one or more "
-						+ "arguments (denoting units) in rule '" + rule + "'");
+			throw new ConfigurationException("the '" + typeName + "' type should take one or more "
+			        + "arguments (denoting units) in rule '" + rule + "'");
 		}
 	}
 
-
-	public boolean isA(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				value,
-		String				typeName,
-		String[]			typeArgs,
-		int					indentLevel,
-		StringBuffer		errSuffix) throws ConfigurationException
-	{
-		boolean				result;
-		int					i;
+	@Override
+	public boolean isA(SchemaValidator sv, Configuration cfg, String value, String typeName, String[] typeArgs, int indentLevel,
+	        StringBuffer errSuffix) throws ConfigurationException {
+		boolean result;
+		int i;
 
 		result = cfg.isFloatWithUnits(value, typeArgs);
 		if (result == false) {
-			errSuffix.append("the value should be in the format "
-					+ "'<float> <units>' where <units> is one of:");
+			errSuffix.append("the value should be in the format " + "'<float> <units>' where <units> is one of:");
 			for (i = 0; i < typeArgs.length; i++) {
 				if (i < typeArgs.length - 1) {
-					errSuffix.append(" '" + typeArgs[i]
-							+ "',");
+					errSuffix.append(" '" + typeArgs[i] + "',");
 				} else {
-					errSuffix.append(" '" + typeArgs[i]
-							+ "'");
+					errSuffix.append(" '" + typeArgs[i] + "'");
 				}
 			}
 		}

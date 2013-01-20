@@ -24,74 +24,52 @@
 
 package org.config4j;
 
+class SchemaTypeString extends SchemaType {
 
-class SchemaTypeString extends SchemaType
-{
-
-	public SchemaTypeString()
-	{
+	public SchemaTypeString() {
 		super("string", Configuration.CFG_STRING);
 	}
 
-
-	public void checkRule(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule) throws ConfigurationException
-	{
-		int					len;
-		int					min;
-		int					max;
+	@Override
+	public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
+	        throws ConfigurationException {
+		int len;
+		int min;
+		int max;
 
 		len = typeArgs.length;
 		if (len == 0) {
 			return;
 		}
 		if (len != 2) {
-			throw new ConfigurationException("the '" + typeName
-					+ "' type should take either no arguments or 2 arguments "
-					+ "(denoting min_length and max_length values) in rule '"
-					+ rule + "'");
+			throw new ConfigurationException("the '" + typeName + "' type should take either no arguments or 2 arguments "
+			        + "(denoting min_length and max_length values) in rule '" + rule + "'");
 		}
 		try {
 			min = cfg.stringToInt("", "", typeArgs[0]);
-		} catch(ConfigurationException ex) {
-			throw new ConfigurationException("non-integer value for the first "
-						+ "('min_length') argument in rule '" + rule + "'");
+		} catch (ConfigurationException ex) {
+			throw new ConfigurationException("non-integer value for the first " + "('min_length') argument in rule '" + rule + "'");
 		}
 		try {
 			max = cfg.stringToInt("", "", typeArgs[1]);
-		} catch(ConfigurationException ex) {
-			throw new ConfigurationException("non-integer value for the second "
-					+ "('max_length') argument in rule '" + rule + "'");
+		} catch (ConfigurationException ex) {
+			throw new ConfigurationException("non-integer value for the second " + "('max_length') argument in rule '" + rule + "'");
 		}
 		if (min < 0 || max < 0) {
-			throw new ConfigurationException("the 'min_length' and "
-					+ "'max_length' of a string cannot be negative in rule '"
-					+ rule + "'");
+			throw new ConfigurationException("the 'min_length' and " + "'max_length' of a string cannot be negative in rule '" + rule + "'");
 		}
 		if (min > max) {
-			throw new ConfigurationException("the first ('min_length') "
-					+ "argument is larger than the second ('max_length') "
-					+ "argument in rule '" + rule + "'");
+			throw new ConfigurationException("the first ('min_length') " + "argument is larger than the second ('max_length') "
+			        + "argument in rule '" + rule + "'");
 		}
 	}
 
-
-	public boolean isA(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				value,
-		String				typeName,
-		String[]			typeArgs,
-		int					indentLevel,
-		StringBuffer		errSuffix) throws ConfigurationException
-	{
-		int					strLen;
-		int					minLength;
-		int					maxLength;
+	@Override
+	public boolean isA(SchemaValidator sv, Configuration cfg, String value, String typeName, String[] typeArgs, int indentLevel,
+	        StringBuffer errSuffix) throws ConfigurationException {
+		int strLen;
+		int minLength;
+		int maxLength;
 
 		if (typeArgs.length == 0) {
 			return true;
@@ -100,8 +78,7 @@ class SchemaTypeString extends SchemaType
 		minLength = cfg.stringToInt("", "", typeArgs[0]);
 		maxLength = cfg.stringToInt("", "", typeArgs[1]);
 		if (strLen < minLength || strLen > maxLength) {
-			errSuffix.append("its length is outside the permitted range ["
-							 +  minLength + ", " + maxLength + "]");
+			errSuffix.append("its length is outside the permitted range [" + minLength + ", " + maxLength + "]");
 			return false;
 		}
 		return true;

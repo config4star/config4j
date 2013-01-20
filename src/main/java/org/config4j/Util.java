@@ -28,32 +28,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+class Util {
 
-class Util
-{
-
-	public static void assertion(boolean b)
-	{
+	public static void assertion(boolean b) {
 		if (!b) {
 			throw new AssertionError("assertion failed");
 		}
 	}
 
-
-	public static void assertion(boolean b, String msg)
-	{
+	public static void assertion(boolean b, String msg) {
 		if (!b) {
-			throw new IllegalStateException(
-				"assertion failure: " + msg);
+			throw new IllegalStateException("assertion failure: " + msg);
 		}
 	}
 
-
-	public static String[] splitScopedNameIntoArray(String str)
-	{
-		ArrayList<String>	list = null;
-		StringTokenizer		st = null;
-		String				array[] = null;
+	public static String[] splitScopedNameIntoArray(String str) {
+		ArrayList<String> list = null;
+		StringTokenizer st = null;
+		String array[] = null;
 
 		list = new ArrayList<String>();
 		st = new StringTokenizer(str, ".");
@@ -61,21 +53,19 @@ class Util
 			list.add(st.nextToken());
 		}
 		array = new String[list.size()];
-		return (String[])(list.toArray(array));
+		return list.toArray(array);
 	}
 
+	public static boolean isCmdInDir(String cmd, String dir) {
+		File file;
+		String fileName;
+		String[] extArray;
+		int i;
 
-	public static boolean isCmdInDir(String cmd, String dir)
-	{
-		File				file;
-		String				fileName;
-		String[]			extArray;
-		int					i;
-		
 		if (File.separator.equals("\\")) {
-			extArray = new String[]{".exe", ".bat", ""};
+			extArray = new String[] { ".exe", ".bat", "" };
 		} else {
-			extArray = new String[]{""};
+			extArray = new String[] { "" };
 		}
 
 		for (i = 0; i < extArray.length; i++) {
@@ -88,20 +78,18 @@ class Util
 		return false;
 	}
 
+	public static boolean execCmd(String cmd, StringBuffer output) {
+		Process p;
+		StreamReaderThread outThread;
+		StreamReaderThread errThread;
+		int exitVal;
 
-	public static boolean execCmd(String cmd, StringBuffer output)
-	{
-		Process					p;
-		StreamReaderThread		outThread;
-		StreamReaderThread		errThread;
-		int						exitVal;
-
-		//--------
+		// --------
 		// Ensure that "output" is empty.
-		//--------
+		// --------
 		output.delete(0, output.length());
 
-		//--------
+		// --------
 		// Execute the command and capture its stdout
 		// (and stderr too if the proces has a non-zero exit status).
 		//
@@ -111,7 +99,7 @@ class Util
 		// read concurrently by separate threads to avoid the
 		// possibility of deadlock. You can find the article at:
 		// www.javaworld.com/javaworld/jw-12-2000/jw-1229-traps.html
-		//--------
+		// --------
 		try {
 			p = Runtime.getRuntime().exec(cmd);
 			outThread = new StreamReaderThread(p.getInputStream());
@@ -123,14 +111,14 @@ class Util
 				try {
 					outThread.join();
 					break;
-					} catch(InterruptedException ex) {
+				} catch (InterruptedException ex) {
 				}
 			}
 			while (true) {
 				try {
 					errThread.join();
 					break;
-					} catch(InterruptedException ex) {
+				} catch (InterruptedException ex) {
 				}
 			}
 			if (exitVal == 0) {
@@ -140,12 +128,11 @@ class Util
 				output.append("\n");
 				output.append(errThread.getBuf());
 			}
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			exitVal = 1;
-			output.append("cannot execute '" + cmd + "': "
-					+ ex.getMessage());
+			output.append("cannot execute '" + cmd + "': " + ex.getMessage());
 		}
-		return (exitVal == 0);
+		return exitVal == 0;
 	}
 
 }

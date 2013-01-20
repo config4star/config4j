@@ -24,125 +24,78 @@
 
 package org.config4j;
 
+public abstract class SchemaType implements Comparable<SchemaType> {
 
-public abstract class SchemaType implements Comparable<SchemaType>
-{
-
-	public SchemaType(String typeName, int cfgType)
-	{
-		this.typeName  = typeName;
-		this.className = this.getClass().getName();
-		this.cfgType   = cfgType;
+	public SchemaType(String typeName, int cfgType) {
+		this.typeName = typeName;
+		className = this.getClass().getName();
+		this.cfgType = cfgType;
 	}
 
-
-	public int compareTo(SchemaType o)
-	{
+	public int compareTo(SchemaType o) {
 		return typeName.compareTo(o.typeName);
 	}
 
+	abstract public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
+	        throws ConfigurationException;
 
-	abstract public void checkRule(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule) throws ConfigurationException;
-
-
-	public void validate(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				scope,
-		String				name,
-		String				typeName,
-		String				origTypeName,
-		String[]			typeArgs,
-		int					indentLevel) throws ConfigurationException
-	{
-		String				value;
-		StringBuffer		errSuffix;
-		String				fullyScopedName;
-		String				sep;
+	public void validate(SchemaValidator sv, Configuration cfg, String scope, String name, String typeName, String origTypeName,
+	        String[] typeArgs, int indentLevel) throws ConfigurationException {
+		String value;
+		StringBuffer errSuffix;
+		String fullyScopedName;
+		String sep;
 
 		value = cfg.lookupString(scope, name);
 		errSuffix = new StringBuffer();
 
-		if (!sv.callIsA(this, cfg, value, typeName, typeArgs, indentLevel+1,
-					    errSuffix))
-		{
+		if (!sv.callIsA(this, cfg, value, typeName, typeArgs, indentLevel + 1, errSuffix)) {
 			fullyScopedName = Configuration.mergeNames(scope, name);
 			if (errSuffix.length() > 0) {
 				sep = "; ";
 			} else {
 				sep = "";
 			}
-			throw new ConfigurationException(cfg.fileName() + ": bad "
-					+ typeName + " value ('" + value + "') for '"
-					+ fullyScopedName + "'" + sep + errSuffix);
+			throw new ConfigurationException(cfg.fileName() + ": bad " + typeName + " value ('" + value + "') for '" + fullyScopedName
+			        + "'" + sep + errSuffix);
 		}
 	}
 
-
-	public boolean isA(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				value,
-		String				typeName,
-		String[]			typeArgs,
-		int					indentLevel,
-		StringBuffer		errSuffix)
-	{
+	public boolean isA(SchemaValidator sv, Configuration cfg, String value, String typeName, String[] typeArgs, int indentLevel,
+	        StringBuffer errSuffix) {
 		return false;
 	}
 
+	public String getTypeName() {
+		return typeName;
+	}
 
-	public String getTypeName()  { return typeName; }
-	public int    getCfgType()   { return cfgType; }
-	String        getClassName() { return className; }
+	public int getCfgType() {
+		return cfgType;
+	}
 
+	String getClassName() {
+		return className;
+	}
 
-	protected SchemaType findType(SchemaValidator sv, String name)
-	{
+	protected SchemaType findType(SchemaValidator sv, String name) {
 		return sv.findType(name);
 	}
 
-
-	protected final void callValidate(
-		SchemaType			target,
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				scope,
-		String				name,
-		String				typeName,
-		String				origTypeName,
-		String[]			typeArgs,
-		int					indentLevel) throws ConfigurationException
-	{
-		sv.callValidate(target, cfg, scope, name, typeName, origTypeName,
-						typeArgs, indentLevel);
+	protected final void callValidate(SchemaType target, SchemaValidator sv, Configuration cfg, String scope, String name, String typeName,
+	        String origTypeName, String[] typeArgs, int indentLevel) throws ConfigurationException {
+		sv.callValidate(target, cfg, scope, name, typeName, origTypeName, typeArgs, indentLevel);
 	}
 
-
-	protected final boolean callIsA(
-		SchemaType			target,
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				value,
-		String				typeName,
-		String[]			typeArgs,
-		int					indentLevel,
-		StringBuffer		errSuffix) throws ConfigurationException
-	{
-		return sv.callIsA(target, cfg, value, typeName, typeArgs, indentLevel,
-						  errSuffix);
+	protected final boolean callIsA(SchemaType target, SchemaValidator sv, Configuration cfg, String value, String typeName,
+	        String[] typeArgs, int indentLevel, StringBuffer errSuffix) throws ConfigurationException {
+		return sv.callIsA(target, cfg, value, typeName, typeArgs, indentLevel, errSuffix);
 	}
 
-
-	//--------
+	// --------
 	// Instance variables
-	//--------
-	private String			typeName;
-	private String			className;
-	private int				cfgType;
+	// --------
+	private String typeName;
+	private String className;
+	private int cfgType;
 }

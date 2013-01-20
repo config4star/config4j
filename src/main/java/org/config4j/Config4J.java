@@ -26,40 +26,36 @@ package org.config4j;
 
 import java.util.ArrayList;
 
+class Config4J {
 
-class Config4J
-{
+	private static String cmd;
+	private static boolean isRecursive;
+	private static boolean wantExpandedUidNames;
+	private static String scope;
+	private static String[] filterPatterns;
+	private static String name;
+	private static String cfgSource;
+	private static String secSource;
+	private static String secScope;
+	private static String schemaSource;
+	private static String schemaName;
+	private static boolean wantDiagnostics;
+	private static int types;
+	private static int forceMode;
 
-	private static String		cmd;
-	private static boolean		isRecursive;
-	private static boolean		wantExpandedUidNames;
-	private static String		scope;
-	private static String[]		filterPatterns;
-	private static String		name;
-	private static String		cfgSource;
-	private static String		secSource;
-	private static String		secScope;
-	private static String		schemaSource;
-	private static String		schemaName;
-	private static boolean		wantDiagnostics;
-	private static int			types;
-	private static int			forceMode;
-
-
-	public static void main(String[] args)
-	{
-		String				str;
-		Configuration		cfg;
-		Configuration		secCfg;
-		Configuration		schemaCfg;
-		Configuration		secDumpCfg;
-		SchemaValidator		sv = new SchemaValidator();
-		String				secDumpScope;
-		String[]			vec;
-		String[]			schema;
-		int					i;
-		String[]			names;
-		String				fullyScopedName;
+	public static void main(String[] args) {
+		String str;
+		Configuration cfg;
+		Configuration secCfg;
+		Configuration schemaCfg;
+		Configuration secDumpCfg;
+		SchemaValidator sv = new SchemaValidator();
+		String secDumpScope;
+		String[] vec;
+		String[] schema;
+		int i;
+		String[] names;
+		String fullyScopedName;
 
 		cfg = Configuration.create();
 		secCfg = Configuration.create();
@@ -79,9 +75,9 @@ class Config4J
 		fullyScopedName = Configuration.mergeNames(scope, name);
 
 		if (cmd.equals("parse")) {
-			//--------
+			// --------
 			// Nothing else to do
-			//--------
+			// --------
 		} else if (cmd.equals("validate")) {
 			try {
 				schemaCfg.parse(schemaSource);
@@ -94,8 +90,7 @@ class Config4J
 			}
 		} else if (cmd.equals("slist")) {
 			try {
-				names = cfg.listFullyScopedNames(scope, name, types,
-						isRecursive, filterPatterns);
+				names = cfg.listFullyScopedNames(scope, name, types, isRecursive, filterPatterns);
 				for (i = 0; i < names.length; i++) {
 					System.out.println(names[i]);
 				}
@@ -104,8 +99,7 @@ class Config4J
 			}
 		} else if (cmd.equals("llist")) {
 			try {
-				names = cfg.listLocallyScopedNames(scope, name, types,
-						isRecursive, filterPatterns);
+				names = cfg.listLocallyScopedNames(scope, name, types, isRecursive, filterPatterns);
 				for (i = 0; i < names.length; i++) {
 					System.out.println(names[i]);
 				}
@@ -147,37 +141,33 @@ class Config4J
 					System.err.println("'" + fullyScopedName + "' is a scope");
 					break;
 				case Configuration.CFG_NO_VALUE:
-					System.err.println("'" + fullyScopedName
-							+ "' does not exist");
+					System.err.println("'" + fullyScopedName + "' does not exist");
 					break;
 				default:
 					Util.assertion(false); // Bug!
 					break;
 				}
-			} catch(ConfigurationException ex) {
+			} catch (ConfigurationException ex) {
 				System.err.println(ex.getMessage());
 			}
 		} else if (cmd.equals("dumpSec")) {
 			try {
 				secDumpCfg = cfg.getSecurityConfiguration();
 				secDumpScope = cfg.getSecurityConfigurationScope();
-				str = secDumpCfg.dump(wantExpandedUidNames, secDumpScope,
-						"allow_patterns");
+				str = secDumpCfg.dump(wantExpandedUidNames, secDumpScope, "allow_patterns");
 				System.out.println(str);
-				str = secDumpCfg.dump(wantExpandedUidNames, secDumpScope,
-						"deny_patterns");
+				str = secDumpCfg.dump(wantExpandedUidNames, secDumpScope, "deny_patterns");
 				System.out.println(str);
-				str = secDumpCfg.dump(wantExpandedUidNames, secDumpScope,
-						"trusted_directories");
+				str = secDumpCfg.dump(wantExpandedUidNames, secDumpScope, "trusted_directories");
 				System.out.println(str);
-			} catch(ConfigurationException ex) {
+			} catch (ConfigurationException ex) {
 				System.err.println(ex.getMessage());
 			}
 		} else if (cmd.equals("dump")) {
 			try {
 				str = cfg.dump(wantExpandedUidNames, scope, name);
 				System.out.print(str);
-			} catch(ConfigurationException ex) {
+			} catch (ConfigurationException ex) {
 				System.err.println(ex.getMessage());
 			}
 		} else {
@@ -185,10 +175,8 @@ class Config4J
 		}
 	}
 
-
-	private static void parseCmdLineArgs(String[] args, Configuration cfg)
-	{
-		int					i;
+	private static void parseCmdLineArgs(String[] args, Configuration cfg) {
+		int i;
 		ArrayList<String> patterns;
 
 		cmd = null;
@@ -197,7 +185,7 @@ class Config4J
 		name = "";
 		cfgSource = null;
 		secSource = null;
-		secScope  = "";
+		secScope = "";
 		schemaSource = null;
 		schemaName = "";
 		wantDiagnostics = false;
@@ -209,28 +197,40 @@ class Config4J
 			if (args[i].equals("-h")) {
 				usage("");
 			} else if (args[i].equals("-set")) {
-				if (i >= args.length-2) { usage(""); }
-				cfg.insertString("", args[i+1], args[i+2]);
+				if (i >= args.length - 2) {
+					usage("");
+				}
+				cfg.insertString("", args[i + 1], args[i + 2]);
 				i += 2;
 			} else if (args[i].equals("-cfg")) {
-				if (i == args.length-1) { usage(""); }
-				cfgSource = args[i+1];
+				if (i == args.length - 1) {
+					usage("");
+				}
+				cfgSource = args[i + 1];
 				i++;
 			} else if (args[i].equals("-secCfg")) {
-				if (i == args.length-1) { usage(""); }
-				secSource = args[i+1];
+				if (i == args.length - 1) {
+					usage("");
+				}
+				secSource = args[i + 1];
 				i++;
 			} else if (args[i].equals("-secScope")) {
-				if (i == args.length-1) { usage(""); }
-				secScope = args[i+1];
+				if (i == args.length - 1) {
+					usage("");
+				}
+				secScope = args[i + 1];
 				i++;
 			} else if (args[i].equals("-schemaCfg")) {
-				if (i == args.length-1) { usage(""); }
-				schemaSource = args[i+1];
+				if (i == args.length - 1) {
+					usage("");
+				}
+				schemaSource = args[i + 1];
 				i++;
 			} else if (args[i].equals("-schema")) {
-				if (i == args.length-1) { usage(""); }
-				schemaName = args[i+1];
+				if (i == args.length - 1) {
+					usage("");
+				}
+				schemaName = args[i + 1];
 				i++;
 			} else if (args[i].equals("-diagnostics")) {
 				wantDiagnostics = true;
@@ -241,12 +241,14 @@ class Config4J
 			} else if (args[i].equals("-nodiagnostics")) {
 				wantDiagnostics = false;
 			} else if (args[i].equals("-types")) {
-				if (i == args.length-1) { usage(""); }
-				types = stringToTypes(args[i+1]);
+				if (i == args.length - 1) {
+					usage("");
+				}
+				types = stringToTypes(args[i + 1]);
 				i++;
-				//--------
+				// --------
 				// Commands
-				//--------
+				// --------
 			} else if (args[i].equals("parse")) {
 				cmd = args[i];
 			} else if (args[i].equals("slist")) {
@@ -263,20 +265,26 @@ class Config4J
 				cmd = args[i];
 			} else if (args[i].equals("validate")) {
 				cmd = args[i];
-				//--------
+				// --------
 				// Arguments to commands
-				//--------
+				// --------
 			} else if (args[i].equals("-scope")) {
-				if (i == args.length-1) { usage(""); }
-				scope = args[i+1];
+				if (i == args.length - 1) {
+					usage("");
+				}
+				scope = args[i + 1];
 				i++;
 			} else if (args[i].equals("-filter")) {
-				if (i == args.length-1) { usage(""); }
-				patterns.add(args[i+1]);
+				if (i == args.length - 1) {
+					usage("");
+				}
+				patterns.add(args[i + 1]);
 				i++;
 			} else if (args[i].equals("-name")) {
-				if (i == args.length-1) { usage(""); }
-				name = args[i+1];
+				if (i == args.length - 1) {
+					usage("");
+				}
+				name = args[i + 1];
 				i++;
 			} else if (args[i].equals("-recursive")) {
 				isRecursive = true;
@@ -300,23 +308,19 @@ class Config4J
 		}
 		if (cmd.equals("validate")) {
 			if (schemaSource == null) {
-				System.err.println("\nThe validate command requires "
-						+ "-schemaCfg <source>\n\n");
+				System.err.println("\nThe validate command requires " + "-schemaCfg <source>\n\n");
 				usage("");
 			}
 			if (schemaName.equals("")) {
-				System.err.println("\nThe validate command requires "
-						+ "-schema <full.name>\n\n");
+				System.err.println("\nThe validate command requires " + "-schema <full.name>\n\n");
 				usage("");
 			}
 		}
 
-		filterPatterns= patterns.toArray(new String[patterns.size()]);
+		filterPatterns = patterns.toArray(new String[patterns.size()]);
 	}
 
-
-	static int stringToTypes(String str)
-	{
+	static int stringToTypes(String str) {
 		if (str.equals("string")) {
 			return Configuration.CFG_STRING;
 		} else if (str.equals("list")) {
@@ -332,67 +336,38 @@ class Config4J
 		return Configuration.CFG_STRING; // Not reached; keep compiler happy
 	}
 
-
-	private static void usage(String optMsg)
-	{
-		StringBuffer			msg;
+	private static void usage(String optMsg) {
+		StringBuffer msg;
 
 		msg = new StringBuffer();
 		if (!optMsg.equals("")) {
 			msg.append(optMsg + "\n\n");
 		}
 
-		msg.append(
-				"usage: java org.config4j.Config4J -cfg <source> "
-						+  "<command> <options>\n"
-						+ "\n"
-						+ "<command> can be one of the following:\n"
-						+ "  parse               Parse and report errors, if any\n"
-						+ "  validate            Validate <scope>.<name>\n"
-						+ "  dump                Dump <scope>.<name>\n"
-						+ "  dumpSec             Dump the security policy\n"
-						+ "  print               Print value of the <scope>.<name> "
-						+ "variable\n"
-						+ "  type                Print type of the <scope>.<name> entry\n"
-						+ "  slist               List scoped names in <scope>.<name>\n"
-						+ "  llist               List local names in <scope>.<name>\n"
-						+ "\n"
-						+ "<options> can be:\n"
-						+ "  -h                  Print this usage statement\n"
-						+ "  -set <name> <value> Preset name=value in configuration "
-						+ "object\n"
-						+ "  -scope <scope>      Specify <scope> argument for commands\n"
-						+ "  -name <name>        Specify <name> argument for commands\n"
-						+ "\n"
-						+ "  -secCfg <source>    Override default security policy\n"
-						+ "  -secScope           Scope for security policy\n"
-						+ "\n"
-						+ "  -schemaCfg <source> Source that contains a schema\n"
-						+ "  -schema <full.name> Name of schema in '-schemaCfg <source>'\n"
-						+ "  -force_optional     Validate with forceMode = FORCE_OPTIONAL\n"
-						+ "  -force_required     Validate with forceMode = FORCE_REQUIRED\n"
-						+ "  -diagnostics        Print diagnostics during schema "
-						+ "validation\n"
-						+ "  -nodiagnostics       Do not print diagnostics during schema "
-						+ "validation (default)\n"
-						+ "\n"
-						+ "  -recursive          For llist, slist and validate (default)\n"
-						+ "  -norecursive        For llist, slist and validate\n"
-						+ "  -filter <pattern>   A filter pattern for sslist and llist\n"
-						+ "  -types <types>      For llist, slist and validate\n"
-						+ "\n"
-						+ "  -expandUid          For dump (default)\n"
-						+ "  -unexpandUid        For dump\n"
-						+ "\n"
-						+ "<types> can be one of the following\n"
-						+ "  string, list, scope, variables, scope_and_vars (default)\n"
-						+ "\n"
-						+ "<source> can be one of the following:\n"
-						+ "  file.cfg       A configuration file\n"
-						+ "  file#file.cfg  A configuration file\n"
-						+ "  exec#<command> Output from executing the specified "
-						+ "command\n"
-				);
+		msg.append("usage: java org.config4j.Config4J -cfg <source> " + "<command> <options>\n" + "\n"
+		        + "<command> can be one of the following:\n" + "  parse               Parse and report errors, if any\n"
+		        + "  validate            Validate <scope>.<name>\n" + "  dump                Dump <scope>.<name>\n"
+		        + "  dumpSec             Dump the security policy\n" + "  print               Print value of the <scope>.<name> "
+		        + "variable\n" + "  type                Print type of the <scope>.<name> entry\n"
+		        + "  slist               List scoped names in <scope>.<name>\n"
+		        + "  llist               List local names in <scope>.<name>\n" + "\n" + "<options> can be:\n"
+		        + "  -h                  Print this usage statement\n" + "  -set <name> <value> Preset name=value in configuration "
+		        + "object\n" + "  -scope <scope>      Specify <scope> argument for commands\n"
+		        + "  -name <name>        Specify <name> argument for commands\n" + "\n"
+		        + "  -secCfg <source>    Override default security policy\n" + "  -secScope           Scope for security policy\n" + "\n"
+		        + "  -schemaCfg <source> Source that contains a schema\n"
+		        + "  -schema <full.name> Name of schema in '-schemaCfg <source>'\n"
+		        + "  -force_optional     Validate with forceMode = FORCE_OPTIONAL\n"
+		        + "  -force_required     Validate with forceMode = FORCE_REQUIRED\n"
+		        + "  -diagnostics        Print diagnostics during schema " + "validation\n"
+		        + "  -nodiagnostics       Do not print diagnostics during schema " + "validation (default)\n" + "\n"
+		        + "  -recursive          For llist, slist and validate (default)\n"
+		        + "  -norecursive        For llist, slist and validate\n" + "  -filter <pattern>   A filter pattern for sslist and llist\n"
+		        + "  -types <types>      For llist, slist and validate\n" + "\n" + "  -expandUid          For dump (default)\n"
+		        + "  -unexpandUid        For dump\n" + "\n" + "<types> can be one of the following\n"
+		        + "  string, list, scope, variables, scope_and_vars (default)\n" + "\n" + "<source> can be one of the following:\n"
+		        + "  file.cfg       A configuration file\n" + "  file#file.cfg  A configuration file\n"
+		        + "  exec#<command> Output from executing the specified " + "command\n");
 		System.out.print(msg.toString());
 		System.exit(1);
 	}

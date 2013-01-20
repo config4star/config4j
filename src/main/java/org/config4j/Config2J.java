@@ -26,36 +26,29 @@ package org.config4j;
 
 import java.util.ArrayList;
 
+public class Config2J {
 
-public class Config2J
-{
+	static private String calculateRuleForName(Configuration cfg, String name, String uName, String[] wildcardedNamesAndTypes) {
+		int i;
+		String str;
+		String keyword;
+		String wildcardedName;
+		String type;
+		String rule;
 
-	static private String calculateRuleForName(
-			Configuration		cfg,
-			String				name,
-			String				uName,
-			String[]			wildcardedNamesAndTypes)
-	{
-		int					i;
-		String				str;
-		String				keyword;
-		String				wildcardedName;
-		String				type;
-		String				rule;
-
-		for (i = 0; i < wildcardedNamesAndTypes.length; i+= 3) {
-			keyword        = wildcardedNamesAndTypes[i+0]; //@optional/@required
-			wildcardedName = wildcardedNamesAndTypes[i+1];
-			type           = wildcardedNamesAndTypes[i+2];
+		for (i = 0; i < wildcardedNamesAndTypes.length; i += 3) {
+			keyword = wildcardedNamesAndTypes[i + 0]; // @optional/@required
+			wildcardedName = wildcardedNamesAndTypes[i + 1];
+			type = wildcardedNamesAndTypes[i + 2];
 			if (Configuration.patternMatch(uName, wildcardedName)) {
 				rule = keyword + " " + uName + " = " + type;
 				return rule;
 			}
 		}
 
-		//--------
+		// --------
 		// Use heuristics to guess a good type.
-		//--------
+		// --------
 		if (cfg.type("", name) == Configuration.CFG_SCOPE) {
 			rule = uName + " = scope";
 		} else if (cfg.type("", name) == Configuration.CFG_LIST) {
@@ -87,14 +80,10 @@ public class Config2J
 		return rule;
 	}
 
-
-	private static boolean doesVectorcontainString(
-			ArrayList<String>	vec,
-			String				str)
-	{
-		int					i;
-		int					len;
-		String				item;
+	private static boolean doesVectorcontainString(ArrayList<String> vec, String str) {
+		int i;
+		int len;
+		String item;
 
 		len = vec.size();
 		for (i = 0; i < len; i++) {
@@ -106,21 +95,14 @@ public class Config2J
 		return false;
 	}
 
-
-	private static String[] calculateSchema(
-			Configuration		cfg,
-			String[]			namesList,
-			String[]			recipeUserTypes,
-			String[]			wildcardedNamesAndTypes,
-			String[]			recipeIgnoreRules)
-					throws ConfigurationException
-					{
-		int					i;
-		String				rule;
-		String				name;
-		String				uName;
-		ArrayList<String>	uidNames;
-		ArrayList<String>	schema;
+	private static String[] calculateSchema(Configuration cfg, String[] namesList, String[] recipeUserTypes,
+	        String[] wildcardedNamesAndTypes, String[] recipeIgnoreRules) throws ConfigurationException {
+		int i;
+		String rule;
+		String name;
+		String uName;
+		ArrayList<String> uidNames;
+		ArrayList<String> schema;
 
 		uidNames = new ArrayList<String>();
 		schema = new ArrayList<String>();
@@ -133,30 +115,23 @@ public class Config2J
 		for (i = 0; i < namesList.length; i++) {
 			name = namesList[i];
 			if (name.equals("uid-")) {
-				rule = calculateRuleForName(cfg, name, name,
-						wildcardedNamesAndTypes);
+				rule = calculateRuleForName(cfg, name, name, wildcardedNamesAndTypes);
 				schema.add(rule);
 			} else {
 				uName = cfg.unexpandUid(name);
 				if (!doesVectorcontainString(uidNames, uName)) {
 					uidNames.add(uName);
-					rule = calculateRuleForName(cfg, name, uName,
-							wildcardedNamesAndTypes);
+					rule = calculateRuleForName(cfg, name, uName, wildcardedNamesAndTypes);
 					schema.add(rule);
 				}
 			}
 		}
-		return (String[])schema.toArray(new String[schema.size()]);
-					}
+		return schema.toArray(new String[schema.size()]);
+	}
 
-
-	private static boolean doesPatternMatchAnyUnexpandedNameInList(
-			Configuration		cfg,
-			String				pattern,
-			String[]			namesList)
-	{
-		int					i;
-		String				uName;
+	private static boolean doesPatternMatchAnyUnexpandedNameInList(Configuration cfg, String pattern, String[] namesList) {
+		int i;
+		String uName;
 
 		for (i = 0; i < namesList.length; i++) {
 			uName = cfg.unexpandUid(namesList[i]);
@@ -167,58 +142,44 @@ public class Config2J
 		return false;
 	}
 
-
-	private static String[] checkForUnmatchedPatterns(
-			Configuration		cfg,
-			String[]	 		namesList,
-			String[]			wildcardedNamesAndTypes)
-					throws ConfigurationException
-					{
-		int					i;
-		String				wildcardedName;
-		ArrayList<String>	unmatchedPatterns;
+	private static String[] checkForUnmatchedPatterns(Configuration cfg, String[] namesList, String[] wildcardedNamesAndTypes)
+	        throws ConfigurationException {
+		int i;
+		String wildcardedName;
+		ArrayList<String> unmatchedPatterns;
 
 		unmatchedPatterns = new ArrayList<String>();
-		//--------
+		// --------
 		// Check if there is a wildcarded name that does not match
 		// anything
-		//--------
+		// --------
 		for (i = 0; i < wildcardedNamesAndTypes.length; i += 3) {
-			wildcardedName = wildcardedNamesAndTypes[i+1];
-			if (!doesPatternMatchAnyUnexpandedNameInList(cfg, wildcardedName,
-					namesList))
-			{
+			wildcardedName = wildcardedNamesAndTypes[i + 1];
+			if (!doesPatternMatchAnyUnexpandedNameInList(cfg, wildcardedName, namesList)) {
 				unmatchedPatterns.add(wildcardedName);
 			}
 		}
-		return (String[])unmatchedPatterns.toArray(
-				new String[unmatchedPatterns.size()]);
-					}
+		return unmatchedPatterns.toArray(new String[unmatchedPatterns.size()]);
+	}
 
-
-	public static void main(String[] args)
-	{
-		boolean				ok;
-		Configuration		cfg;
-		Configuration		schemaCfg;
-		Config2JUtil		util;
-		String[]			namesList;
-		String[]			recipeUserTypes;
-		String[]			wildcardedNamesAndTypes;
-		String[]			recipeIgnoreRules;
-		String[]			schema;
-		String[]			unmatchedPatterns;
-		String				scope;
-		SchemaValidator		sv = new SchemaValidator();
-		int					i;
-		int					len;
-		String[]			overrideSchema = new String[] {
-				"@typedef keyword = enum[\"@optional\", \"@required\"]",
-				"user_types = list[string]",
-				"wildcarded_names_and_types = table[keyword,keyword, "
-						+ "string,wildcarded-name, string,type]",
-						"ignore_rules = list[string]",
-		};
+	public static void main(String[] args) {
+		boolean ok;
+		Configuration cfg;
+		Configuration schemaCfg;
+		Config2JUtil util;
+		String[] namesList;
+		String[] recipeUserTypes;
+		String[] wildcardedNamesAndTypes;
+		String[] recipeIgnoreRules;
+		String[] schema;
+		String[] unmatchedPatterns;
+		String scope;
+		SchemaValidator sv = new SchemaValidator();
+		int i;
+		int len;
+		String[] overrideSchema = new String[] { "@typedef keyword = enum[\"@optional\", \"@required\"]", "user_types = list[string]",
+		        "wildcarded_names_and_types = table[keyword,keyword, " + "string,wildcarded-name, string,type]",
+		        "ignore_rules = list[string]", };
 
 		schema = null;
 		unmatchedPatterns = new String[0];
@@ -229,35 +190,29 @@ public class Config2J
 		if (ok && util.wantSchema()) {
 			try {
 				cfg.parse(util.getCfgFileName());
-				namesList = cfg.listFullyScopedNames("", "",
-						Configuration.CFG_SCOPE_AND_VARS, true);
+				namesList = cfg.listFullyScopedNames("", "", Configuration.CFG_SCOPE_AND_VARS, true);
 				if (util.getSchemaOverrideCfg() != null) {
 					schemaCfg.parse(util.getSchemaOverrideCfg());
 					scope = util.getSchemaOverrideScope();
 					sv.parseSchema(overrideSchema);
 					sv.validate(schemaCfg, scope, "");
 					recipeUserTypes = schemaCfg.lookupList(scope, "user_types");
-					wildcardedNamesAndTypes = schemaCfg.lookupList(scope,
-							"wildcarded_names_and_types");
-					recipeIgnoreRules = schemaCfg.lookupList(scope,
-							"ignore_rules");
+					wildcardedNamesAndTypes = schemaCfg.lookupList(scope, "wildcarded_names_and_types");
+					recipeIgnoreRules = schemaCfg.lookupList(scope, "ignore_rules");
 				} else {
 					recipeUserTypes = new String[0];
 					wildcardedNamesAndTypes = new String[0];
 					recipeIgnoreRules = new String[0];
 				}
-				schema = calculateSchema(cfg, namesList, recipeUserTypes,
-						wildcardedNamesAndTypes, recipeIgnoreRules);
-				unmatchedPatterns = checkForUnmatchedPatterns(cfg, namesList,
-						wildcardedNamesAndTypes);
-			} catch(ConfigurationException ex) {
+				schema = calculateSchema(cfg, namesList, recipeUserTypes, wildcardedNamesAndTypes, recipeIgnoreRules);
+				unmatchedPatterns = checkForUnmatchedPatterns(cfg, namesList, wildcardedNamesAndTypes);
+			} catch (ConfigurationException ex) {
 				System.err.println(ex.getMessage());
 				ok = false;
 			}
 			len = unmatchedPatterns.length;
 			if (len != 0) {
-				System.err.println("Error: the following patterns in the "
-						+ "schema recipe did not match anything");
+				System.err.println("Error: the following patterns in the " + "schema recipe did not match anything");
 				for (i = 0; i < len; i++) {
 					System.err.println("\t'" + unmatchedPatterns[i] + "'");
 				}

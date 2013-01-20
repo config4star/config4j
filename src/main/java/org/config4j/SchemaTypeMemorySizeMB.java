@@ -24,86 +24,60 @@
 
 package org.config4j;
 
+class SchemaTypeMemorySizeMB extends SchemaType {
 
-class SchemaTypeMemorySizeMB extends SchemaType
-{
-
-	public SchemaTypeMemorySizeMB()
-	{
+	public SchemaTypeMemorySizeMB() {
 		super("memorySizeMB", Configuration.CFG_STRING);
 	}
 
-
-	public void checkRule(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule) throws ConfigurationException
-	{
-		int					len;
-		int					min;
-		int					max;
+	@Override
+	public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
+	        throws ConfigurationException {
+		int len;
+		int min;
+		int max;
 
 		len = typeArgs.length;
 		if (len == 0) {
 			return;
 		}
 		if (len != 2) {
-			throw new ConfigurationException("the '" + typeName
-					+ "' type should take either no arguments or 2 arguments "
-					+ "(denoting min and max memory sizes) in rule '"
-					+ rule + "'");
+			throw new ConfigurationException("the '" + typeName + "' type should take either no arguments or 2 arguments "
+			        + "(denoting min and max memory sizes) in rule '" + rule + "'");
 		}
 		try {
 			min = cfg.stringToMemorySizeMB("", "", typeArgs[0]);
-		} catch(ConfigurationException ex) {
-			throw new ConfigurationException("bad " + typeName
-					+ " value for the first ('min') argument in rule '"
-					+ rule + "'; should be the format '<float> <units>' "
-					+ "where <units> is one of: "
-					+ "'MB', 'GB', 'TB', 'PB'");
+		} catch (ConfigurationException ex) {
+			throw new ConfigurationException("bad " + typeName + " value for the first ('min') argument in rule '" + rule
+			        + "'; should be the format '<float> <units>' " + "where <units> is one of: " + "'MB', 'GB', 'TB', 'PB'");
 		}
 		try {
 			max = cfg.stringToMemorySizeMB("", "", typeArgs[1]);
-		} catch(ConfigurationException ex) {
-			throw new ConfigurationException("bad " + typeName
-					+ " value for the second ('max') argument in rule '"
-					+ rule + "'; should be in the format '<float> <units>' "
-					+ "where <units> is one of: "
-					+ "'MB', 'GB', 'TB', 'PB'");
+		} catch (ConfigurationException ex) {
+			throw new ConfigurationException("bad " + typeName + " value for the second ('max') argument in rule '" + rule
+			        + "'; should be in the format '<float> <units>' " + "where <units> is one of: " + "'MB', 'GB', 'TB', 'PB'");
 		}
 		if (min < -1 || max < -1) {
-			throw new ConfigurationException("the 'min' and 'max' of a "
-					+ typeName + " cannot be negative in rule '" + rule + "'");
+			throw new ConfigurationException("the 'min' and 'max' of a " + typeName + " cannot be negative in rule '" + rule + "'");
 		}
-		if ((max != -1) && (min == -1 || min > max)) {
-			throw new ConfigurationException("the first ('min') argument "
-					+ "is larger than the second ('max') argument in rule '"
-					+ rule + "'");
+		if (max != -1 && (min == -1 || min > max)) {
+			throw new ConfigurationException("the first ('min') argument " + "is larger than the second ('max') argument in rule '" + rule
+			        + "'");
 		}
 	}
 
-
-	public boolean isA(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				value,
-		String				typeName,
-		String[]			typeArgs,
-		int					indentLevel,
-		StringBuffer		errSuffix) throws ConfigurationException
-	{
-		int					val;
-		int					min;
-		int					max;
+	@Override
+	public boolean isA(SchemaValidator sv, Configuration cfg, String value, String typeName, String[] typeArgs, int indentLevel,
+	        StringBuffer errSuffix) throws ConfigurationException {
+		int val;
+		int min;
+		int max;
 
 		try {
 			val = cfg.stringToMemorySizeMB("", "", value);
-		} catch(ConfigurationException ex) {
-			errSuffix.append("the value should be in the format "
-					+ "'<units> <float>' where <units> is one of: "
-					+ "'MB', 'GB', 'TB', 'PB'");
+		} catch (ConfigurationException ex) {
+			errSuffix.append("the value should be in the format " + "'<units> <float>' where <units> is one of: "
+			        + "'MB', 'GB', 'TB', 'PB'");
 			return false;
 		}
 		if (typeArgs.length == 0) {
@@ -112,8 +86,7 @@ class SchemaTypeMemorySizeMB extends SchemaType
 		min = cfg.stringToMemorySizeMB("", "", typeArgs[0]);
 		max = cfg.stringToMemorySizeMB("", "", typeArgs[1]);
 		if (val < min || val > max) {
-			errSuffix.append("the value is outside the permitted range ["
-					  + typeArgs[0] + ", " + typeArgs[1] + "]");
+			errSuffix.append("the value is outside the permitted range [" + typeArgs[0] + ", " + typeArgs[1] + "]");
 			return false;
 		}
 		return true;

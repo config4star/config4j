@@ -24,40 +24,23 @@
 
 package org.config4j;
 
+class SchemaTypeScope extends SchemaType {
 
-class SchemaTypeScope extends SchemaType
-{
-
-	public SchemaTypeScope()
-	{
+	public SchemaTypeScope() {
 		super("scope", Configuration.CFG_SCOPE);
 	}
 
-
-	public void checkRule(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule) throws ConfigurationException
-	{
+	@Override
+	public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
+	        throws ConfigurationException {
 		if (typeArgs.length != 0) {
-			throw new ConfigurationException("the '" + typeName + "' type "
-						+ "should not take arguments in rule '" + rule + "'");
+			throw new ConfigurationException("the '" + typeName + "' type " + "should not take arguments in rule '" + rule + "'");
 		}
 	}
 
-
-	public void validate(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				scope,
-		String				name,
-		String				typeName,
-		String				origTypeName,
-		String[]			typeArgs,
-		int					indentLevel) throws ConfigurationException
-	{
+	@Override
+	public void validate(SchemaValidator sv, Configuration cfg, String scope, String name, String typeName, String origTypeName,
+	        String[] typeArgs, int indentLevel) throws ConfigurationException {
 		cfg.lookupScope(scope, name);
 	}
 

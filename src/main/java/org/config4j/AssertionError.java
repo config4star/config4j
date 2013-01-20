@@ -24,12 +24,9 @@
 
 package org.config4j;
 
-
 @SuppressWarnings("serial")
-class AssertionError extends Error
-{
-	AssertionError(String s)
-	{
+class AssertionError extends Error {
+	AssertionError(String s) {
 		super(s);
 	}
 }

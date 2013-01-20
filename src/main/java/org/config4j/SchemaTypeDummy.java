@@ -24,23 +24,15 @@
 
 package org.config4j;
 
+class SchemaTypeDummy extends SchemaType {
 
-class SchemaTypeDummy extends SchemaType
-{
-
-	public SchemaTypeDummy(String name)
-	{
+	public SchemaTypeDummy(String name) {
 		super(name, Configuration.CFG_STRING);
 	}
 
-
-	public void checkRule(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule) throws ConfigurationException
-	{
+	@Override
+	public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
+	        throws ConfigurationException {
 	}
 
 }

@@ -24,15 +24,12 @@
 
 package org.config4j;
 
+public class Config2JNoCheck {
+	public static void main(String[] args) {
+		boolean ok;
+		int exitStatus;
+		Config2JUtil util;
 
-public class Config2JNoCheck
-{
-	public static void main(String[] args)
-	{
-		boolean				ok;
-		int					exitStatus;
-		Config2JUtil		util;
-		
 		util = new Config2JUtil("org.config4j.Config2JNoCheck");
 		ok = util.parseCmdLineArgs(args);
 		if (ok) {

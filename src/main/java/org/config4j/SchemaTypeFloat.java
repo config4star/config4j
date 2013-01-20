@@ -24,73 +24,53 @@
 
 package org.config4j;
 
+class SchemaTypeFloat extends SchemaType {
 
-class SchemaTypeFloat extends SchemaType
-{
-
-	public SchemaTypeFloat()
-	{
+	public SchemaTypeFloat() {
 		super("float", Configuration.CFG_STRING);
 	}
 
-
-	public void checkRule(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule) throws ConfigurationException
-	{
-		int					typeArgsLen;
-		float				min;
-		float				max;
+	@Override
+	public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
+	        throws ConfigurationException {
+		int typeArgsLen;
+		float min;
+		float max;
 
 		typeArgsLen = typeArgs.length;
 		if (typeArgsLen == 0) {
 			return;
 		}
 		if (typeArgsLen != 2) {
-			throw new ConfigurationException("the '" + typeName
-								+ "' type should take either no arguments or "
-								+ "2 arguments (denoting min and max values) "
-								+ "in rule '" + rule + "'");
+			throw new ConfigurationException("the '" + typeName + "' type should take either no arguments or "
+			        + "2 arguments (denoting min and max values) " + "in rule '" + rule + "'");
 		}
 		try {
 			min = cfg.stringToFloat("", "", typeArgs[0]);
-		} catch(ConfigurationException ex) {
-			throw new ConfigurationException("non-float value for the first "
-								+ "('min') argument in rule '" + rule + "'");
+		} catch (ConfigurationException ex) {
+			throw new ConfigurationException("non-float value for the first " + "('min') argument in rule '" + rule + "'");
 		}
 		try {
 			max = cfg.stringToFloat("", "", typeArgs[1]);
-		} catch(ConfigurationException ex) {
-			throw new ConfigurationException("non-float value for the second "
-								+ "('max') argument in rule '" + rule + "'");
+		} catch (ConfigurationException ex) {
+			throw new ConfigurationException("non-float value for the second " + "('max') argument in rule '" + rule + "'");
 		}
 		if (min > max) {
-			throw new ConfigurationException("the first ('min') argument is "
-								+ "larger than the second ('max') argument "
-								+ "in rule '" + rule + "'");
+			throw new ConfigurationException("the first ('min') argument is " + "larger than the second ('max') argument " + "in rule '"
+			        + rule + "'");
 		}
 	}
 
-
-	public boolean isA(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				value,
-		String				typeName,
-		String[]			typeArgs,
-		int					indentLevel,
-		StringBuffer		errSuffix) throws ConfigurationException
-	{
-		float				val;
-		float				min;
-		float				max;
+	@Override
+	public boolean isA(SchemaValidator sv, Configuration cfg, String value, String typeName, String[] typeArgs, int indentLevel,
+	        StringBuffer errSuffix) throws ConfigurationException {
+		float val;
+		float min;
+		float max;
 
 		try {
 			val = cfg.stringToFloat("", "", value);
-		} catch(ConfigurationException ex) {
+		} catch (ConfigurationException ex) {
 			return false;
 		}
 		if (typeArgs.length == 0) {
@@ -100,8 +80,7 @@ class SchemaTypeFloat extends SchemaType
 		min = cfg.stringToFloat("", "", typeArgs[0]);
 		max = cfg.stringToFloat("", "", typeArgs[1]);
 		if (val < min || val > max) {
-			errSuffix.append("the value is outside the permitted range ["
-							 + typeArgs[0] + ", " + typeArgs[1] + "]");
+			errSuffix.append("the value is outside the permitted range [" + typeArgs[0] + ", " + typeArgs[1] + "]");
 			return false;
 		}
 		return true;

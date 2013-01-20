@@ -24,7 +24,6 @@
 
 package org.config4j;
 
-
 //--------------------------------------------------------------
 // Class:	ConfigItem
 //
@@ -34,91 +33,67 @@ package org.config4j;
 //		<value> part, (which can be a string or a sequence
 //		of string) or a <scope>.
 //--------------------------------------------------------------
-class ConfigItem
-{
-	ConfigItem(String name, String stringVal)
-	{
-		this.name      = name;
+class ConfigItem {
+	ConfigItem(String name, String stringVal) {
+		this.name = name;
 		this.stringVal = stringVal;
-		this.type      = Configuration.CFG_STRING;
+		type = Configuration.CFG_STRING;
 	}
 
-
-	ConfigItem(String name, String[] listVal)
-	{
-		this.name    = name;
+	ConfigItem(String name, String[] listVal) {
+		this.name = name;
 		this.listVal = listVal;
-		this.type    = Configuration.CFG_LIST;
+		type = Configuration.CFG_LIST;
 	}
 
-
-	ConfigItem(String name, ConfigScope scopeVal)
-	{
-		this.name     = name;
+	ConfigItem(String name, ConfigScope scopeVal) {
+		this.name = name;
 		this.scopeVal = scopeVal;
-		this.type     = Configuration.CFG_SCOPE;
+		type = Configuration.CFG_SCOPE;
 	}
 
-
-	//--------
+	// --------
 	// Public operations
-	//--------
+	// --------
 
-	int getType()
-	{
-		return this.type;
+	int getType() {
+		return type;
 	}
 
-
-	String getName()
-	{
-		return this.name;
+	String getName() {
+		return name;
 	}
 
-
-	String getStringVal()
-	{
+	String getStringVal() {
 		Util.assertion(type == Configuration.CFG_STRING);
-		return this.stringVal;
+		return stringVal;
 	}
 
-
-	String[] getListVal()
-	{
+	String[] getListVal() {
 		Util.assertion(type == Configuration.CFG_LIST);
-		return this.listVal;
+		return listVal;
 	}
 
-
-	ConfigScope getScopeVal()
-	{
+	ConfigScope getScopeVal() {
 		Util.assertion(type == Configuration.CFG_SCOPE);
-		return this.scopeVal;
+		return scopeVal;
 	}
 
-
-	void dump(StringBuffer buf, String name, boolean wantExpandedUidNames)
-	{
+	void dump(StringBuffer buf, String name, boolean wantExpandedUidNames) {
 		dump(buf, name, wantExpandedUidNames, 0);
 	}
 
-
-	void dump(
-		StringBuffer				buf,
-		String						name,
-		boolean						wantExpandedUidNames,
-		int							indentLevel)
-	{
-		int							i;
-		String						escStr;
-		UidIdentifierProcessor		uidIdProc;
+	void dump(StringBuffer buf, String name, boolean wantExpandedUidNames, int indentLevel) {
+		int i;
+		String escStr;
+		UidIdentifierProcessor uidIdProc;
 
 		if (!wantExpandedUidNames) {
 			uidIdProc = new UidIdentifierProcessor();
 			name = uidIdProc.unexpand(name);
 		}
 		printIndent(buf, indentLevel);
-		switch(type) {
+		switch (type) {
 		case Configuration.CFG_STRING:
 			escStr = escapeString(stringVal);
 			buf.append(name + " = \"" + escStr + "\";\n");
@@ -128,7 +103,7 @@ class ConfigItem
 			for (i = 0; i < listVal.length; i++) {
 				escStr = escapeString(listVal[i]);
 				buf.append("\"" + escStr + "\"");
-				if (i < listVal.length-1) {
+				if (i < listVal.length - 1) {
 					buf.append(", ");
 				}
 			}
@@ -136,7 +111,7 @@ class ConfigItem
 			break;
 		case Configuration.CFG_SCOPE:
 			buf.append(name + " {\n");
-			scopeVal.dump(buf, wantExpandedUidNames, indentLevel+1);
+			scopeVal.dump(buf, wantExpandedUidNames, indentLevel + 1);
 			printIndent(buf, indentLevel);
 			buf.append("}\n");
 			break;
@@ -145,29 +120,25 @@ class ConfigItem
 		}
 	}
 
-
-	private void printIndent(StringBuffer buf, int indentLevel)
-	{
-		int				i;
+	private void printIndent(StringBuffer buf, int indentLevel) {
+		int i;
 
 		for (i = 0; i < indentLevel; i++) {
 			buf.append("\t");
 		}
 	}
 
-
-	private String escapeString(String str)
-	{
-		StringBuffer		buf;
-		int					i;
-		int					len;
-		char				ch;
+	private String escapeString(String str) {
+		StringBuffer buf;
+		int i;
+		int len;
+		char ch;
 
 		buf = new StringBuffer();
 		len = str.length();
 		for (i = 0; i < len; i++) {
 			ch = str.charAt(i);
-			switch(ch) {
+			switch (ch) {
 			case '\t':
 				buf.append("%t");
 				break;
@@ -188,11 +159,9 @@ class ConfigItem
 		return buf.toString();
 	}
 
-
-	private int				type;
-	private String			name;
-	private String			stringVal;
-	private String[]		listVal;
-	private ConfigScope		scopeVal;
+	private int type;
+	private String name;
+	private String stringVal;
+	private String[] listVal;
+	private ConfigScope scopeVal;
 }
-

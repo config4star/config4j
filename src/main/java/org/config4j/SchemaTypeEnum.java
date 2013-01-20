@@ -24,42 +24,25 @@
 
 package org.config4j;
 
+class SchemaTypeEnum extends SchemaType {
 
-class SchemaTypeEnum extends SchemaType
-{
-
-	public SchemaTypeEnum()
-	{
+	public SchemaTypeEnum() {
 		super("enum", Configuration.CFG_STRING);
 	}
 
-
-	public void checkRule(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule) throws ConfigurationException
-	{
+	@Override
+	public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
+	        throws ConfigurationException {
 		if (typeArgs.length == 0) {
-			throw new ConfigurationException(
-						"the '" + typeName + "' type should take one or more "
-						+ "arguments (denoting enum values) in rule '"
-						+ rule + "'");
+			throw new ConfigurationException("the '" + typeName + "' type should take one or more "
+			        + "arguments (denoting enum values) in rule '" + rule + "'");
 		}
 	}
 
-
-	public boolean isA(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				value,
-		String				typeName,
-		String[]			typeArgs,
-		int					indentLevel,
-		StringBuffer		errSuffix) throws ConfigurationException
-	{
-		int					i;
+	@Override
+	public boolean isA(SchemaValidator sv, Configuration cfg, String value, String typeName, String[] typeArgs, int indentLevel,
+	        StringBuffer errSuffix) throws ConfigurationException {
+		int i;
 
 		Util.assertion(typeArgs.length != 0);
 		for (i = 0; i < typeArgs.length; i++) {

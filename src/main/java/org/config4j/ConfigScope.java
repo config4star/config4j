@@ -31,11 +31,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
-class ConfigScope
-{
-	ConfigScope(ConfigScope parentScope, String name)
-	{
+class ConfigScope {
+	ConfigScope(ConfigScope parentScope, String name) {
 		table = new HashMap<String, ConfigItem>(16);
 		this.parentScope = parentScope;
 		if (parentScope == null) {
@@ -48,16 +45,12 @@ class ConfigScope
 		}
 	}
 
-
-	String getScopedName()
-	{
+	String getScopedName() {
 		return scopedName;
 	}
 
-
-	ConfigScope rootScope()
-	{
-		ConfigScope		scope;
+	ConfigScope rootScope() {
+		ConfigScope scope;
 
 		scope = this;
 		while (scope.parentScope != null) {
@@ -66,16 +59,14 @@ class ConfigScope
 		return scope;
 	}
 
+	boolean addOrReplaceString(String name, String strVal) {
+		ConfigItem item;
 
-	boolean addOrReplaceString(String name, String strVal)
-	{
-		ConfigItem		item;
-
-		item = (ConfigItem)table.get(name);
+		item = table.get(name);
 		if (item != null && item.getType() == Configuration.CFG_SCOPE) {
-			//--------
+			// --------
 			// Fail because there is a scope with the same name
-			//--------
+			// --------
 			return false;
 		} else {
 			table.put(name, new ConfigItem(name, strVal));
@@ -83,16 +74,14 @@ class ConfigScope
 		}
 	}
 
+	boolean addOrReplaceList(String name, String[] listVal) {
+		ConfigItem item;
 
-	boolean addOrReplaceList(String name, String[] listVal)
-	{
-		ConfigItem		item;
-
-		item = (ConfigItem)table.get(name);
+		item = table.get(name);
 		if (item != null && item.getType() == Configuration.CFG_SCOPE) {
-			//--------
+			// --------
 			// Fail because there is a scope with the same name
-			//--------
+			// --------
 			return false;
 		} else {
 			table.put(name, new ConfigItem(name, listVal));
@@ -100,17 +89,15 @@ class ConfigScope
 		}
 	}
 
+	boolean addOrReplaceList(String name, ArrayList<String> listVal) {
+		ConfigItem item;
+		String[] array;
 
-	boolean addOrReplaceList(String name, ArrayList<String> listVal)
-	{
-		ConfigItem			item;
-		String[]			array;
-
-		item = (ConfigItem)table.get(name);
+		item = table.get(name);
 		if (item != null && item.getType() == Configuration.CFG_SCOPE) {
-			//--------
+			// --------
 			// Fail because there is a scope with the same name
-			//--------
+			// --------
 			return false;
 		} else {
 			array = new String[listVal.size()];
@@ -120,159 +107,129 @@ class ConfigScope
 		}
 	}
 
+	ConfigScope ensureScopeExists(String name) {
+		ConfigItem item;
+		ConfigScope scope;
 
-	ConfigScope ensureScopeExists(String name)
-	{
-		ConfigItem		item;
-		ConfigScope		scope;
-
-		item = (ConfigItem)table.get(name);
+		item = table.get(name);
 		if (item != null && item.getType() != Configuration.CFG_SCOPE) {
-			//--------
+			// --------
 			// Fail because it already exists, but not as a scope
-			//--------
+			// --------
 			scope = null;
 		} else if (item != null) {
-			//--------
+			// --------
 			// It already exists.
-			//--------
+			// --------
 			scope = item.getScopeVal();
 		} else {
-			//--------
+			// --------
 			// It doesn't already exist. Create it.
-			//--------
+			// --------
 			scope = new ConfigScope(this, name);
 			table.put(name, new ConfigItem(name, scope));
 		}
 		return scope;
 	}
 
-
-	boolean removeItem(String name)
-	{
-		ConfigItem		item;
-		item = (ConfigItem)table.get(name);
+	boolean removeItem(String name) {
+		ConfigItem item;
+		item = table.get(name);
 		if (item != null) {
 			table.remove(name);
 		}
-		return (item != null);
+		return item != null;
 	}
 
-
-	ConfigItem findItem(String name)
-	{
-		return (ConfigItem)table.get(name);
+	ConfigItem findItem(String name) {
+		return table.get(name);
 	}
 
+	String[] listFullyScopedNames(int typeMask, boolean recursive) {
+		ArrayList<String> vec = new ArrayList<String>();
+		String[] result;
 
-	String[] listFullyScopedNames(int typeMask, boolean recursive)
-	{
-		ArrayList<String>	vec = new ArrayList<String>();
-		String[]			result;
-
-		listScopedNamesHelper(scopedName, typeMask, recursive, new String[0],
-				vec);
+		listScopedNamesHelper(scopedName, typeMask, recursive, new String[0], vec);
 		result = new String[vec.size()];
-		return (vec.toArray(result));
+		return vec.toArray(result);
 	}
 
+	String[] listFullyScopedNames(int typeMask, boolean recursive, String[] filterPatterns) {
+		ArrayList<String> vec = new ArrayList<String>();
+		String[] result;
 
-	String[] listFullyScopedNames(
-			int				typeMask,
-			boolean			recursive,
-			String[]		filterPatterns)
-	{
-		ArrayList<String>	vec = new ArrayList<String>();
-		String[]			result;
-
-		listScopedNamesHelper(scopedName, typeMask, recursive, filterPatterns,
-				vec);
+		listScopedNamesHelper(scopedName, typeMask, recursive, filterPatterns, vec);
 		result = new String[vec.size()];
-		return (vec.toArray(result));
+		return vec.toArray(result);
 	}
 
-
-	String[] listLocallyScopedNames(int typeMask, boolean recursive)
-	{
-		ArrayList<String>	vec = new ArrayList<String>();
-		String[]			result;
+	String[] listLocallyScopedNames(int typeMask, boolean recursive) {
+		ArrayList<String> vec = new ArrayList<String>();
+		String[] result;
 
 		listScopedNamesHelper("", typeMask, recursive, new String[0], vec);
 		result = new String[vec.size()];
-		return (vec.toArray(result));
+		return vec.toArray(result);
 	}
 
-
-	String[] listLocallyScopedNames(
-			int				typeMask,
-			boolean			recursive,
-			String[]		filterPatterns)
-	{
-		ArrayList<String>	vec = new ArrayList<String>();
-		String[]			result;
+	String[] listLocallyScopedNames(int typeMask, boolean recursive, String[] filterPatterns) {
+		ArrayList<String> vec = new ArrayList<String>();
+		String[] result;
 
 		listScopedNamesHelper("", typeMask, recursive, filterPatterns, vec);
 		result = new String[vec.size()];
-		return (vec.toArray(result));
+		return vec.toArray(result);
 	}
 
-
-	ConfigScope getParentScope()
-	{
+	ConfigScope getParentScope() {
 		return parentScope;
 	}
 
-
-	void dump(StringBuffer buf, boolean wantExpandedUidNames)
-	{
+	void dump(StringBuffer buf, boolean wantExpandedUidNames) {
 		dump(buf, wantExpandedUidNames, 0);
 	}
 
+	void dump(StringBuffer buf, boolean wantExpandedUidNames, int indentLevel) {
+		String[] namesArray;
+		int i;
+		ConfigItem item;
 
-	void dump(StringBuffer buf, boolean wantExpandedUidNames, int indentLevel)
-	{
-		String[]		namesArray;
-		int				i;
-		ConfigItem		item;
-
-		//--------
+		// --------
 		// First pass. Dump the variables.
-		//--------
+		// --------
 		namesArray = listLocalNames(Configuration.CFG_VARIABLES);
 		Arrays.sort(namesArray);
 		for (i = 0; i < namesArray.length; i++) {
-			item = (ConfigItem)table.get(namesArray[i]);
+			item = table.get(namesArray[i]);
 			Util.assertion(item != null);
 			Util.assertion((item.getType() & Configuration.CFG_VARIABLES) != 0);
 			item.dump(buf, namesArray[i], wantExpandedUidNames, indentLevel);
 		}
 
-		//--------
+		// --------
 		// Second pass. Dump the nested scopes.
-		//--------
+		// --------
 		namesArray = listLocalNames(Configuration.CFG_SCOPE);
 		Arrays.sort(namesArray);
 		for (i = 0; i < namesArray.length; i++) {
-			item = (ConfigItem)table.get(namesArray[i]);
+			item = table.get(namesArray[i]);
 			Util.assertion((item.getType() & Configuration.CFG_SCOPE) != 0);
 			item.dump(buf, namesArray[i], wantExpandedUidNames, indentLevel);
 		}
 	}
 
-
-	private String[] listLocalNames(int typeMask)
-	{
-		ArrayList<String>					arrayList;
-		Map.Entry<String, ConfigItem>		entry;
-		Iterator<Entry<String, ConfigItem>>	iter;
-		ConfigItem							item;
-		String[]							result;
+	private String[] listLocalNames(int typeMask) {
+		ArrayList<String> arrayList;
+		Map.Entry<String, ConfigItem> entry;
+		Iterator<Entry<String, ConfigItem>> iter;
+		ConfigItem item;
+		String[] result;
 
 		arrayList = new ArrayList<String>();
 		iter = table.entrySet().iterator();
 		while (iter.hasNext()) {
-			entry = (Map.Entry<String, ConfigItem>)iter.next();
-			item = (ConfigItem)entry.getValue();
+			entry = iter.next();
+			item = entry.getValue();
 			if ((item.getType() & typeMask) != 0) {
 				arrayList.add(item.getName());
 			}
@@ -282,53 +239,39 @@ class ConfigScope
 		return result;
 	}
 
-
-	private void listScopedNamesHelper(
-			String				prefix,
-			int					typeMask,
-			boolean				recursive,
-			String[]			filterPatterns,
-			ArrayList<String>	arrayList)
-	{
-		Map.Entry<String, ConfigItem>		entry;
-		Iterator<Entry<String, ConfigItem>>	iter;
-		ConfigItem					  		item;
-		ConfigScope							scope;
-		boolean								isPrefixEmpty;
-		String								scopedName;
+	private void listScopedNamesHelper(String prefix, int typeMask, boolean recursive, String[] filterPatterns, ArrayList<String> arrayList) {
+		Map.Entry<String, ConfigItem> entry;
+		Iterator<Entry<String, ConfigItem>> iter;
+		ConfigItem item;
+		ConfigScope scope;
+		boolean isPrefixEmpty;
+		String scopedName;
 
 		isPrefixEmpty = prefix.equals("");
 		iter = table.entrySet().iterator();
 		while (iter.hasNext()) {
-			entry = (Map.Entry<String, ConfigItem>)iter.next();
-			item = (ConfigItem)entry.getValue();
+			entry = iter.next();
+			item = entry.getValue();
 			if (isPrefixEmpty) {
 				scopedName = item.getName();
 			} else {
 				scopedName = prefix + "." + item.getName();
 			}
-			if ((item.getType() & typeMask) != 0
-					&& listFilter(scopedName, filterPatterns))
-			{
+			if ((item.getType() & typeMask) != 0 && listFilter(scopedName, filterPatterns)) {
 				arrayList.add(scopedName);
 			}
-			if (recursive&& item.getType()==Configuration.CFG_SCOPE)
-			{
+			if (recursive && item.getType() == Configuration.CFG_SCOPE) {
 				scope = item.getScopeVal();
-				scope.listScopedNamesHelper(scopedName,
-						typeMask, true, filterPatterns,
-						arrayList);
+				scope.listScopedNamesHelper(scopedName, typeMask, true, filterPatterns, arrayList);
 			}
 		}
 	}
 
-
-	private boolean listFilter(String name, String[] filterPatterns)
-	{
-		int							i;
-		String						unexpandedName;
-		String						pattern;
-		UidIdentifierProcessor		uidProc;
+	private boolean listFilter(String name, String[] filterPatterns) {
+		int i;
+		String unexpandedName;
+		String pattern;
+		UidIdentifierProcessor uidProc;
 
 		if (filterPatterns.length == 0) {
 			return true;
@@ -338,16 +281,14 @@ class ConfigScope
 		unexpandedName = uidProc.unexpand(name);
 		for (i = 0; i < filterPatterns.length; i++) {
 			pattern = filterPatterns[i];
-			if (Configuration.patternMatch(unexpandedName, pattern))
-			{
+			if (Configuration.patternMatch(unexpandedName, pattern)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-
-	private final ConfigScope				parentScope;
-	private String							scopedName;
-	private final Map<String, ConfigItem>	table;
+	private final ConfigScope parentScope;
+	private String scopedName;
+	private final Map<String, ConfigItem> table;
 }

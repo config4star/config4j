@@ -24,64 +24,50 @@
 
 package org.config4j;
 
-
-public class ValueWithUnits
-{
-	public ValueWithUnits()
-	{
-		this.state = NO_VALUE;
+public class ValueWithUnits {
+	public ValueWithUnits() {
+		state = NO_VALUE;
 	}
 
-
-	public ValueWithUnits(int value, String units)
-	{
-		this.state = INT_VALUE;
-		this.intValue = value;
+	public ValueWithUnits(int value, String units) {
+		state = INT_VALUE;
+		intValue = value;
 		this.units = units;
 	}
 
-
-	public ValueWithUnits(float value, String units)
-	{
-		this.state = FLOAT_VALUE;
-		this.floatValue = value;
+	public ValueWithUnits(float value, String units) {
+		state = FLOAT_VALUE;
+		floatValue = value;
 		this.units = units;
 	}
 
-
-	public int getIntValue()
-	{
-		if (this.state != INT_VALUE) {
+	public int getIntValue() {
+		if (state != INT_VALUE) {
 			throw new IllegalStateException("ValueWithUnits.getIntValue()");
 		}
-		return this.intValue;
+		return intValue;
 	}
 
-
-	public float getFloatValue()
-	{
-		if (this.state != FLOAT_VALUE) {
+	public float getFloatValue() {
+		if (state != FLOAT_VALUE) {
 			throw new IllegalStateException("ValueWithUnits.getFloatValue()");
 		}
-		return this.floatValue;
+		return floatValue;
 	}
 
-
-	public String getUnits()
-	{
-		if (this.state == NO_VALUE) {
+	public String getUnits() {
+		if (state == NO_VALUE) {
 			throw new IllegalStateException("ValueWithUnits.getUnits()");
 		}
-		return this.units;
+		return units;
 	}
 
+	private int state;
+	private int intValue;
+	private float floatValue;
+	private String units;
 
-	private int					state;
-	private int					intValue;
-	private float				floatValue;
-	private String				units;
-
-	private final static int	NO_VALUE    = 0;
-	private final static int	INT_VALUE   = 1;
-	private final static int	FLOAT_VALUE = 2;
+	private final static int NO_VALUE = 0;
+	private final static int INT_VALUE = 1;
+	private final static int FLOAT_VALUE = 2;
 }

@@ -24,40 +24,33 @@
 
 package org.config4j;
 
-
-
-class SchemaLex extends LexBase
-{
-	//--------
+class SchemaLex extends LexBase {
+	// --------
 	// Constants for lexical symbols.
 	// Keywords
-	//--------
-	final static short LEX_IGNORE_EVERYTHING_IN_SYM  = 101;
-	final static short LEX_IGNORE_SCOPES_IN_SYM      = 102;
-	final static short LEX_IGNORE_VARIABLES_IN_SYM   = 103;
-	final static short LEX_TYPEDEF_SYM               = 104;
-	final static short LEX_OPTIONAL_SYM              = 105;
-	final static short LEX_REQUIRED_SYM              = 106;
-	//--------
-	// There are no functions in the schema language
-	//--------
+	// --------
+	final static short LEX_IGNORE_EVERYTHING_IN_SYM = 101;
+	final static short LEX_IGNORE_SCOPES_IN_SYM = 102;
+	final static short LEX_IGNORE_VARIABLES_IN_SYM = 103;
+	final static short LEX_TYPEDEF_SYM = 104;
+	final static short LEX_OPTIONAL_SYM = 105;
+	final static short LEX_REQUIRED_SYM = 106;
 
-	SchemaLex(String str) throws ConfigurationException
-	{
+	// --------
+	// There are no functions in the schema language
+	// --------
+
+	SchemaLex(String str) throws ConfigurationException {
 		super(str);
-		this.keywordInfoArray = schemaKeywordInfoArray;
+		keywordInfoArray = schemaKeywordInfoArray;
 	}
 
-
-	//--------
+	// --------
 	// Instance variables
-	//--------
+	// --------
 	private LexKeywordInfo[] schemaKeywordInfoArray = new LexKeywordInfo[] {
-		new LexKeywordInfo("@ignoreEverythingIn", LEX_IGNORE_EVERYTHING_IN_SYM),
-		new LexKeywordInfo("@ignoreScopesIn",     LEX_IGNORE_SCOPES_IN_SYM),
-		new LexKeywordInfo("@ignoreVariablesIn",  LEX_IGNORE_VARIABLES_IN_SYM),
-		new LexKeywordInfo("@optional",           LEX_OPTIONAL_SYM),
-		new LexKeywordInfo("@required",           LEX_REQUIRED_SYM),
-		new LexKeywordInfo("@typedef",            LEX_TYPEDEF_SYM),
-	};
+	        new LexKeywordInfo("@ignoreEverythingIn", LEX_IGNORE_EVERYTHING_IN_SYM),
+	        new LexKeywordInfo("@ignoreScopesIn", LEX_IGNORE_SCOPES_IN_SYM),
+	        new LexKeywordInfo("@ignoreVariablesIn", LEX_IGNORE_VARIABLES_IN_SYM), new LexKeywordInfo("@optional", LEX_OPTIONAL_SYM),
+	        new LexKeywordInfo("@required", LEX_REQUIRED_SYM), new LexKeywordInfo("@typedef", LEX_TYPEDEF_SYM), };
 }

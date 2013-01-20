@@ -24,77 +24,80 @@
 
 package org.config4j;
 
-
-class LexToken
-{
-	//--------
+class LexToken {
+	// --------
 	// Ctor, dtor and assignment operator
-	//--------
-	public LexToken()
-	{
-		this.type     = LexBase.LEX_UNKNOWN_SYM;
-		this.lineNum  = -1;
-		this.spelling = "";
-		this.funcType = LexBase.NOT_A_FUNC;
+	// --------
+	public LexToken() {
+		type = LexBase.LEX_UNKNOWN_SYM;
+		lineNum = -1;
+		spelling = "";
+		funcType = LexBase.NOT_A_FUNC;
 	}
 
-
-	public LexToken(LexToken other)
-	{
-		this.type     = other.type;
-		this.lineNum  = other.lineNum;
-		this.spelling = other.spelling;
-		this.funcType = other.funcType;
+	public LexToken(LexToken other) {
+		type = other.type;
+		lineNum = other.lineNum;
+		spelling = other.spelling;
+		funcType = other.funcType;
 	}
 
-
-	public LexToken(short type, int lineNum, String spelling)
-	{
-		this.type     = type;
-		this.lineNum  = lineNum;
+	public LexToken(short type, int lineNum, String spelling) {
+		this.type = type;
+		this.lineNum = lineNum;
 		this.spelling = spelling;
-		this.funcType = LexBase.NOT_A_FUNC;
+		funcType = LexBase.NOT_A_FUNC;
 	}
 
-	//--------
+	// --------
 	// Accessor functions
-	//--------
-	public String getSpelling()   { return this.spelling; }
-	public int getLineNum()       { return this.lineNum; }
-	public int getType()          { return this.type; }
-	public boolean isStringFunc() { return this.funcType==LexBase.STRING_FUNC; }
-	public boolean isListFunc()	  { return this.funcType == LexBase.LIST_FUNC; }
-	public boolean isBoolFunc()	  { return this.funcType == LexBase.BOOL_FUNC; }
-
-	//--------
-	// Modifier function
-	//--------
-	public void reset(short type, int lineNum, String spelling)
-	{
-		this.type     = type;
-		this.lineNum  = lineNum;
-		this.spelling = spelling;
-		this.funcType = LexBase.NOT_A_FUNC;
+	// --------
+	public String getSpelling() {
+		return spelling;
 	}
 
+	public int getLineNum() {
+		return lineNum;
+	}
 
-	public void reset(
-		short			type,
-		int				lineNum,
-		String			spelling,
-		short			funcType)
-	{
-		this.type     = type;
-		this.lineNum  = lineNum;
+	public int getType() {
+		return type;
+	}
+
+	public boolean isStringFunc() {
+		return funcType == LexBase.STRING_FUNC;
+	}
+
+	public boolean isListFunc() {
+		return funcType == LexBase.LIST_FUNC;
+	}
+
+	public boolean isBoolFunc() {
+		return funcType == LexBase.BOOL_FUNC;
+	}
+
+	// --------
+	// Modifier function
+	// --------
+	public void reset(short type, int lineNum, String spelling) {
+		this.type = type;
+		this.lineNum = lineNum;
+		this.spelling = spelling;
+		funcType = LexBase.NOT_A_FUNC;
+	}
+
+	public void reset(short type, int lineNum, String spelling, short funcType) {
+		this.type = type;
+		this.lineNum = lineNum;
 		this.spelling = spelling;
 		this.funcType = funcType;
 	}
 
-	//--------
+	// --------
 	// Instance variables.
-	//--------
-	private short		type;
-	private String		spelling;
-	private int			lineNum;
-	private short		funcType;
+	// --------
+	private short type;
+	private String spelling;
+	private int lineNum;
+	private short funcType;
 }

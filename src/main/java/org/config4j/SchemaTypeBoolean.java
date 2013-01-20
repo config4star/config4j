@@ -24,39 +24,24 @@
 
 package org.config4j;
 
+class SchemaTypeBoolean extends SchemaType {
 
-class SchemaTypeBoolean extends SchemaType
-{
-
-	public SchemaTypeBoolean()
-	{
+	public SchemaTypeBoolean() {
 		super("boolean", Configuration.CFG_STRING);
 	}
 
-	public void checkRule(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule) throws ConfigurationException
-	{
+	@Override
+	public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
+	        throws ConfigurationException {
 		if (typeArgs.length != 0) {
-			throw new ConfigurationException("the '" + typeName + "' type "
-						+ "should not take arguments in rule '" + rule + "'");
+			throw new ConfigurationException("the '" + typeName + "' type " + "should not take arguments in rule '" + rule + "'");
 		}
 	}
 
-
-	public boolean isA(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				value,
-		String				typeName,
-		String[]			typeArgs,
-		int					indentLevel,
-		StringBuffer		errSuffix) throws ConfigurationException
-	{
-		boolean				result;
+	@Override
+	public boolean isA(SchemaValidator sv, Configuration cfg, String value, String typeName, String[] typeArgs, int indentLevel,
+	        StringBuffer errSuffix) throws ConfigurationException {
+		boolean result;
 
 		result = cfg.isBoolean(value);
 		if (result == false) {

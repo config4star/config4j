@@ -30,45 +30,41 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-
-class EnvStreamParserThread extends Thread
-{
-	EnvStreamParserThread(InputStream inputStream)
-	{
+class EnvStreamParserThread extends Thread {
+	EnvStreamParserThread(InputStream inputStream) {
 		this.inputStream = inputStream;
-		this.envProperties = new Properties();
+		envProperties = new Properties();
 	}
 
-	Properties getEnvProperties()
-	{
+	Properties getEnvProperties() {
 		return envProperties;
 	}
 
-	public void run()
-	{
-		InputStreamReader	isr;
-		BufferedReader		br;
-		String				line;
-		String				key;
-		String				value;
+	@Override
+	public void run() {
+		InputStreamReader isr;
+		BufferedReader br;
+		String line;
+		String key;
+		String value;
 
-		int					index;
+		int index;
 		try {
 			isr = new InputStreamReader(inputStream);
 			br = new BufferedReader(isr);
 			while ((line = br.readLine()) != null) {
 				index = line.indexOf("=");
 				if (index != -1) {
-					key   = line.substring(0, index).toUpperCase();
-					value = line.substring(index+1);
+					key = line.substring(0, index).toUpperCase();
+					value = line.substring(index + 1);
 					envProperties.setProperty(key, value);
 				}
 			}
-		} catch(IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	private InputStream	inputStream;
-	private Properties	envProperties;
+	private InputStream inputStream;
+	private Properties envProperties;
 }

@@ -29,28 +29,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-
-class StreamReaderThread extends Thread
-{
-	StreamReaderThread(InputStream inputStream)
-	{
+class StreamReaderThread extends Thread {
+	StreamReaderThread(InputStream inputStream) {
 		this.inputStream = inputStream;
-		this.buf = new StringBuffer();
+		buf = new StringBuffer();
 	}
 
-
-	String	getBuf()
-	{
+	String getBuf() {
 		return buf.toString();
 	}
 
-
-	public void run()
-	{
-		InputStreamReader	isr;
-		BufferedReader		br;
-		boolean			first;
-		String			line;
+	@Override
+	public void run() {
+		InputStreamReader isr;
+		BufferedReader br;
+		boolean first;
+		String line;
 
 		try {
 			isr = new InputStreamReader(inputStream);
@@ -63,11 +57,11 @@ class StreamReaderThread extends Thread
 				buf.append(line);
 				first = false;
 			}
-		} catch(IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	private InputStream	inputStream;
-	private StringBuffer	buf;
+	private InputStream inputStream;
+	private StringBuffer buf;
 }

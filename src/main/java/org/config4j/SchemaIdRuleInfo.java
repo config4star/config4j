@@ -26,32 +26,19 @@ package org.config4j;
 
 import java.util.ArrayList;
 
+class SchemaIdRuleInfo implements Comparable<SchemaIdRuleInfo> {
 
-class SchemaIdRuleInfo implements Comparable<SchemaIdRuleInfo>
-{
-
-	public SchemaIdRuleInfo(
-		String			locallyScopedName,
-		String			typeName,
-		String[]		args,
-		boolean			isOptional)
-	{
-		this.locallyScopedName = locallyScopedName;
-		this.typeName          = typeName;
-		this.args              = args;
-		this.isOptional        = isOptional;
-	}
-
-
-	public SchemaIdRuleInfo(
-		String				locallyScopedName,
-		String				typeName,
-		ArrayList<String>	args,
-		boolean				isOptional)
-	{
+	public SchemaIdRuleInfo(String locallyScopedName, String typeName, String[] args, boolean isOptional) {
 		this.locallyScopedName = locallyScopedName;
 		this.typeName = typeName;
-		this.args = (String[])args.toArray(new String[args.size()]);
+		this.args = args;
+		this.isOptional = isOptional;
+	}
+
+	public SchemaIdRuleInfo(String locallyScopedName, String typeName, ArrayList<String> args, boolean isOptional) {
+		this.locallyScopedName = locallyScopedName;
+		this.typeName = typeName;
+		this.args = args.toArray(new String[args.size()]);
 		this.isOptional = isOptional;
 	}
 
@@ -59,23 +46,33 @@ class SchemaIdRuleInfo implements Comparable<SchemaIdRuleInfo>
 		return locallyScopedName.compareTo(o.locallyScopedName);
 	}
 
-	public boolean equals(Object o)
-	{
-		SchemaIdRuleInfo other = (SchemaIdRuleInfo)o;
+	@Override
+	public boolean equals(Object o) {
+		SchemaIdRuleInfo other = (SchemaIdRuleInfo) o;
 		return locallyScopedName.equals(other.locallyScopedName);
 	}
 
+	public String getLocallyScopedName() {
+		return locallyScopedName;
+	}
 
-	public String   getLocallyScopedName() { return this.locallyScopedName;}
-	public String   getTypeName()          { return this.typeName; }
-	public String[] getArgs()              { return this.args; }
-	public boolean  getIsOptional()        { return this.isOptional; }
+	public String getTypeName() {
+		return typeName;
+	}
 
-	//--------
+	public String[] getArgs() {
+		return args;
+	}
+
+	public boolean getIsOptional() {
+		return isOptional;
+	}
+
+	// --------
 	// Instance variables
-	//--------
-	private String		locallyScopedName;
-	private String		typeName;
-	private String[]	args;
-	private boolean		isOptional;
+	// --------
+	private String locallyScopedName;
+	private String typeName;
+	private String[] args;
+	private boolean isOptional;
 }

@@ -24,80 +24,61 @@
 
 package org.config4j;
 
+class SchemaTypeList extends SchemaType {
 
-class SchemaTypeList extends SchemaType
-{
-
-	public SchemaTypeList()
-	{
+	public SchemaTypeList() {
 		super("list", Configuration.CFG_LIST);
 	}
 
-	public void checkRule(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				typeName,
-		String[]			typeArgs,
-		String				rule) throws ConfigurationException
-	{
-		int					argsLen;
-		String				listElementTypeName;
-		SchemaType			typeDef;
+	@Override
+	public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
+	        throws ConfigurationException {
+		int argsLen;
+		String listElementTypeName;
+		SchemaType typeDef;
 
-		//--------
+		// --------
 		// Check there is one argument.
-		//--------
+		// --------
 		argsLen = typeArgs.length;
 		if (argsLen != 1) {
-			throw new ConfigurationException("the '" + typeName + "' type "
-					+ "requires one type argument " + "in rule '" + rule + "'");
+			throw new ConfigurationException("the '" + typeName + "' type " + "requires one type argument " + "in rule '" + rule + "'");
 		}
 
-		//--------
+		// --------
 		// The argument must be the name of a string-based type.
-		//--------
+		// --------
 		listElementTypeName = typeArgs[0];
 		typeDef = findType(sv, listElementTypeName);
 		if (typeDef == null) {
-			throw new ConfigurationException("unknown type '"
-						+ listElementTypeName + "' in rule '" + rule + "'");
+			throw new ConfigurationException("unknown type '" + listElementTypeName + "' in rule '" + rule + "'");
 		}
-		switch(typeDef.getCfgType()) {
+		switch (typeDef.getCfgType()) {
 		case Configuration.CFG_STRING:
 			break;
 		case Configuration.CFG_LIST:
-			throw new ConfigurationException("you cannot embed a list type ('"
-					+ listElementTypeName + "') inside " + "another list "
-					+ "in rule '" + rule + "'");
+			throw new ConfigurationException("you cannot embed a list type ('" + listElementTypeName + "') inside " + "another list "
+			        + "in rule '" + rule + "'");
 		case Configuration.CFG_SCOPE:
-			throw new ConfigurationException("you cannot embed a scope type ('"
-					+ listElementTypeName + "') inside " + "a list in rule '"
-					+ rule + "'");
+			throw new ConfigurationException("you cannot embed a scope type ('" + listElementTypeName + "') inside " + "a list in rule '"
+			        + rule + "'");
 		default:
 			Util.assertion(false);
 		}
 	}
 
-
-	public void validate(
-		SchemaValidator		sv,
-		Configuration		cfg,
-		String				scope,
-		String				name,
-		String				typeName,
-		String				origTypeName,
-		String[]			typeArgs,
-		int					indentLevel) throws ConfigurationException
-	{
-		String				fullyScopedName;
-		StringBuffer		errSuffix;
-		String[]			array;
-		SchemaType			elemTypeDef;
-		String				elemTypeName;
-		String				elemValue;
-		String				sep;
-		boolean				ok;
-		int					i;
+	@Override
+	public void validate(SchemaValidator sv, Configuration cfg, String scope, String name, String typeName, String origTypeName,
+	        String[] typeArgs, int indentLevel) throws ConfigurationException {
+		String fullyScopedName;
+		StringBuffer errSuffix;
+		String[] array;
+		SchemaType elemTypeDef;
+		String elemTypeName;
+		String elemValue;
+		String sep;
+		boolean ok;
+		int i;
 
 		Util.assertion(typeArgs.length == 1);
 		elemTypeName = typeArgs[0];
@@ -109,8 +90,7 @@ class SchemaTypeList extends SchemaType
 		errSuffix = new StringBuffer();
 		for (i = 0; i < array.length; i++) {
 			elemValue = array[i];
-			ok = callIsA(elemTypeDef, sv, cfg, elemValue, elemTypeName,
-					new String[0], indentLevel+1, errSuffix);
+			ok = callIsA(elemTypeDef, sv, cfg, elemValue, elemTypeName, new String[0], indentLevel + 1, errSuffix);
 			if (!ok) {
 				if (errSuffix.length() == 0) {
 					sep = "";
@@ -118,10 +98,8 @@ class SchemaTypeList extends SchemaType
 					sep = "; ";
 				}
 				fullyScopedName = Configuration.mergeNames(scope, name);
-				throw new ConfigurationException(cfg.fileName() + ": bad "
-							+ elemTypeName + " value ('" + elemValue
-							+ "') in the '" + fullyScopedName + "' "
-							+ typeName + sep + errSuffix);
+				throw new ConfigurationException(cfg.fileName() + ": bad " + elemTypeName + " value ('" + elemValue + "') in the '"
+				        + fullyScopedName + "' " + typeName + sep + errSuffix);
 			}
 		}
 	}
