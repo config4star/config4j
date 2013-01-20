@@ -33,9 +33,32 @@ import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
 class Config2JUtil {
+	private static final String CR = System.getProperty("line.separator");
 	private static final String INDENT1 = "    ";
 	private static final String INDENT2 = "        ";
-	private static final String CR = System.getProperty("line.separator");
+
+	private String cfgFileName;
+
+	private String className;
+
+	private boolean isClassPublic;
+
+	private String outputDir;
+
+	private String packageName;
+
+	// --------
+	// Instance variables
+	// --------
+	private String progName;
+
+	private String schemaOverrideCfg;
+
+	private String schemaOverrideScope;
+
+	private boolean wantSchema;
+
+	private boolean wantSingleton;
 
 	Config2JUtil(String progName) {
 		this.progName = progName;
@@ -48,130 +71,6 @@ class Config2JUtil {
 		wantSingleton = false;
 		wantSchema = true;
 		packageName = "";
-	}
-
-	boolean parseCmdLineArgs(String args[]) {
-		int i;
-
-		for (i = 0; i < args.length; i++) {
-			if (args[i].equals("-cfg")) {
-				if (i == args.length - 1) {
-					usage("");
-					return false;
-				}
-				cfgFileName = args[i + 1];
-				i++;
-			} else if (args[i].equals("-noschema")) {
-				wantSchema = false;
-			} else if (args[i].equals("-class")) {
-				if (i == args.length - 1) {
-					usage("");
-					return false;
-				}
-				className = args[i + 1];
-				i++;
-			} else if (args[i].equals("-outDir")) {
-				if (i == args.length - 1) {
-					usage("");
-					return false;
-				}
-				outputDir = args[i + 1];
-				i++;
-			} else if (args[i].equals("-public")) {
-				isClassPublic = true;
-			} else if (args[i].equals("-schemaOverrideCfg")) {
-				if (i == args.length - 1) {
-					usage("");
-					return false;
-				}
-				schemaOverrideCfg = args[i + 1];
-				i++;
-			} else if (args[i].equals("-schemaOverrideScope")) {
-				if (i == args.length - 1) {
-					usage("");
-					return false;
-				}
-				schemaOverrideScope = args[i + 1];
-				i++;
-			} else if (args[i].equals("-package")) {
-				if (i == args.length - 1) {
-					usage("");
-					return false;
-				}
-				if (!isValidPackageName(args[i + 1])) {
-					System.err.print(CR + "Invalid package '" + args[i + 1] + "'");
-					usage("");
-					return false;
-				}
-				packageName = args[i + 1];
-				i++;
-			} else if (args[i].equals("-singleton")) {
-				wantSingleton = true;
-			} else {
-				usage(args[i]);
-				return false;
-			}
-		}
-		if (className == null || cfgFileName == null) {
-			usage("");
-			return false;
-		}
-		return true;
-	}
-
-	String getCfgFileName() {
-		return cfgFileName;
-	}
-
-	String getSchemaOverrideCfg() {
-		return schemaOverrideCfg;
-	}
-
-	String getSchemaOverrideScope() {
-		return schemaOverrideScope;
-	}
-
-	boolean wantSchema() {
-		return wantSchema;
-	}
-
-	private boolean isValidPackageName(String str) {
-		StringTokenizer st;
-		int i;
-		int len;
-		String name;
-
-		st = new StringTokenizer(str, ".");
-		while (st.hasMoreTokens()) {
-			name = st.nextToken();
-			if (name.equals("")) {
-				return false;
-			}
-			if (!Character.isJavaIdentifierStart(name.charAt(0))) {
-				return false;
-			}
-			len = name.length();
-			for (i = 1; i < len; i++) {
-				if (!Character.isJavaIdentifierPart(name.charAt(i))) {
-					return false;
-				}
-
-			}
-		}
-		return true;
-	}
-
-	private void usage(String unknownArg) {
-		System.err.print(CR);
-		if (!unknownArg.equals("")) {
-			System.err.print("unknown argument '" + unknownArg + "'" + CR);
-		}
-		System.err.print("usage: java " + progName + " -cfg <file.cfg> -class <class>" + CR + "options are:" + CR
-		        + "\t-outDir <directory>  Generate the class in the " + "specified directory" + CR
-		        + "\t-public              Make the generated class public" + CR + "\t-noschema            Do not generate a schema" + CR
-		        + "\t-schemaOverrideCfg   <file.cfg>   " + CR + "\t-schemaOverrideScope <scope> " + CR
-		        + "\t-package x.y.z       Generate class into " + "specified package" + CR
-		        + "\t-singleton           generate a singleton class" + CR);
 	}
 
 	boolean generateJavaClass(String[] schema) {
@@ -246,6 +145,160 @@ class Config2JUtil {
 		}
 
 		return result;
+	}
+
+	String getCfgFileName() {
+		return cfgFileName;
+	}
+
+	String getSchemaOverrideCfg() {
+		return schemaOverrideCfg;
+	}
+
+	String getSchemaOverrideScope() {
+		return schemaOverrideScope;
+	}
+
+	private boolean isValidPackageName(String str) {
+		StringTokenizer st;
+		int i;
+		int len;
+		String name;
+
+		st = new StringTokenizer(str, ".");
+		while (st.hasMoreTokens()) {
+			name = st.nextToken();
+			if (name.equals("")) {
+				return false;
+			}
+			if (!Character.isJavaIdentifierStart(name.charAt(0))) {
+				return false;
+			}
+			len = name.length();
+			for (i = 1; i < len; i++) {
+				if (!Character.isJavaIdentifierPart(name.charAt(i))) {
+					return false;
+				}
+
+			}
+		}
+		return true;
+	}
+
+	void outputEscapedChar(PrintWriter out, char ch) {
+		switch (ch) {
+		case '\\':
+			out.print("\\\\");
+			break;
+		case '\t':
+			out.print("\\t");
+			break;
+		case '\n':
+			// out.print("\\n");
+			out.print("\" + CR + \"");
+			break;
+		case '"':
+			out.print("\\\"");
+			break;
+		default:
+			out.print(ch);
+		}
+	}
+
+	private void outputEscapedString(PrintWriter out, String str) throws IOException {
+		int i;
+		int len;
+
+		len = str.length();
+		for (i = 0; i < len; i++) {
+			outputEscapedChar(out, str.charAt(i));
+		}
+	}
+
+	boolean parseCmdLineArgs(String args[]) {
+		int i;
+
+		for (i = 0; i < args.length; i++) {
+			if (args[i].equals("-cfg")) {
+				if (i == args.length - 1) {
+					usage("");
+					return false;
+				}
+				cfgFileName = args[i + 1];
+				i++;
+			} else if (args[i].equals("-noschema")) {
+				wantSchema = false;
+			} else if (args[i].equals("-class")) {
+				if (i == args.length - 1) {
+					usage("");
+					return false;
+				}
+				className = args[i + 1];
+				i++;
+			} else if (args[i].equals("-outDir")) {
+				if (i == args.length - 1) {
+					usage("");
+					return false;
+				}
+				outputDir = args[i + 1];
+				i++;
+			} else if (args[i].equals("-public")) {
+				isClassPublic = true;
+			} else if (args[i].equals("-schemaOverrideCfg")) {
+				if (i == args.length - 1) {
+					usage("");
+					return false;
+				}
+				schemaOverrideCfg = args[i + 1];
+				i++;
+			} else if (args[i].equals("-schemaOverrideScope")) {
+				if (i == args.length - 1) {
+					usage("");
+					return false;
+				}
+				schemaOverrideScope = args[i + 1];
+				i++;
+			} else if (args[i].equals("-package")) {
+				if (i == args.length - 1) {
+					usage("");
+					return false;
+				}
+				if (!isValidPackageName(args[i + 1])) {
+					System.err.print(CR + "Invalid package '" + args[i + 1] + "'");
+					usage("");
+					return false;
+				}
+				packageName = args[i + 1];
+				i++;
+			} else if (args[i].equals("-singleton")) {
+				wantSingleton = true;
+			} else {
+				usage(args[i]);
+				return false;
+			}
+		}
+		if (className == null || cfgFileName == null) {
+			usage("");
+			return false;
+		}
+		return true;
+	}
+
+	private void usage(String unknownArg) {
+		System.err.print(CR);
+		if (!unknownArg.equals("")) {
+			System.err.print("unknown argument '" + unknownArg + "'" + CR);
+		}
+		System.err.print("usage: java " + progName + " -cfg <file.cfg> -class <class>" + CR + "options are:" + CR
+		        + "\t-outDir <directory>  Generate the class in the " + "specified directory" + CR
+		        + "\t-public              Make the generated class public" + CR + "\t-noschema            Do not generate a schema" + CR
+		        + "\t-schemaOverrideCfg   <file.cfg>   " + CR + "\t-schemaOverrideScope <scope> " + CR
+		        + "\t-package x.y.z       Generate class into " + "specified package" + CR
+		        + "\t-singleton           generate a singleton class" + CR);
+	}
+
+	boolean wantSchema() {
+		return wantSchema;
 	}
 
 	private void writeClassToFile(BufferedReader in, PrintWriter out, String[] schema) throws IOException {
@@ -334,48 +387,4 @@ class Config2JUtil {
 		}
 		out.print("}" + CR);
 	}
-
-	private void outputEscapedString(PrintWriter out, String str) throws IOException {
-		int i;
-		int len;
-
-		len = str.length();
-		for (i = 0; i < len; i++) {
-			outputEscapedChar(out, str.charAt(i));
-		}
-	}
-
-	void outputEscapedChar(PrintWriter out, char ch) {
-		switch (ch) {
-		case '\\':
-			out.print("\\\\");
-			break;
-		case '\t':
-			out.print("\\t");
-			break;
-		case '\n':
-			// out.print("\\n");
-			out.print("\" + CR + \"");
-			break;
-		case '"':
-			out.print("\\\"");
-			break;
-		default:
-			out.print(ch);
-		}
-	}
-
-	// --------
-	// Instance variables
-	// --------
-	private String progName;
-	private String cfgFileName;
-	private String schemaOverrideCfg;
-	private String schemaOverrideScope;
-	private String className;
-	private boolean isClassPublic;
-	private boolean wantSingleton;
-	private boolean wantSchema;
-	private String packageName;
-	private String outputDir;
 }

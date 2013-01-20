@@ -30,15 +30,9 @@ class ConfigLex extends LexBase {
 	// First, keywords
 	// --------
 	final static short LEX_COPY_FROM_SYM = 101;
-	final static short LEX_ELSE_SYM = 102;
 	final static short LEX_ELSE_IF_SYM = 103;
+	final static short LEX_ELSE_SYM = 102;
 	final static short LEX_ERROR_SYM = 104;
-	final static short LEX_IF_SYM = 105;
-	final static short LEX_IF_EXISTS_SYM = 106;
-	final static short LEX_IN_SYM = 107;
-	final static short LEX_INCLUDE_SYM = 108;
-	final static short LEX_MATCHES_SYM = 109;
-	final static short LEX_REMOVE_SYM = 110;
 	// --------
 	// Now, functions
 	// --------
@@ -56,22 +50,12 @@ class ConfigLex extends LexBase {
 	final static short LEX_FUNC_REPLACE_SYM = 212;
 	final static short LEX_FUNC_SIBLING_SCOPE_SYM = 213;
 	final static short LEX_FUNC_SPLIT_SYM = 214;
-
-	ConfigLex(int sourceType, String source, UidIdentifierProcessor uidIdentifierProcessor) throws ConfigurationException {
-		super(sourceType, source, uidIdentifierProcessor);
-		keywordInfoArray = configKeywordInfoArray;
-		funcInfoArray = configFuncInfoArray;
-	}
-
-	// --------
-	// Instance variables
-	// --------
-	private LexKeywordInfo[] configKeywordInfoArray = new LexKeywordInfo[] { new LexKeywordInfo("@copyFrom", LEX_COPY_FROM_SYM),
-	        new LexKeywordInfo("@else", LEX_ELSE_SYM), new LexKeywordInfo("@elseIf", LEX_ELSE_IF_SYM),
-	        new LexKeywordInfo("@error", LEX_ERROR_SYM), new LexKeywordInfo("@if", LEX_IF_SYM),
-	        new LexKeywordInfo("@ifExists", LEX_IF_EXISTS_SYM), new LexKeywordInfo("@in", LEX_IN_SYM),
-	        new LexKeywordInfo("@include", LEX_INCLUDE_SYM), new LexKeywordInfo("@matches", LEX_MATCHES_SYM),
-	        new LexKeywordInfo("@remove", LEX_REMOVE_SYM), };
+	final static short LEX_IF_EXISTS_SYM = 106;
+	final static short LEX_IF_SYM = 105;
+	final static short LEX_IN_SYM = 107;
+	final static short LEX_INCLUDE_SYM = 108;
+	final static short LEX_MATCHES_SYM = 109;
+	final static short LEX_REMOVE_SYM = 110;
 
 	private LexFuncInfo[] configFuncInfoArray = new LexFuncInfo[] { new LexFuncInfo("configFile(", STRING_FUNC, LEX_FUNC_CONFIG_FILE_SYM),
 	        new LexFuncInfo("configType(", STRING_FUNC, LEX_FUNC_CONFIG_TYPE_SYM),
@@ -86,4 +70,20 @@ class ConfigLex extends LexBase {
 	        new LexFuncInfo("replace(", STRING_FUNC, LEX_FUNC_REPLACE_SYM),
 	        new LexFuncInfo("siblingScope(", STRING_FUNC, LEX_FUNC_SIBLING_SCOPE_SYM),
 	        new LexFuncInfo("split(", LIST_FUNC, LEX_FUNC_SPLIT_SYM), };
+
+	// --------
+	// Instance variables
+	// --------
+	private LexKeywordInfo[] configKeywordInfoArray = new LexKeywordInfo[] { new LexKeywordInfo("@copyFrom", LEX_COPY_FROM_SYM),
+	        new LexKeywordInfo("@else", LEX_ELSE_SYM), new LexKeywordInfo("@elseIf", LEX_ELSE_IF_SYM),
+	        new LexKeywordInfo("@error", LEX_ERROR_SYM), new LexKeywordInfo("@if", LEX_IF_SYM),
+	        new LexKeywordInfo("@ifExists", LEX_IF_EXISTS_SYM), new LexKeywordInfo("@in", LEX_IN_SYM),
+	        new LexKeywordInfo("@include", LEX_INCLUDE_SYM), new LexKeywordInfo("@matches", LEX_MATCHES_SYM),
+	        new LexKeywordInfo("@remove", LEX_REMOVE_SYM), };
+
+	ConfigLex(int sourceType, String source, UidIdentifierProcessor uidIdentifierProcessor) throws ConfigurationException {
+		super(sourceType, source, uidIdentifierProcessor);
+		keywordInfoArray = configKeywordInfoArray;
+		funcInfoArray = configFuncInfoArray;
+	}
 }

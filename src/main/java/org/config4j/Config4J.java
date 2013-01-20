@@ -28,20 +28,20 @@ import java.util.ArrayList;
 
 class Config4J {
 
-	private static String cmd;
-	private static boolean isRecursive;
-	private static boolean wantExpandedUidNames;
-	private static String scope;
-	private static String[] filterPatterns;
-	private static String name;
 	private static String cfgSource;
-	private static String secSource;
-	private static String secScope;
-	private static String schemaSource;
-	private static String schemaName;
-	private static boolean wantDiagnostics;
-	private static int types;
+	private static String cmd;
+	private static String[] filterPatterns;
 	private static int forceMode;
+	private static boolean isRecursive;
+	private static String name;
+	private static String schemaName;
+	private static String schemaSource;
+	private static String scope;
+	private static String secScope;
+	private static String secSource;
+	private static int types;
+	private static boolean wantDiagnostics;
+	private static boolean wantExpandedUidNames;
 
 	public static void main(String[] args) {
 		String str;

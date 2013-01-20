@@ -32,18 +32,13 @@ class SchemaLex extends LexBase {
 	final static short LEX_IGNORE_EVERYTHING_IN_SYM = 101;
 	final static short LEX_IGNORE_SCOPES_IN_SYM = 102;
 	final static short LEX_IGNORE_VARIABLES_IN_SYM = 103;
-	final static short LEX_TYPEDEF_SYM = 104;
 	final static short LEX_OPTIONAL_SYM = 105;
 	final static short LEX_REQUIRED_SYM = 106;
+	final static short LEX_TYPEDEF_SYM = 104;
 
 	// --------
 	// There are no functions in the schema language
 	// --------
-
-	SchemaLex(String str) throws ConfigurationException {
-		super(str);
-		keywordInfoArray = schemaKeywordInfoArray;
-	}
 
 	// --------
 	// Instance variables
@@ -53,4 +48,9 @@ class SchemaLex extends LexBase {
 	        new LexKeywordInfo("@ignoreScopesIn", LEX_IGNORE_SCOPES_IN_SYM),
 	        new LexKeywordInfo("@ignoreVariablesIn", LEX_IGNORE_VARIABLES_IN_SYM), new LexKeywordInfo("@optional", LEX_OPTIONAL_SYM),
 	        new LexKeywordInfo("@required", LEX_REQUIRED_SYM), new LexKeywordInfo("@typedef", LEX_TYPEDEF_SYM), };
+
+	SchemaLex(String str) throws ConfigurationException {
+		super(str);
+		keywordInfoArray = schemaKeywordInfoArray;
+	}
 }

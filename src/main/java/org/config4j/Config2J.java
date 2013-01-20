@@ -80,21 +80,6 @@ public class Config2J {
 		return rule;
 	}
 
-	private static boolean doesVectorcontainString(ArrayList<String> vec, String str) {
-		int i;
-		int len;
-		String item;
-
-		len = vec.size();
-		for (i = 0; i < len; i++) {
-			item = vec.get(i);
-			if (item.equals(str)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private static String[] calculateSchema(Configuration cfg, String[] namesList, String[] recipeUserTypes,
 	        String[] wildcardedNamesAndTypes, String[] recipeIgnoreRules) throws ConfigurationException {
 		int i;
@@ -129,19 +114,6 @@ public class Config2J {
 		return schema.toArray(new String[schema.size()]);
 	}
 
-	private static boolean doesPatternMatchAnyUnexpandedNameInList(Configuration cfg, String pattern, String[] namesList) {
-		int i;
-		String uName;
-
-		for (i = 0; i < namesList.length; i++) {
-			uName = cfg.unexpandUid(namesList[i]);
-			if (Configuration.patternMatch(uName, pattern)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private static String[] checkForUnmatchedPatterns(Configuration cfg, String[] namesList, String[] wildcardedNamesAndTypes)
 	        throws ConfigurationException {
 		int i;
@@ -160,6 +132,34 @@ public class Config2J {
 			}
 		}
 		return unmatchedPatterns.toArray(new String[unmatchedPatterns.size()]);
+	}
+
+	private static boolean doesPatternMatchAnyUnexpandedNameInList(Configuration cfg, String pattern, String[] namesList) {
+		int i;
+		String uName;
+
+		for (i = 0; i < namesList.length; i++) {
+			uName = cfg.unexpandUid(namesList[i]);
+			if (Configuration.patternMatch(uName, pattern)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean doesVectorcontainString(ArrayList<String> vec, String str) {
+		int i;
+		int len;
+		String item;
+
+		len = vec.size();
+		for (i = 0; i < len; i++) {
+			item = vec.get(i);
+			if (item.equals(str)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static void main(String[] args) {

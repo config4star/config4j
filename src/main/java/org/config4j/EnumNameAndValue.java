@@ -25,6 +25,10 @@
 package org.config4j;
 
 public class EnumNameAndValue {
+	private String name;
+
+	private int value;
+
 	public EnumNameAndValue(String name, int value) {
 		this.name = name;
 		this.value = value;
@@ -37,7 +41,4 @@ public class EnumNameAndValue {
 	public int getValue() {
 		return value;
 	}
-
-	private String name;
-	private int value;
 }

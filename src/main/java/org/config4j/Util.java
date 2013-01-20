@@ -42,42 +42,6 @@ class Util {
 		}
 	}
 
-	public static String[] splitScopedNameIntoArray(String str) {
-		ArrayList<String> list = null;
-		StringTokenizer st = null;
-		String array[] = null;
-
-		list = new ArrayList<String>();
-		st = new StringTokenizer(str, ".");
-		while (st.hasMoreTokens()) {
-			list.add(st.nextToken());
-		}
-		array = new String[list.size()];
-		return list.toArray(array);
-	}
-
-	public static boolean isCmdInDir(String cmd, String dir) {
-		File file;
-		String fileName;
-		String[] extArray;
-		int i;
-
-		if (File.separator.equals("\\")) {
-			extArray = new String[] { ".exe", ".bat", "" };
-		} else {
-			extArray = new String[] { "" };
-		}
-
-		for (i = 0; i < extArray.length; i++) {
-			fileName = dir + File.separator + cmd + extArray[i];
-			file = new File(fileName);
-			if (file.isFile()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public static boolean execCmd(String cmd, StringBuffer output) {
 		Process p;
 		StreamReaderThread outThread;
@@ -133,6 +97,42 @@ class Util {
 			output.append("cannot execute '" + cmd + "': " + ex.getMessage());
 		}
 		return exitVal == 0;
+	}
+
+	public static boolean isCmdInDir(String cmd, String dir) {
+		File file;
+		String fileName;
+		String[] extArray;
+		int i;
+
+		if (File.separator.equals("\\")) {
+			extArray = new String[] { ".exe", ".bat", "" };
+		} else {
+			extArray = new String[] { "" };
+		}
+
+		for (i = 0; i < extArray.length; i++) {
+			fileName = dir + File.separator + cmd + extArray[i];
+			file = new File(fileName);
+			if (file.isFile()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static String[] splitScopedNameIntoArray(String str) {
+		ArrayList<String> list = null;
+		StringTokenizer st = null;
+		String array[] = null;
+
+		list = new ArrayList<String>();
+		st = new StringTokenizer(str, ".");
+		while (st.hasMoreTokens()) {
+			list.add(st.nextToken());
+		}
+		array = new String[list.size()];
+		return list.toArray(array);
 	}
 
 }

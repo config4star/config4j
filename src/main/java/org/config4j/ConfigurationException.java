@@ -25,7 +25,7 @@
 package org.config4j;
 
 @SuppressWarnings("serial")
-public class ConfigurationException extends java.lang.RuntimeException {
+public class ConfigurationException extends RuntimeException {
 	public ConfigurationException(String msg) {
 		super(msg);
 	}

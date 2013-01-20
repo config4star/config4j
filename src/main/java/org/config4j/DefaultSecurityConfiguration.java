@@ -25,6 +25,8 @@
 package org.config4j;
 
 class DefaultSecurityConfiguration extends ConfigurationImpl {
+	static DefaultSecurityConfiguration singleton = new DefaultSecurityConfiguration();
+
 	DefaultSecurityConfiguration() {
 		try {
 			parse(INPUT_STRING, DefaultSecurity.getString(), "Config4* default security");
@@ -36,6 +38,4 @@ class DefaultSecurityConfiguration extends ConfigurationImpl {
 			System.exit(1);
 		}
 	}
-
-	static DefaultSecurityConfiguration singleton = new DefaultSecurityConfiguration();
 }

@@ -26,6 +26,13 @@ package org.config4j;
 
 class SchemaTypeTypedef extends SchemaType {
 
+	private String[] baseTypeArgs;
+
+	// --------
+	// Instance variables
+	// --------
+	private String baseTypeName;
+
 	public SchemaTypeTypedef(String name, int cfgType, String baseTypeName, String[] baseTypeArgs) {
 		super(name, cfgType);
 		this.baseTypeName = baseTypeName;
@@ -39,19 +46,6 @@ class SchemaTypeTypedef extends SchemaType {
 			throw new ConfigurationException("you cannot specify arguments " + "when using user-defined type '" + typeName + "' in '"
 			        + rule + "'");
 		}
-	}
-
-	@Override
-	public void validate(SchemaValidator sv, Configuration cfg, String scope, String name, String typeName, String origTypeName,
-	        String[] typeArgs, int indentLevel) throws ConfigurationException {
-		SchemaType typeDef;
-		SchemaType baseTypeDef;
-
-		Util.assertion(typeArgs.length == 0);
-		typeDef = findType(sv, typeName);
-		Util.assertion(typeDef != null);
-		baseTypeDef = findType(sv, baseTypeName);
-		callValidate(baseTypeDef, sv, cfg, scope, name, baseTypeName, origTypeName, baseTypeArgs, indentLevel + 1);
 	}
 
 	@Override
@@ -70,10 +64,17 @@ class SchemaTypeTypedef extends SchemaType {
 		return result;
 	}
 
-	// --------
-	// Instance variables
-	// --------
-	private String baseTypeName;
-	private String[] baseTypeArgs;
+	@Override
+	public void validate(SchemaValidator sv, Configuration cfg, String scope, String name, String typeName, String origTypeName,
+	        String[] typeArgs, int indentLevel) throws ConfigurationException {
+		SchemaType typeDef;
+		SchemaType baseTypeDef;
+
+		Util.assertion(typeArgs.length == 0);
+		typeDef = findType(sv, typeName);
+		Util.assertion(typeDef != null);
+		baseTypeDef = findType(sv, baseTypeName);
+		callValidate(baseTypeDef, sv, cfg, scope, name, baseTypeName, origTypeName, baseTypeArgs, indentLevel + 1);
+	}
 
 }

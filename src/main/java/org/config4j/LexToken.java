@@ -25,6 +25,17 @@
 package org.config4j;
 
 class LexToken {
+	private short funcType;
+
+	private int lineNum;
+
+	private String spelling;
+
+	// --------
+	// Instance variables.
+	// --------
+	private short type;
+
 	// --------
 	// Ctor, dtor and assignment operator
 	// --------
@@ -49,6 +60,10 @@ class LexToken {
 		funcType = LexBase.NOT_A_FUNC;
 	}
 
+	public int getLineNum() {
+		return lineNum;
+	}
+
 	// --------
 	// Accessor functions
 	// --------
@@ -56,24 +71,20 @@ class LexToken {
 		return spelling;
 	}
 
-	public int getLineNum() {
-		return lineNum;
-	}
-
 	public int getType() {
 		return type;
 	}
 
-	public boolean isStringFunc() {
-		return funcType == LexBase.STRING_FUNC;
+	public boolean isBoolFunc() {
+		return funcType == LexBase.BOOL_FUNC;
 	}
 
 	public boolean isListFunc() {
 		return funcType == LexBase.LIST_FUNC;
 	}
 
-	public boolean isBoolFunc() {
-		return funcType == LexBase.BOOL_FUNC;
+	public boolean isStringFunc() {
+		return funcType == LexBase.STRING_FUNC;
 	}
 
 	// --------
@@ -92,12 +103,4 @@ class LexToken {
 		this.spelling = spelling;
 		this.funcType = funcType;
 	}
-
-	// --------
-	// Instance variables.
-	// --------
-	private short type;
-	private String spelling;
-	private int lineNum;
-	private short funcType;
 }

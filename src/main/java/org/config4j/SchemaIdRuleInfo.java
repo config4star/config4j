@@ -28,17 +28,28 @@ import java.util.ArrayList;
 
 class SchemaIdRuleInfo implements Comparable<SchemaIdRuleInfo> {
 
-	public SchemaIdRuleInfo(String locallyScopedName, String typeName, String[] args, boolean isOptional) {
-		this.locallyScopedName = locallyScopedName;
-		this.typeName = typeName;
-		this.args = args;
-		this.isOptional = isOptional;
-	}
+	private String[] args;
+
+	private boolean isOptional;
+
+	// --------
+	// Instance variables
+	// --------
+	private String locallyScopedName;
+
+	private String typeName;
 
 	public SchemaIdRuleInfo(String locallyScopedName, String typeName, ArrayList<String> args, boolean isOptional) {
 		this.locallyScopedName = locallyScopedName;
 		this.typeName = typeName;
 		this.args = args.toArray(new String[args.size()]);
+		this.isOptional = isOptional;
+	}
+
+	public SchemaIdRuleInfo(String locallyScopedName, String typeName, String[] args, boolean isOptional) {
+		this.locallyScopedName = locallyScopedName;
+		this.typeName = typeName;
+		this.args = args;
 		this.isOptional = isOptional;
 	}
 
@@ -52,14 +63,6 @@ class SchemaIdRuleInfo implements Comparable<SchemaIdRuleInfo> {
 		return locallyScopedName.equals(other.locallyScopedName);
 	}
 
-	public String getLocallyScopedName() {
-		return locallyScopedName;
-	}
-
-	public String getTypeName() {
-		return typeName;
-	}
-
 	public String[] getArgs() {
 		return args;
 	}
@@ -68,11 +71,11 @@ class SchemaIdRuleInfo implements Comparable<SchemaIdRuleInfo> {
 		return isOptional;
 	}
 
-	// --------
-	// Instance variables
-	// --------
-	private String locallyScopedName;
-	private String typeName;
-	private String[] args;
-	private boolean isOptional;
+	public String getLocallyScopedName() {
+		return locallyScopedName;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
 }

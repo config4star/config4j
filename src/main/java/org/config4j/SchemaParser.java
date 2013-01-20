@@ -27,10 +27,53 @@ package org.config4j;
 import java.util.ArrayList;
 
 class SchemaParser {
+	private Configuration cfg;
+
+	// --------
+	// Instance variables
+	// --------
+	private SchemaLex lex;
+
+	// --------------------------------------------------------------
+	// BNF for an ignoreRule:
+	// ignoreRule '@ignoreEverythingIn' locallyScopedName
+	// | '@ignoreScopesIn' locallyScopedName
+	// | '@ignoreVariablesIn' locallyScopedName
+	// locallyScopedName = IDENT
+	// --------------------------------------------------------------
+
+	private SchemaValidator sv;
+
+	// --------------------------------------------------------------
+	// BNF for an idRule:
+	// idRule OptOrRequired locallyScopedName '=' type
+	// | OptOrRequired locallyScopedName '=' type '[' args ']'
+	// OptOrRequired = '@optional'
+	// | '@required'
+	// | empty
+	// args = empty
+	// | arg { ',' arg }*
+	// locallyScopedName = IDENT
+	// type = IDENT
+	// arg = IDENT
+	// | STRING
+	// --------------------------------------------------------------
+
+	private LexToken token;
+
 	public SchemaParser(SchemaValidator sv) {
 		this.sv = sv;
 		lex = null;
 		cfg = Configuration.create();
+	}
+
+	private void accept(int sym, String rule, String msgPrefix) throws ConfigurationException {
+		if (token.getType() == sym) {
+			lex.nextToken(token);
+		} else {
+			throw new ConfigurationException("error in validation rule '" + rule + "': " + msgPrefix + " near '" + token.getSpelling()
+			        + "'");
+		}
 	}
 
 	public void parse(String[] schema) throws ConfigurationException {
@@ -88,41 +131,6 @@ class SchemaParser {
 			}
 		}
 	}
-
-	// --------------------------------------------------------------
-	// BNF for an ignoreRule:
-	// ignoreRule '@ignoreEverythingIn' locallyScopedName
-	// | '@ignoreScopesIn' locallyScopedName
-	// | '@ignoreVariablesIn' locallyScopedName
-	// locallyScopedName = IDENT
-	// --------------------------------------------------------------
-
-	private SchemaIgnoreRuleInfo parseIgnoreRule(String rule) throws ConfigurationException {
-		String locallyScopedName;
-		short symbol;
-
-		symbol = (short) token.getType();
-		lex.nextToken(token); // consume the "@ignore<something>" keyword
-		locallyScopedName = token.getSpelling();
-		accept(LexBase.LEX_IDENT_SYM, rule, "expecting an identifier");
-		accept(LexBase.LEX_EOF_SYM, rule, "expecting <end of string>");
-		return new SchemaIgnoreRuleInfo(symbol, locallyScopedName);
-	}
-
-	// --------------------------------------------------------------
-	// BNF for an idRule:
-	// idRule OptOrRequired locallyScopedName '=' type
-	// | OptOrRequired locallyScopedName '=' type '[' args ']'
-	// OptOrRequired = '@optional'
-	// | '@required'
-	// | empty
-	// args = empty
-	// | arg { ',' arg }*
-	// locallyScopedName = IDENT
-	// type = IDENT
-	// arg = IDENT
-	// | STRING
-	// --------------------------------------------------------------
 
 	private SchemaIdRuleInfo parseIdRule(String rule) throws ConfigurationException {
 		SchemaType typeDef;
@@ -200,6 +208,18 @@ class SchemaParser {
 		return new SchemaIdRuleInfo(locallyScopedName, typeName, args, isOptional);
 	}
 
+	private SchemaIgnoreRuleInfo parseIgnoreRule(String rule) throws ConfigurationException {
+		String locallyScopedName;
+		short symbol;
+
+		symbol = (short) token.getType();
+		lex.nextToken(token); // consume the "@ignore<something>" keyword
+		locallyScopedName = token.getSpelling();
+		accept(LexBase.LEX_IDENT_SYM, rule, "expecting an identifier");
+		accept(LexBase.LEX_EOF_SYM, rule, "expecting <end of string>");
+		return new SchemaIgnoreRuleInfo(symbol, locallyScopedName);
+	}
+
 	private void parseUserTypeDef(String str) throws ConfigurationException {
 		SchemaType baseTypeDef;
 		String typeName;
@@ -254,22 +274,5 @@ class SchemaParser {
 		sv.callCheckRule(baseTypeDef, cfg, baseTypeName, baseTypeArgs, str, 1);
 		sv.registerTypedef(typeName, baseTypeDef.getCfgType(), baseTypeName, baseTypeArgs);
 	}
-
-	private void accept(int sym, String rule, String msgPrefix) throws ConfigurationException {
-		if (token.getType() == sym) {
-			lex.nextToken(token);
-		} else {
-			throw new ConfigurationException("error in validation rule '" + rule + "': " + msgPrefix + " near '" + token.getSpelling()
-			        + "'");
-		}
-	}
-
-	// --------
-	// Instance variables
-	// --------
-	private SchemaLex lex;
-	private LexToken token;
-	private SchemaValidator sv;
-	private Configuration cfg;
 
 }

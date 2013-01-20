@@ -33,6 +33,21 @@ public class SchemaValidator {
 	public static final int FORCE_OPTIONAL = 1;
 	public static final int FORCE_REQUIRED = 2;
 
+	boolean areSchemaTypesSorted;
+
+	boolean areTypesSorted;
+
+	// --------
+	// Instance variables NOT visible to subclasses.
+	// --------
+	ArrayList<SchemaIdRuleInfo> schemaIdRules;
+
+	ArrayList<SchemaIgnoreRuleInfo> schemaIgnoreRules;
+
+	ArrayList<SchemaType> schemaTypes;
+
+	private boolean wantDiagnostics;
+
 	public SchemaValidator() {
 		try {
 			wantDiagnostics = false;
@@ -44,160 +59,6 @@ public class SchemaValidator {
 		} catch (ConfigurationException ex) {
 			Util.assertion(false);
 		}
-	}
-
-	public void setWantDiagnostics(boolean wantDiagnostics) {
-		this.wantDiagnostics = wantDiagnostics;
-	}
-
-	public boolean getWantDiagnostics() {
-		return wantDiagnostics;
-	}
-
-	public void parseSchema(String[] schema) throws ConfigurationException {
-		SchemaParser schemaParser = new SchemaParser(this);
-		String prefix = "---- " + this.getClass().getName() + ".parseSchema()";
-		if (wantDiagnostics) {
-			System.out.print("\n" + prefix + ": start\n");
-		}
-		try {
-			schemaParser.parse(schema);
-		} catch (ConfigurationException ex) {
-			if (wantDiagnostics) {
-				System.out.print("\n" + prefix + ": error: " + ex.getMessage() + "\n");
-			}
-			throw ex;
-		}
-		if (wantDiagnostics) {
-			System.out.print("\n" + prefix + ": end\n");
-		}
-	}
-
-	public void validate(Configuration cfg, String scope, String name) throws ConfigurationException {
-		validate(cfg, scope, name, true, Configuration.CFG_SCOPE_AND_VARS, DO_NOT_FORCE);
-	}
-
-	public void validate(Configuration cfg, String scope, String name, int forceMode) throws ConfigurationException {
-		validate(cfg, scope, name, true, Configuration.CFG_SCOPE_AND_VARS, forceMode);
-	}
-
-	public void validate(Configuration cfg, String scope, String name, boolean recurseIntoSubscopes, int typeMask)
-	        throws ConfigurationException {
-		validate(cfg, scope, name, recurseIntoSubscopes, typeMask, DO_NOT_FORCE);
-	}
-
-	public void validate(Configuration cfg, String scope, String name, boolean recurseIntoSubscopes, int typeMask, int forceMode)
-	        throws ConfigurationException {
-		String[] itemNames;
-
-		// --------
-		// Get a list of the entries in the scope
-		// --------
-		Configuration.mergeNames(scope, name);
-		itemNames = cfg.listLocallyScopedNames(scope, name, typeMask, recurseIntoSubscopes);
-
-		// --------
-		// Now validate those names
-		// --------
-		validate(cfg, scope, name, itemNames, forceMode);
-	}
-
-	private void checkTypeDoesNotExist(String typeName) throws ConfigurationException {
-		int len;
-		int i;
-		SchemaType type;
-
-		len = schemaTypes.size();
-		for (i = 0; i < len; i++) {
-			type = schemaTypes.get(i);
-			if (typeName.equals(type.getTypeName())) {
-				throw new ConfigurationException("schema type '" + typeName + "' is already registered");
-			}
-		}
-	}
-
-	protected void registerType(SchemaType type) throws ConfigurationException {
-		checkTypeDoesNotExist(type.getTypeName());
-		schemaTypes.add(type);
-		areTypesSorted = false;
-	}
-
-	void registerTypedef(String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArgsList)
-	        throws ConfigurationException {
-		SchemaType type;
-		String[] baseTypeArgs;
-
-		checkTypeDoesNotExist(typeName);
-		baseTypeArgs = baseTypeArgsList.toArray(new String[0]);
-		type = new SchemaTypeTypedef(typeName, cfgType, baseTypeName, baseTypeArgs);
-		schemaTypes.add(type);
-		areTypesSorted = false;
-	}
-
-	void sortTypes() {
-		SchemaType[] array;
-		int i;
-
-		array = new SchemaType[schemaTypes.size()];
-		schemaTypes.toArray(array);
-		Arrays.sort(array);
-		schemaTypes.clear();
-		schemaTypes.ensureCapacity(array.length);
-		for (i = 0; i < array.length; i++) {
-			schemaTypes.add(array[i]);
-		}
-		areTypesSorted = true;
-	}
-
-	SchemaType findType(String name) {
-		SchemaType search;
-		SchemaType[] array;
-		int index;
-
-		search = new SchemaTypeDummy(name);
-		if (areTypesSorted) {
-			array = new SchemaType[schemaTypes.size()];
-			schemaTypes.toArray(array);
-			index = Arrays.binarySearch(array, search);
-		} else {
-			index = schemaTypes.indexOf(search);
-		}
-		if (index < 0) {
-			return null;
-		}
-		return schemaTypes.get(index);
-	}
-
-	private boolean wantDiagnostics;
-
-	private void indent(int indentLevel) {
-		for (int i = 0; i < indentLevel; i++) {
-			System.out.print("  ");
-		}
-	}
-
-	private void printTypeArgs(String[] typeArgs, int indentLevel) {
-		indent(indentLevel);
-		System.out.print("typeArgs = [");
-		for (int i = 0; i < typeArgs.length; i++) {
-			System.out.print("\"" + typeArgs[i] + "\"");
-			if (i < typeArgs.length - 1) {
-				System.out.print(", ");
-			}
-		}
-		System.out.print("]\n");
-	}
-
-	private void printTypeNameAndArgs(String typeName, String[] typeArgs, int indentLevel) {
-		indent(indentLevel);
-		System.out.print("typename = \"" + typeName + "\"; typeArgs = [");
-		for (int i = 0; i < typeArgs.length; i++) {
-			System.out.print("\"" + typeArgs[i] + "\"");
-			if (i < typeArgs.length - 1) {
-				System.out.print(", ");
-			}
-		}
-		System.out.print("]\n");
 	}
 
 	void callCheckRule(SchemaType target, Configuration cfg, String typeName, ArrayList<String> typeArgsList, String rule, int indentLevel) {
@@ -232,34 +93,6 @@ public class SchemaValidator {
 		}
 	}
 
-	void callValidate(SchemaType target, Configuration cfg, String scope, String name, String typeName, String origTypeName,
-	        String[] typeArgs, int indentLevel) {
-		try {
-			if (wantDiagnostics) {
-				System.out.println("");
-				indent(indentLevel);
-				System.out.print("start " + target.getClassName() + ".validate()\n");
-				indent(indentLevel + 1);
-				System.out.print("scope = \"" + scope + "\"; name = \"" + name + "\"\n");
-				indent(indentLevel + 1);
-				System.out.print("typeName = \"" + typeName + "\"; origTypeName = \"" + origTypeName + "\"\n");
-				printTypeArgs(typeArgs, indentLevel + 1);
-			}
-			target.validate(this, cfg, scope, name, typeName, origTypeName, typeArgs, indentLevel + 1);
-			if (wantDiagnostics) {
-				indent(indentLevel);
-				System.out.print("end " + target.getClassName() + ".validate()\n");
-			}
-		} catch (ConfigurationException ex) {
-			if (wantDiagnostics) {
-				System.out.println("");
-				indent(indentLevel);
-				System.out.print("exception throw from " + target.getClassName() + ".validate(): " + ex.getMessage() + "\n");
-			}
-			throw ex;
-		}
-	}
-
 	boolean callIsA(SchemaType target, Configuration cfg, String value, String typeName, String[] typeArgs, int indentLevel,
 	        StringBuffer errSuffix) {
 		boolean result = false;
@@ -289,6 +122,335 @@ public class SchemaValidator {
 			throw ex;
 		}
 		return result;
+	}
+
+	void callValidate(SchemaType target, Configuration cfg, String scope, String name, String typeName, String origTypeName,
+	        String[] typeArgs, int indentLevel) {
+		try {
+			if (wantDiagnostics) {
+				System.out.println("");
+				indent(indentLevel);
+				System.out.print("start " + target.getClassName() + ".validate()\n");
+				indent(indentLevel + 1);
+				System.out.print("scope = \"" + scope + "\"; name = \"" + name + "\"\n");
+				indent(indentLevel + 1);
+				System.out.print("typeName = \"" + typeName + "\"; origTypeName = \"" + origTypeName + "\"\n");
+				printTypeArgs(typeArgs, indentLevel + 1);
+			}
+			target.validate(this, cfg, scope, name, typeName, origTypeName, typeArgs, indentLevel + 1);
+			if (wantDiagnostics) {
+				indent(indentLevel);
+				System.out.print("end " + target.getClassName() + ".validate()\n");
+			}
+		} catch (ConfigurationException ex) {
+			if (wantDiagnostics) {
+				System.out.println("");
+				indent(indentLevel);
+				System.out.print("exception throw from " + target.getClassName() + ".validate(): " + ex.getMessage() + "\n");
+			}
+			throw ex;
+		}
+	}
+
+	private void checkTypeDoesNotExist(String typeName) throws ConfigurationException {
+		int len;
+		int i;
+		SchemaType type;
+
+		len = schemaTypes.size();
+		for (i = 0; i < len; i++) {
+			type = schemaTypes.get(i);
+			if (typeName.equals(type.getTypeName())) {
+				throw new ConfigurationException("schema type '" + typeName + "' is already registered");
+			}
+		}
+	}
+
+	private SchemaIdRuleInfo findIdRule(String name) {
+		int index;
+		SchemaIdRuleInfo search;
+
+		search = new SchemaIdRuleInfo(name, null, (String[]) null, false);
+		index = schemaIdRules.indexOf(search);
+		if (index < 0) {
+			return null;
+		}
+		return schemaIdRules.get(index);
+	}
+
+	SchemaType findType(String name) {
+		SchemaType search;
+		SchemaType[] array;
+		int index;
+
+		search = new SchemaTypeDummy(name);
+		if (areTypesSorted) {
+			array = new SchemaType[schemaTypes.size()];
+			schemaTypes.toArray(array);
+			index = Arrays.binarySearch(array, search);
+		} else {
+			index = schemaTypes.indexOf(search);
+		}
+		if (index < 0) {
+			return null;
+		}
+		return schemaTypes.get(index);
+	}
+
+	public boolean getWantDiagnostics() {
+		return wantDiagnostics;
+	}
+
+	private void indent(int indentLevel) {
+		for (int i = 0; i < indentLevel; i++) {
+			System.out.print("  ");
+		}
+	}
+
+	public void parseSchema(String[] schema) throws ConfigurationException {
+		SchemaParser schemaParser = new SchemaParser(this);
+		String prefix = "---- " + this.getClass().getName() + ".parseSchema()";
+		if (wantDiagnostics) {
+			System.out.print("\n" + prefix + ": start\n");
+		}
+		try {
+			schemaParser.parse(schema);
+		} catch (ConfigurationException ex) {
+			if (wantDiagnostics) {
+				System.out.print("\n" + prefix + ": error: " + ex.getMessage() + "\n");
+			}
+			throw ex;
+		}
+		if (wantDiagnostics) {
+			System.out.print("\n" + prefix + ": end\n");
+		}
+	}
+
+	private void printTypeArgs(String[] typeArgs, int indentLevel) {
+		indent(indentLevel);
+		System.out.print("typeArgs = [");
+		for (int i = 0; i < typeArgs.length; i++) {
+			System.out.print("\"" + typeArgs[i] + "\"");
+			if (i < typeArgs.length - 1) {
+				System.out.print(", ");
+			}
+		}
+		System.out.print("]\n");
+	}
+
+	private void printTypeNameAndArgs(String typeName, String[] typeArgs, int indentLevel) {
+		indent(indentLevel);
+		System.out.print("typename = \"" + typeName + "\"; typeArgs = [");
+		for (int i = 0; i < typeArgs.length; i++) {
+			System.out.print("\"" + typeArgs[i] + "\"");
+			if (i < typeArgs.length - 1) {
+				System.out.print(", ");
+			}
+		}
+		System.out.print("]\n");
+	}
+
+	private void registerBuiltinTypes() {
+		registerType(new SchemaTypeScope());
+
+		// --------
+		// List-based types
+		// --------
+		registerType(new SchemaTypeList());
+		registerType(new SchemaTypeTable());
+		registerType(new SchemaTypeTuple());
+
+		// --------
+		// String-based types
+		// --------
+		registerType(new SchemaTypeString());
+		registerType(new SchemaTypeBoolean());
+		registerType(new SchemaTypeDurationMicroseconds());
+		registerType(new SchemaTypeDurationMilliseconds());
+		registerType(new SchemaTypeDurationSeconds());
+		registerType(new SchemaTypeEnum());
+		registerType(new SchemaTypeFloat());
+		registerType(new SchemaTypeFloatWithUnits());
+		registerType(new SchemaTypeInt());
+		registerType(new SchemaTypeIntWithUnits());
+		registerType(new SchemaTypeUnitsWithFloat());
+		registerType(new SchemaTypeUnitsWithInt());
+		registerType(new SchemaTypeMemorySizeBytes());
+		registerType(new SchemaTypeMemorySizeKB());
+		registerType(new SchemaTypeMemorySizeMB());
+	}
+
+	protected void registerType(SchemaType type) throws ConfigurationException {
+		checkTypeDoesNotExist(type.getTypeName());
+		schemaTypes.add(type);
+		areTypesSorted = false;
+	}
+
+	void registerTypedef(String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArgsList)
+	        throws ConfigurationException {
+		SchemaType type;
+		String[] baseTypeArgs;
+
+		checkTypeDoesNotExist(typeName);
+		baseTypeArgs = baseTypeArgsList.toArray(new String[0]);
+		type = new SchemaTypeTypedef(typeName, cfgType, baseTypeName, baseTypeArgs);
+		schemaTypes.add(type);
+		areTypesSorted = false;
+	}
+
+	public void setWantDiagnostics(boolean wantDiagnostics) {
+		this.wantDiagnostics = wantDiagnostics;
+	}
+
+	private boolean shouldIgnore(Configuration cfg, String scope, String expandedName, String unexpandedName) {
+		int i;
+		int len;
+		int size;
+		short symbol;
+		String name;
+		String nameAfterPrefix;
+		SchemaIgnoreRuleInfo rule;
+		boolean hasDotAfterPrefix;
+		int cfgType = 0;
+
+		size = schemaIgnoreRules.size();
+		for (i = 0; i < size; i++) {
+			rule = schemaIgnoreRules.get(i);
+			name = rule.getLocallyScopedName();
+			len = name.length();
+			// --------
+			// Does unexpandedName start with rule.locallScopedName
+			// followed by "."?
+			// --------
+			if (!unexpandedName.startsWith(name)) {
+				continue;
+			}
+			if (unexpandedName.length() == len || unexpandedName.charAt(len) != '.') {
+				continue;
+			}
+
+			// --------
+			// It does. Whether we ignore the item depends on the
+			// "@ignore<something>" keyword used.
+			// --------
+			symbol = rule.getSymbol();
+			switch (symbol) {
+			case SchemaLex.LEX_IGNORE_EVERYTHING_IN_SYM:
+				return true;
+			case SchemaLex.LEX_IGNORE_SCOPES_IN_SYM:
+			case SchemaLex.LEX_IGNORE_VARIABLES_IN_SYM:
+				break;
+			default:
+				Util.assertion(false, "Bug!");
+				break;
+			}
+			nameAfterPrefix = unexpandedName.substring(len + 1);
+			hasDotAfterPrefix = nameAfterPrefix.indexOf('.') != -1;
+			try {
+				cfgType = cfg.type(scope, expandedName);
+			} catch (ConfigurationException ex) {
+				Util.assertion(false, "Bug!");
+			}
+			if (symbol == SchemaLex.LEX_IGNORE_VARIABLES_IN_SYM) {
+				if (hasDotAfterPrefix) {
+					// --------
+					// The item is a variable in a nested scope so
+					// the "@ignoreVariablesIn" rule does not apply.
+					// --------
+					continue;
+				}
+				// --------
+				// The item is directly in the scope, so the
+				// "@ignoreVariablesIn" rule applies if the item
+				// is a variable.
+				// --------
+				if ((cfgType & Configuration.CFG_VARIABLES) != 0) {
+					return true;
+				} else {
+					continue;
+				}
+			}
+
+			Util.assertion(symbol == SchemaLex.LEX_IGNORE_SCOPES_IN_SYM);
+			if (hasDotAfterPrefix) {
+				// --------
+				// The item is in a *nested* scope, so we ignore it.
+				// --------
+				return true;
+			}
+			// --------
+			// The item is directly in the ignorable-able scope,
+			// so we ignore it only if the item is a scope.
+			// --------
+			if (cfgType == Configuration.CFG_SCOPE) {
+				return true;
+			} else {
+				continue;
+			}
+		}
+		return false;
+	}
+
+	void sortSchemaRules() {
+		SchemaIdRuleInfo[] array;
+		int i;
+
+		array = new SchemaIdRuleInfo[schemaIdRules.size()];
+		schemaIdRules.toArray(array);
+		Arrays.sort(array);
+		schemaIdRules.clear();
+		schemaIdRules.ensureCapacity(array.length);
+		for (i = 0; i < array.length; i++) {
+			schemaIdRules.add(array[i]);
+		}
+	}
+
+	// --------
+	// Helper operations.
+	// --------
+
+	void sortTypes() {
+		SchemaType[] array;
+		int i;
+
+		array = new SchemaType[schemaTypes.size()];
+		schemaTypes.toArray(array);
+		Arrays.sort(array);
+		schemaTypes.clear();
+		schemaTypes.ensureCapacity(array.length);
+		for (i = 0; i < array.length; i++) {
+			schemaTypes.add(array[i]);
+		}
+		areTypesSorted = true;
+	}
+
+	public void validate(Configuration cfg, String scope, String name) throws ConfigurationException {
+		validate(cfg, scope, name, true, Configuration.CFG_SCOPE_AND_VARS, DO_NOT_FORCE);
+	}
+
+	public void validate(Configuration cfg, String scope, String name, boolean recurseIntoSubscopes, int typeMask)
+	        throws ConfigurationException {
+		validate(cfg, scope, name, recurseIntoSubscopes, typeMask, DO_NOT_FORCE);
+	}
+
+	public void validate(Configuration cfg, String scope, String name, boolean recurseIntoSubscopes, int typeMask, int forceMode)
+	        throws ConfigurationException {
+		String[] itemNames;
+
+		// --------
+		// Get a list of the entries in the scope
+		// --------
+		Configuration.mergeNames(scope, name);
+		itemNames = cfg.listLocallyScopedNames(scope, name, typeMask, recurseIntoSubscopes);
+
+		// --------
+		// Now validate those names
+		// --------
+		validate(cfg, scope, name, itemNames, forceMode);
+	}
+
+	public void validate(Configuration cfg, String scope, String name, int forceMode) throws ConfigurationException {
+		validate(cfg, scope, name, true, Configuration.CFG_SCOPE_AND_VARS, forceMode);
 	}
 
 	private void validate(Configuration cfg, String scope, String localName, String[] itemNames, int forceMode)
@@ -434,164 +596,6 @@ public class SchemaValidator {
 			}
 		}
 
-	}
-
-	private boolean shouldIgnore(Configuration cfg, String scope, String expandedName, String unexpandedName) {
-		int i;
-		int len;
-		int size;
-		short symbol;
-		String name;
-		String nameAfterPrefix;
-		SchemaIgnoreRuleInfo rule;
-		boolean hasDotAfterPrefix;
-		int cfgType = 0;
-
-		size = schemaIgnoreRules.size();
-		for (i = 0; i < size; i++) {
-			rule = schemaIgnoreRules.get(i);
-			name = rule.getLocallyScopedName();
-			len = name.length();
-			// --------
-			// Does unexpandedName start with rule.locallScopedName
-			// followed by "."?
-			// --------
-			if (!unexpandedName.startsWith(name)) {
-				continue;
-			}
-			if (unexpandedName.length() == len || unexpandedName.charAt(len) != '.') {
-				continue;
-			}
-
-			// --------
-			// It does. Whether we ignore the item depends on the
-			// "@ignore<something>" keyword used.
-			// --------
-			symbol = rule.getSymbol();
-			switch (symbol) {
-			case SchemaLex.LEX_IGNORE_EVERYTHING_IN_SYM:
-				return true;
-			case SchemaLex.LEX_IGNORE_SCOPES_IN_SYM:
-			case SchemaLex.LEX_IGNORE_VARIABLES_IN_SYM:
-				break;
-			default:
-				Util.assertion(false, "Bug!");
-				break;
-			}
-			nameAfterPrefix = unexpandedName.substring(len + 1);
-			hasDotAfterPrefix = nameAfterPrefix.indexOf('.') != -1;
-			try {
-				cfgType = cfg.type(scope, expandedName);
-			} catch (ConfigurationException ex) {
-				Util.assertion(false, "Bug!");
-			}
-			if (symbol == SchemaLex.LEX_IGNORE_VARIABLES_IN_SYM) {
-				if (hasDotAfterPrefix) {
-					// --------
-					// The item is a variable in a nested scope so
-					// the "@ignoreVariablesIn" rule does not apply.
-					// --------
-					continue;
-				}
-				// --------
-				// The item is directly in the scope, so the
-				// "@ignoreVariablesIn" rule applies if the item
-				// is a variable.
-				// --------
-				if ((cfgType & Configuration.CFG_VARIABLES) != 0) {
-					return true;
-				} else {
-					continue;
-				}
-			}
-
-			Util.assertion(symbol == SchemaLex.LEX_IGNORE_SCOPES_IN_SYM);
-			if (hasDotAfterPrefix) {
-				// --------
-				// The item is in a *nested* scope, so we ignore it.
-				// --------
-				return true;
-			}
-			// --------
-			// The item is directly in the ignorable-able scope,
-			// so we ignore it only if the item is a scope.
-			// --------
-			if (cfgType == Configuration.CFG_SCOPE) {
-				return true;
-			} else {
-				continue;
-			}
-		}
-		return false;
-	}
-
-	// --------
-	// Helper operations.
-	// --------
-
-	void sortSchemaRules() {
-		SchemaIdRuleInfo[] array;
-		int i;
-
-		array = new SchemaIdRuleInfo[schemaIdRules.size()];
-		schemaIdRules.toArray(array);
-		Arrays.sort(array);
-		schemaIdRules.clear();
-		schemaIdRules.ensureCapacity(array.length);
-		for (i = 0; i < array.length; i++) {
-			schemaIdRules.add(array[i]);
-		}
-	}
-
-	private SchemaIdRuleInfo findIdRule(String name) {
-		int index;
-		SchemaIdRuleInfo search;
-
-		search = new SchemaIdRuleInfo(name, null, (String[]) null, false);
-		index = schemaIdRules.indexOf(search);
-		if (index < 0) {
-			return null;
-		}
-		return schemaIdRules.get(index);
-	}
-
-	// --------
-	// Instance variables NOT visible to subclasses.
-	// --------
-	ArrayList<SchemaIdRuleInfo> schemaIdRules;
-	ArrayList<SchemaIgnoreRuleInfo> schemaIgnoreRules;
-	ArrayList<SchemaType> schemaTypes;
-	boolean areSchemaTypesSorted;
-	boolean areTypesSorted;
-
-	private void registerBuiltinTypes() {
-		registerType(new SchemaTypeScope());
-
-		// --------
-		// List-based types
-		// --------
-		registerType(new SchemaTypeList());
-		registerType(new SchemaTypeTable());
-		registerType(new SchemaTypeTuple());
-
-		// --------
-		// String-based types
-		// --------
-		registerType(new SchemaTypeString());
-		registerType(new SchemaTypeBoolean());
-		registerType(new SchemaTypeDurationMicroseconds());
-		registerType(new SchemaTypeDurationMilliseconds());
-		registerType(new SchemaTypeDurationSeconds());
-		registerType(new SchemaTypeEnum());
-		registerType(new SchemaTypeFloat());
-		registerType(new SchemaTypeFloatWithUnits());
-		registerType(new SchemaTypeInt());
-		registerType(new SchemaTypeIntWithUnits());
-		registerType(new SchemaTypeUnitsWithFloat());
-		registerType(new SchemaTypeUnitsWithInt());
-		registerType(new SchemaTypeMemorySizeBytes());
-		registerType(new SchemaTypeMemorySizeKB());
-		registerType(new SchemaTypeMemorySizeMB());
 	}
 
 }

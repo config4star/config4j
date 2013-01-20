@@ -29,6 +29,26 @@ package org.config4j;
  * part, (which can be a string or a sequence of string) or a <scope>.
  */
 class ConfigItem {
+	private String[] listVal;
+
+	private final String name;
+
+	private ConfigScope scopeVal;
+
+	// --------
+	// Public operations
+	// --------
+
+	private String stringVal;
+
+	private final int type;
+
+	ConfigItem(String name, ConfigScope scopeVal) {
+		this.name = name;
+		this.scopeVal = scopeVal;
+		type = Configuration.CFG_SCOPE;
+	}
+
 	ConfigItem(String name, String stringVal) {
 		this.name = name;
 		this.stringVal = stringVal;
@@ -39,39 +59,6 @@ class ConfigItem {
 		this.name = name;
 		this.listVal = listVal;
 		type = Configuration.CFG_LIST;
-	}
-
-	ConfigItem(String name, ConfigScope scopeVal) {
-		this.name = name;
-		this.scopeVal = scopeVal;
-		type = Configuration.CFG_SCOPE;
-	}
-
-	// --------
-	// Public operations
-	// --------
-
-	int getType() {
-		return type;
-	}
-
-	String getName() {
-		return name;
-	}
-
-	String getStringVal() {
-		Util.assertion(type == Configuration.CFG_STRING);
-		return stringVal;
-	}
-
-	String[] getListVal() {
-		Util.assertion(type == Configuration.CFG_LIST);
-		return listVal;
-	}
-
-	ConfigScope getScopeVal() {
-		Util.assertion(type == Configuration.CFG_SCOPE);
-		return scopeVal;
 	}
 
 	void dump(StringBuffer buf, String name, boolean wantExpandedUidNames) {
@@ -115,14 +102,6 @@ class ConfigItem {
 		}
 	}
 
-	private void printIndent(StringBuffer buf, int indentLevel) {
-		int i;
-
-		for (i = 0; i < indentLevel; i++) {
-			buf.append("\t");
-		}
-	}
-
 	private String escapeString(String str) {
 		StringBuffer buf;
 		int i;
@@ -154,9 +133,34 @@ class ConfigItem {
 		return buf.toString();
 	}
 
-	private final int type;
-	private final String name;
-	private String stringVal;
-	private String[] listVal;
-	private ConfigScope scopeVal;
+	String[] getListVal() {
+		Util.assertion(type == Configuration.CFG_LIST);
+		return listVal;
+	}
+
+	String getName() {
+		return name;
+	}
+
+	ConfigScope getScopeVal() {
+		Util.assertion(type == Configuration.CFG_SCOPE);
+		return scopeVal;
+	}
+
+	String getStringVal() {
+		Util.assertion(type == Configuration.CFG_STRING);
+		return stringVal;
+	}
+
+	int getType() {
+		return type;
+	}
+
+	private void printIndent(StringBuffer buf, int indentLevel) {
+		int i;
+
+		for (i = 0; i < indentLevel; i++) {
+			buf.append("\t");
+		}
+	}
 }

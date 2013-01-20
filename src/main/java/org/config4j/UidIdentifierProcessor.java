@@ -31,20 +31,6 @@ class UidIdentifierProcessor {
 		count = 0;
 	}
 
-	private String formatDigits(int num) {
-		char[] digits;
-		int i;
-		int remainder;
-
-		digits = new char[9];
-		for (i = 0; i < digits.length; i++) {
-			remainder = num % 10;
-			num = num / 10;
-			digits[9 - (i + 1)] = (char) ('0' + remainder);
-		}
-		return new String(digits);
-	}
-
 	/**
 	 * str must be in one of the following forms: - "foo" --> "foo" - "uid-<foo>" --> "uid-<digits>-<foo>" - "uid-<digits>-<foo>" -->
 	 * "uid-<new-digits>-<foo>" where "<foo>" does NOT start with a digit or "-"
@@ -168,6 +154,20 @@ class UidIdentifierProcessor {
 		suffix = str.substring(i);
 		result = "uid-" + digits + "-" + suffix;
 		return result;
+	}
+
+	private String formatDigits(int num) {
+		char[] digits;
+		int i;
+		int remainder;
+
+		digits = new char[9];
+		for (i = 0; i < digits.length; i++) {
+			remainder = num % 10;
+			num = num / 10;
+			digits[9 - (i + 1)] = (char) ('0' + remainder);
+		}
+		return new String(digits);
 	}
 
 	public String unexpand(String str) throws ConfigurationException {

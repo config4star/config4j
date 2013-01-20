@@ -25,11 +25,12 @@
 package org.config4j;
 
 public class LexKeywordInfo {
+	String spelling;
+
+	short symbol;
+
 	LexKeywordInfo(String spelling, short symbol) {
 		this.spelling = spelling;
 		this.symbol = symbol;
 	}
-
-	String spelling;
-	short symbol;
 }

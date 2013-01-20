@@ -32,6 +32,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 class ConfigScope {
+	private final ConfigScope parentScope;
+
+	private String scopedName;
+
+	private final Map<String, ConfigItem> table;
+
 	ConfigScope(ConfigScope parentScope, String name) {
 		table = new HashMap<String, ConfigItem>(16);
 		this.parentScope = parentScope;
@@ -45,22 +51,9 @@ class ConfigScope {
 		}
 	}
 
-	String getScopedName() {
-		return scopedName;
-	}
-
-	ConfigScope rootScope() {
-		ConfigScope scope;
-
-		scope = this;
-		while (scope.parentScope != null) {
-			scope = scope.parentScope;
-		}
-		return scope;
-	}
-
-	boolean addOrReplaceString(String name, String strVal) {
+	boolean addOrReplaceList(String name, ArrayList<String> listVal) {
 		ConfigItem item;
+		String[] array;
 
 		item = table.get(name);
 		if (item != null && item.getType() == Configuration.CFG_SCOPE) {
@@ -69,7 +62,9 @@ class ConfigScope {
 			// --------
 			return false;
 		} else {
-			table.put(name, new ConfigItem(name, strVal));
+			array = new String[listVal.size()];
+			listVal.toArray(array);
+			table.put(name, new ConfigItem(name, array));
 			return true;
 		}
 	}
@@ -89,9 +84,8 @@ class ConfigScope {
 		}
 	}
 
-	boolean addOrReplaceList(String name, ArrayList<String> listVal) {
+	boolean addOrReplaceString(String name, String strVal) {
 		ConfigItem item;
-		String[] array;
 
 		item = table.get(name);
 		if (item != null && item.getType() == Configuration.CFG_SCOPE) {
@@ -100,10 +94,41 @@ class ConfigScope {
 			// --------
 			return false;
 		} else {
-			array = new String[listVal.size()];
-			listVal.toArray(array);
-			table.put(name, new ConfigItem(name, array));
+			table.put(name, new ConfigItem(name, strVal));
 			return true;
+		}
+	}
+
+	void dump(StringBuffer buf, boolean wantExpandedUidNames) {
+		dump(buf, wantExpandedUidNames, 0);
+	}
+
+	void dump(StringBuffer buf, boolean wantExpandedUidNames, int indentLevel) {
+		String[] namesArray;
+		int i;
+		ConfigItem item;
+
+		// --------
+		// First pass. Dump the variables.
+		// --------
+		namesArray = listLocalNames(Configuration.CFG_VARIABLES);
+		Arrays.sort(namesArray);
+		for (i = 0; i < namesArray.length; i++) {
+			item = table.get(namesArray[i]);
+			Util.assertion(item != null);
+			Util.assertion((item.getType() & Configuration.CFG_VARIABLES) != 0);
+			item.dump(buf, namesArray[i], wantExpandedUidNames, indentLevel);
+		}
+
+		// --------
+		// Second pass. Dump the nested scopes.
+		// --------
+		namesArray = listLocalNames(Configuration.CFG_SCOPE);
+		Arrays.sort(namesArray);
+		for (i = 0; i < namesArray.length; i++) {
+			item = table.get(namesArray[i]);
+			Util.assertion((item.getType() & Configuration.CFG_SCOPE) != 0);
+			item.dump(buf, namesArray[i], wantExpandedUidNames, indentLevel);
 		}
 	}
 
@@ -132,17 +157,37 @@ class ConfigScope {
 		return scope;
 	}
 
-	boolean removeItem(String name) {
-		ConfigItem item;
-		item = table.get(name);
-		if (item != null) {
-			table.remove(name);
-		}
-		return item != null;
-	}
-
 	ConfigItem findItem(String name) {
 		return table.get(name);
+	}
+
+	ConfigScope getParentScope() {
+		return parentScope;
+	}
+
+	String getScopedName() {
+		return scopedName;
+	}
+
+	private boolean listFilter(String name, String[] filterPatterns) {
+		int i;
+		String unexpandedName;
+		String pattern;
+		UidIdentifierProcessor uidProc;
+
+		if (filterPatterns.length == 0) {
+			return true;
+		}
+
+		uidProc = new UidIdentifierProcessor();
+		unexpandedName = uidProc.unexpand(name);
+		for (i = 0; i < filterPatterns.length; i++) {
+			pattern = filterPatterns[i];
+			if (Configuration.patternMatch(unexpandedName, pattern)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	String[] listFullyScopedNames(int typeMask, boolean recursive) {
@@ -179,43 +224,6 @@ class ConfigScope {
 		listScopedNamesHelper("", typeMask, recursive, filterPatterns, vec);
 		result = new String[vec.size()];
 		return vec.toArray(result);
-	}
-
-	ConfigScope getParentScope() {
-		return parentScope;
-	}
-
-	void dump(StringBuffer buf, boolean wantExpandedUidNames) {
-		dump(buf, wantExpandedUidNames, 0);
-	}
-
-	void dump(StringBuffer buf, boolean wantExpandedUidNames, int indentLevel) {
-		String[] namesArray;
-		int i;
-		ConfigItem item;
-
-		// --------
-		// First pass. Dump the variables.
-		// --------
-		namesArray = listLocalNames(Configuration.CFG_VARIABLES);
-		Arrays.sort(namesArray);
-		for (i = 0; i < namesArray.length; i++) {
-			item = table.get(namesArray[i]);
-			Util.assertion(item != null);
-			Util.assertion((item.getType() & Configuration.CFG_VARIABLES) != 0);
-			item.dump(buf, namesArray[i], wantExpandedUidNames, indentLevel);
-		}
-
-		// --------
-		// Second pass. Dump the nested scopes.
-		// --------
-		namesArray = listLocalNames(Configuration.CFG_SCOPE);
-		Arrays.sort(namesArray);
-		for (i = 0; i < namesArray.length; i++) {
-			item = table.get(namesArray[i]);
-			Util.assertion((item.getType() & Configuration.CFG_SCOPE) != 0);
-			item.dump(buf, namesArray[i], wantExpandedUidNames, indentLevel);
-		}
 	}
 
 	private String[] listLocalNames(int typeMask) {
@@ -267,28 +275,22 @@ class ConfigScope {
 		}
 	}
 
-	private boolean listFilter(String name, String[] filterPatterns) {
-		int i;
-		String unexpandedName;
-		String pattern;
-		UidIdentifierProcessor uidProc;
-
-		if (filterPatterns.length == 0) {
-			return true;
+	boolean removeItem(String name) {
+		ConfigItem item;
+		item = table.get(name);
+		if (item != null) {
+			table.remove(name);
 		}
-
-		uidProc = new UidIdentifierProcessor();
-		unexpandedName = uidProc.unexpand(name);
-		for (i = 0; i < filterPatterns.length; i++) {
-			pattern = filterPatterns[i];
-			if (Configuration.patternMatch(unexpandedName, pattern)) {
-				return true;
-			}
-		}
-		return false;
+		return item != null;
 	}
 
-	private final ConfigScope parentScope;
-	private String scopedName;
-	private final Map<String, ConfigItem> table;
+	ConfigScope rootScope() {
+		ConfigScope scope;
+
+		scope = this;
+		while (scope.parentScope != null) {
+			scope = scope.parentScope;
+		}
+		return scope;
+	}
 }

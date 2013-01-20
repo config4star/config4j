@@ -25,14 +25,17 @@
 package org.config4j;
 
 public class ValueWithUnits {
+	private final static int FLOAT_VALUE = 2;
+	private final static int INT_VALUE = 1;
+	private final static int NO_VALUE = 0;
+
+	private float floatValue;
+	private int intValue;
+	private final int state;
+	private String units;
+
 	public ValueWithUnits() {
 		state = NO_VALUE;
-	}
-
-	public ValueWithUnits(int value, String units) {
-		state = INT_VALUE;
-		intValue = value;
-		this.units = units;
 	}
 
 	public ValueWithUnits(float value, String units) {
@@ -41,11 +44,10 @@ public class ValueWithUnits {
 		this.units = units;
 	}
 
-	public int getIntValue() {
-		if (state != INT_VALUE) {
-			throw new IllegalStateException("ValueWithUnits.getIntValue()");
-		}
-		return intValue;
+	public ValueWithUnits(int value, String units) {
+		state = INT_VALUE;
+		intValue = value;
+		this.units = units;
 	}
 
 	public float getFloatValue() {
@@ -55,19 +57,17 @@ public class ValueWithUnits {
 		return floatValue;
 	}
 
+	public int getIntValue() {
+		if (state != INT_VALUE) {
+			throw new IllegalStateException("ValueWithUnits.getIntValue()");
+		}
+		return intValue;
+	}
+
 	public String getUnits() {
 		if (state == NO_VALUE) {
 			throw new IllegalStateException("ValueWithUnits.getUnits()");
 		}
 		return units;
 	}
-
-	private int state;
-	private int intValue;
-	private float floatValue;
-	private String units;
-
-	private final static int NO_VALUE = 0;
-	private final static int INT_VALUE = 1;
-	private final static int FLOAT_VALUE = 2;
 }

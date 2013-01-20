@@ -31,6 +31,10 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 class EnvStreamParserThread extends Thread {
+	private Properties envProperties;
+
+	private InputStream inputStream;
+
 	EnvStreamParserThread(InputStream inputStream) {
 		this.inputStream = inputStream;
 		envProperties = new Properties();
@@ -64,7 +68,4 @@ class EnvStreamParserThread extends Thread {
 			ex.printStackTrace();
 		}
 	}
-
-	private InputStream inputStream;
-	private Properties envProperties;
 }

@@ -26,18 +26,58 @@ package org.config4j;
 
 public abstract class SchemaType implements Comparable<SchemaType> {
 
+	private int cfgType;
+
+	private String className;
+
+	// --------
+	// Instance variables
+	// --------
+	private String typeName;
+
 	public SchemaType(String typeName, int cfgType) {
 		this.typeName = typeName;
 		className = this.getClass().getName();
 		this.cfgType = cfgType;
 	}
 
-	public int compareTo(SchemaType o) {
-		return typeName.compareTo(o.typeName);
+	protected final boolean callIsA(SchemaType target, SchemaValidator sv, Configuration cfg, String value, String typeName,
+	        String[] typeArgs, int indentLevel, StringBuffer errSuffix) throws ConfigurationException {
+		return sv.callIsA(target, cfg, value, typeName, typeArgs, indentLevel, errSuffix);
+	}
+
+	protected final void callValidate(SchemaType target, SchemaValidator sv, Configuration cfg, String scope, String name, String typeName,
+	        String origTypeName, String[] typeArgs, int indentLevel) throws ConfigurationException {
+		sv.callValidate(target, cfg, scope, name, typeName, origTypeName, typeArgs, indentLevel);
 	}
 
 	abstract public void checkRule(SchemaValidator sv, Configuration cfg, String typeName, String[] typeArgs, String rule)
 	        throws ConfigurationException;
+
+	public int compareTo(SchemaType o) {
+		return typeName.compareTo(o.typeName);
+	}
+
+	protected SchemaType findType(SchemaValidator sv, String name) {
+		return sv.findType(name);
+	}
+
+	public int getCfgType() {
+		return cfgType;
+	}
+
+	String getClassName() {
+		return className;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public boolean isA(SchemaValidator sv, Configuration cfg, String value, String typeName, String[] typeArgs, int indentLevel,
+	        StringBuffer errSuffix) {
+		return false;
+	}
 
 	public void validate(SchemaValidator sv, Configuration cfg, String scope, String name, String typeName, String origTypeName,
 	        String[] typeArgs, int indentLevel) throws ConfigurationException {
@@ -60,42 +100,4 @@ public abstract class SchemaType implements Comparable<SchemaType> {
 			        + "'" + sep + errSuffix);
 		}
 	}
-
-	public boolean isA(SchemaValidator sv, Configuration cfg, String value, String typeName, String[] typeArgs, int indentLevel,
-	        StringBuffer errSuffix) {
-		return false;
-	}
-
-	public String getTypeName() {
-		return typeName;
-	}
-
-	public int getCfgType() {
-		return cfgType;
-	}
-
-	String getClassName() {
-		return className;
-	}
-
-	protected SchemaType findType(SchemaValidator sv, String name) {
-		return sv.findType(name);
-	}
-
-	protected final void callValidate(SchemaType target, SchemaValidator sv, Configuration cfg, String scope, String name, String typeName,
-	        String origTypeName, String[] typeArgs, int indentLevel) throws ConfigurationException {
-		sv.callValidate(target, cfg, scope, name, typeName, origTypeName, typeArgs, indentLevel);
-	}
-
-	protected final boolean callIsA(SchemaType target, SchemaValidator sv, Configuration cfg, String value, String typeName,
-	        String[] typeArgs, int indentLevel, StringBuffer errSuffix) throws ConfigurationException {
-		return sv.callIsA(target, cfg, value, typeName, typeArgs, indentLevel, errSuffix);
-	}
-
-	// --------
-	// Instance variables
-	// --------
-	private String typeName;
-	private String className;
-	private int cfgType;
 }

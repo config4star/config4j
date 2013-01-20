@@ -30,6 +30,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 class StreamReaderThread extends Thread {
+	private StringBuffer buf;
+
+	private InputStream inputStream;
+
 	StreamReaderThread(InputStream inputStream) {
 		this.inputStream = inputStream;
 		buf = new StringBuffer();
@@ -61,7 +65,4 @@ class StreamReaderThread extends Thread {
 			ex.printStackTrace();
 		}
 	}
-
-	private InputStream inputStream;
-	private StringBuffer buf;
 }
