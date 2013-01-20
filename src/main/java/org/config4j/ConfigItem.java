@@ -24,15 +24,10 @@
 
 package org.config4j;
 
-//--------------------------------------------------------------
-// Class:	ConfigItem
-//
-// Description:	A config file contains "name = <value>" statements
-//		and "name <scope>" statements.
-//		This class is used to store name plus the the
-//		<value> part, (which can be a string or a sequence
-//		of string) or a <scope>.
-//--------------------------------------------------------------
+/**
+ * A config file contains "name = <value>" statements and "name <scope>" statements. This class is used to store name plus the the <value>
+ * part, (which can be a string or a sequence of string) or a <scope>.
+ */
 class ConfigItem {
 	ConfigItem(String name, String stringVal) {
 		this.name = name;
@@ -159,8 +154,8 @@ class ConfigItem {
 		return buf.toString();
 	}
 
-	private int type;
-	private String name;
+	private final int type;
+	private final String name;
 	private String stringVal;
 	private String[] listVal;
 	private ConfigScope scopeVal;
