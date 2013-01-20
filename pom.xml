@@ -3,12 +3,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.config4star</groupId>
 	<artifactId>config4j</artifactId>
+	<packaging>pom</packaging>
+	
 	<version>1.2-SNAPSHOT</version>
 	<name>Config4j</name>
 	<url>http://www.config4star.org/</url>
+
 	<description>Config4* is pronounced “config for star”. The “*” in the name is a placeholder for a programming language, so Config4* is actually a family of configuration-file parsers. Initially, the Config4* family has just two members: Config4Cpp (for C++) and Config4J (for Java). Over time, the family may grow to support other languages.</description>
 	<inceptionYear>2011</inceptionYear>
-	
+
 	<issueManagement>
 		<system>Github</system>
 		<url>https://github.com/config4star/config4j/issues</url>
@@ -32,8 +35,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>2.3.2</version>
 					<configuration>
-						<source>1.4</source>
-						<target>1.4</target>
+						<source>1.5</source>
+						<target>1.5</target>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -54,4 +57,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<modules>
+		<module>cli-tool</module>
+	</modules>
 </project>
