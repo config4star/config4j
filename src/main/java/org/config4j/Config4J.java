@@ -76,7 +76,7 @@ class Config4J
 			System.err.println(ex.getMessage());
 			System.exit(1);
 		}
-		fullyScopedName = cfg.mergeNames(scope, name);
+		fullyScopedName = Configuration.mergeNames(scope, name);
 
 		if (cmd.equals("parse")) {
 			//--------

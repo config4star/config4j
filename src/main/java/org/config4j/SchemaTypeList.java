@@ -117,7 +117,7 @@ class SchemaTypeList extends SchemaType
 				} else {
 					sep = "; ";
 				}
-				fullyScopedName = cfg.mergeNames(scope, name);
+				fullyScopedName = Configuration.mergeNames(scope, name);
 				throw new ConfigurationException(cfg.fileName() + ": bad "
 							+ elemTypeName + " value ('" + elemValue
 							+ "') in the '" + fullyScopedName + "' "

@@ -118,7 +118,7 @@ class SchemaTypeTuple extends SchemaType
 		numElems = typeArgsLen / 2;
 		list = cfg.lookupList(scope, name);
 		if (list.length != numElems) {
-			fullyScopedName = cfg.mergeNames(scope, name);
+			fullyScopedName = Configuration.mergeNames(scope, name);
 			msg = new StringBuffer();
 			msg.append(cfg.fileName() + ": there should be " + numElems
 					+ " entries in the '" + fullyScopedName + "' "
@@ -150,7 +150,7 @@ class SchemaTypeTuple extends SchemaType
 				} else {
 					sep = "; ";
 				}
-				fullyScopedName = cfg.mergeNames(scope, name);
+				fullyScopedName = Configuration.mergeNames(scope, name);
 				throw new ConfigurationException(cfg.fileName() + ": bad "
 							+ elemTypeName + " value ('" + elemValue
 							+ "') for element " + (i+1) + " ('"

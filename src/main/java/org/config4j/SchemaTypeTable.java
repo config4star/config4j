@@ -120,7 +120,7 @@ class SchemaTypeTable extends SchemaType
 		numColumns = typeArgsLen / 2;
 		list = cfg.lookupList(scope, name);
 		if (list.length % numColumns != 0) {
-			fullyScopedName = cfg.mergeNames(scope, name);
+			fullyScopedName = Configuration.mergeNames(scope, name);
 			msg = new StringBuffer();
 			msg.append(cfg.fileName() + ": the number of entries in the '"
 								+ fullyScopedName + "' " + typeName
@@ -147,7 +147,7 @@ class SchemaTypeTable extends SchemaType
 				} else {
 					sep = "; ";
 				}
-				fullyScopedName = cfg.mergeNames(scope, name);
+				fullyScopedName = Configuration.mergeNames(scope, name);
 				throw new ConfigurationException(cfg.fileName() + ": bad "
 							+ colTypeName + " value ('" + colValue
 							+ "') for the '" + typeArgs[colNameIndex]

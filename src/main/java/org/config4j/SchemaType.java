@@ -72,7 +72,7 @@ public abstract class SchemaType implements Comparable
 		if (!sv.callIsA(this, cfg, value, typeName, typeArgs, indentLevel+1,
 					    errSuffix))
 		{
-			fullyScopedName = cfg.mergeNames(scope, name);
+			fullyScopedName = Configuration.mergeNames(scope, name);
 			if (errSuffix.length() > 0) {
 				sep = "; ";
 			} else {

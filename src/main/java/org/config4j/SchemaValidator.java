@@ -133,7 +133,7 @@ public class SchemaValidator
 		//--------
 		// Get a list of the entries in the scope
 		//--------
-		fullyScopedName = cfg.mergeNames(scope, name);
+		fullyScopedName = Configuration.mergeNames(scope, name);
 		itemNames = cfg.listLocallyScopedNames(scope, name, typeMask,
 				recurseIntoSubscopes);
 
@@ -423,7 +423,7 @@ String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArg
 		String				prefix = "---- " + this.getClass().getName()
 				+ ".validate()";
 
-		fullyScopedName = cfg.mergeNames(scope, localName);
+		fullyScopedName = Configuration.mergeNames(scope, localName);
 		if (wantDiagnostics) {
 			System.out.print("\n" + prefix + ": start\n");
 		}
@@ -444,7 +444,7 @@ String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArg
 				//--------
 				// Can't find an idRule for the entry
 				//--------
-				unlistedName = cfg.mergeNames(fullyScopedName, iName);
+				unlistedName = Configuration.mergeNames(fullyScopedName, iName);
 				msg = null;
 				switch (cfg.type(unlistedName, "")) {
 				case Configuration.CFG_SCOPE:
@@ -509,7 +509,7 @@ String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArg
 		if (forceMode == FORCE_OPTIONAL) {
 			return;
 		}
-		fullyScopedName = cfg.mergeNames(scope, localName);
+		fullyScopedName = Configuration.mergeNames(scope, localName);
 		len = schemaIdRules.size();
 		for (i = 0; i < len; i++) {
 			idRule = schemaIdRules.get(i);
@@ -524,7 +524,7 @@ String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArg
 				if (cfg.type(fullyScopedName, nameInRule)
 						== Configuration.CFG_NO_VALUE)
 				{
-					nameOfMissingEntry = cfg.mergeNames(fullyScopedName,
+					nameOfMissingEntry = Configuration.mergeNames(fullyScopedName,
 							nameInRule);
 					typeName = idRule.getTypeName();
 					throw new ConfigurationException(cfg.fileName() + ": the "
@@ -572,7 +572,7 @@ String typeName, int cfgType, String baseTypeName, ArrayList<String> baseTypeArg
 			if (cfg.type(parentScopes[i], lastPartOfName)
 					== Configuration.CFG_NO_VALUE)
 			{
-				nameOfMissingEntry = cfg.mergeNames(parentScopes[i],
+				nameOfMissingEntry = Configuration.mergeNames(parentScopes[i],
 						lastPartOfName);
 				typeName = idRule.getTypeName();
 				throw new ConfigurationException(cfg.fileName() + ": the "
