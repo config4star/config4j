@@ -31,7 +31,7 @@
 				classpath="${classes.dir}"
 				failonerror="true">
 			<arg value="-cfg"/>
-			<arg value="${src.dir}/org/config4j/DefaultSecurity.cfg"/>
+			<arg value="src/main/resources/org/config4j/DefaultSecurity.cfg"/>
 			<arg value="-singleton"/>
 			<arg value="-class"/>
 			<arg value="DefaultSecurity"/>
