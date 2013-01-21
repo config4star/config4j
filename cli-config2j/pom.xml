@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.config4star</groupId>
+		<artifactId>config4j-main</artifactId>
+		<version>1.2-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<artifactId>cli-config2j</artifactId>
+	<name>Console configuration handler generator</name>
+	<description>The config2j utility reads a configuration file and a Java file that contains a class wrapper around a snapshot of the file’s contents. This utility makes it easy to generate a configuration string that can be embedded in an application. This can be useful in an embedded system that does not contain a file system. It is also useful if you want an application to have “fallback” configuration.</description>
+
+	<!--
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<archive>
+						<manifest>
+						</manifest>
+					</archive>				
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	-->
+
+	<dependencies>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.30</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
